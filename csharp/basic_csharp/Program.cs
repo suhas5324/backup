@@ -17,7 +17,7 @@ class Program
             Console.WriteLine("0. Exit");
             Console.Write("Enter your choice (0-6): ");
 
-            string? choice = Console.ReadLine();
+            string choice = Console.ReadLine().Trim();
 
             switch (choice)
             {
