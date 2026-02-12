@@ -3,32 +3,58 @@ using System.IO;
 
 class Program6
 {
-   public static void ReadMovieNames()
+    public static void ReadMovieNames()
     {
-        string filePath = "FavoriteMovies.txt";
+        string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
+        string filePath = Path.Combine(directoryPath, "FavoriteMovies.txt");
 
-        // Prompt user to input movies
-        Console.WriteLine("Enter your favorite movies (one per line). Type 'done' when finished:");
-        using (StreamWriter writer = new StreamWriter(filePath))
+        try
         {
-            string? movie;
-            while ((movie = Console.ReadLine()) != "done")
+            Console.WriteLine("Enter your favorite movies (one per line). Type 'done' when finished:");
+
+            using (StreamWriter writer = new StreamWriter(filePath))
             {
-                if (movie != null)
+                while (true)
                 {
+                    string? movie = Console.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(movie))
+                    {
+                        Console.WriteLine("Movie name cannot be empty.");
+                        continue;
+                    }
+
+                    movie = movie.Trim();
+
+                    if (movie.Equals("done", StringComparison.OrdinalIgnoreCase))
+                        break;
+
                     writer.WriteLine(movie);
                 }
             }
-        }
 
-        Console.WriteLine("\nYour favorite movies in uppercase:");
-        using (StreamReader reader = new StreamReader(filePath))
-        {
-            string? line;
-            while ((line = reader.ReadLine()) != null)
+            Console.WriteLine("\nYour favorite movies in uppercase:");
+
+            using (StreamReader reader = new StreamReader(filePath))
             {
-                Console.WriteLine(line.ToUpper());
+                string? line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Console.WriteLine(line.ToUpper());
+                }
             }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Console.WriteLine("Error: You do not have permission to access this file.");
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine($"File I/O error occurred: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
         }
     }
 }

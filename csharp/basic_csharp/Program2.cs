@@ -1,32 +1,33 @@
-
 class Program2
 {
     public static void FindMax()
     {
-        int maxNumber=int.MinValue;
         Console.WriteLine("Enter numbers separated by commas:");
         string? input = Console.ReadLine();
+
         if (string.IsNullOrWhiteSpace(input))
         {
             Console.WriteLine("No input provided.");
             return;
         }
-        try
-        {
-            string[] numbers = input.Split(',');
-            var arr = new List<int>();
-            foreach (string num in numbers)
-            {
-                int number = Convert.ToInt32(num);
-                maxNumber = Math.Max(maxNumber, number);
-                arr.Add(number);
-            }
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("Invalid input.");
-        }
-        Console.WriteLine("The maximum number is: " + maxNumber);
 
+        string[] numbers = input.Split(',');
+
+        int maxNumber = int.MinValue;
+
+        foreach (string num in numbers)
+        {
+            string trimmed = num.Trim();
+
+            if (!int.TryParse(trimmed, out int number))
+            {
+                Console.WriteLine("Invalid input detected. Please enter only integers separated by commas.");
+                return; 
+            }
+
+            maxNumber = Math.Max(maxNumber, number);
+        }
+
+        Console.WriteLine("The maximum number is: " + maxNumber);
     }
 }
