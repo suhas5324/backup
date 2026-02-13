@@ -6,7 +6,8 @@ class Program
     {
         ICalculator calculator = new Calculator();
         IAdvancedCalculator advancedCalculator = new AdvancedCalculator();
-        InputValidator validator = new InputValidator();
+
+        InputValidator validator = new InputValidator(calculator, advancedCalculator);
 
         bool exit = false;
 
@@ -18,111 +19,54 @@ class Program
             Console.WriteLine("3. Add two floating point numbers");
             Console.WriteLine("4. Power (Advanced Calculator)");
             Console.WriteLine("5. Get Result");
+            Console.WriteLine("6. Get Result in Micro (*10^6)");
             Console.WriteLine("0. Exit");
             Console.Write("Enter your choice: ");
 
-            if (!validator.TryParseInt(Console.ReadLine(), out int choice))
+            string? choiceInput = Console.ReadLine()?.Trim();
+
+            if (!int.TryParse(choiceInput, out int choice))
             {
-                Console.WriteLine("Invalid choice. Try again.");
+                Console.WriteLine("\nInvalid choice. Try again.");
                 continue;
             }
 
             switch (choice)
             {
                 case 1:
-                    Console.Write("Enter first integer: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int a))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.Write("Enter second integer: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int b))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.WriteLine("\n Result: " + calculator.Add(a, b));
+                    Console.WriteLine("\n"+validator.AddTwoIntegers());
                     break;
 
                 case 2:
-                    Console.Write("Enter first integer: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int x))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.Write("Enter second integer: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int y))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.Write("Enter third integer: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int z))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.WriteLine("\n Result: " + calculator.Add(x, y, z));
+                    Console.WriteLine("\n"+validator.AddThreeIntegers());
                     break;
 
                 case 3:
-                    Console.Write("Enter first number: ");
-                    if (!validator.TryParseDouble(Console.ReadLine(), out double d1))
-                    {
-                        Console.WriteLine("Invalid number input.");
-                        break;
-                    }
-
-                    Console.Write("Enter second number: ");
-                    if (!validator.TryParseDouble(Console.ReadLine(), out double d2))
-                    {
-                        Console.WriteLine("Invalid number input.");
-                        break;
-                    }
-
-                    Console.WriteLine("\n Result: " + calculator.Add(d1, d2));
+                    Console.WriteLine("\n"+validator.AddTwoDoubles());
                     break;
 
                 case 4:
-                    Console.Write("Enter base: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int baseValue))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.Write("Enter exponent: ");
-                    if (!validator.TryParseInt(Console.ReadLine(), out int exponent))
-                    {
-                        Console.WriteLine("Invalid integer input.");
-                        break;
-                    }
-
-                    Console.WriteLine("\n Result: " + advancedCalculator.Power(baseValue, exponent));
+                    Console.WriteLine("\n"+validator.Power());
                     break;
 
                 case 5:
-                    Console.WriteLine("\n Latest Result: "
-                        + advancedCalculator.GetResult());
+                    Console.WriteLine("\nLatest Result: " + calculator.GetResult());
+                    break;
+
+                case 6:
+                    double microValue = advancedCalculator.GetResult();
+                    Console.WriteLine("\nLatest Result in Micro (*10^6): " + microValue);
                     break;
 
                 case 0:
                     exit = true;
-                    Console.WriteLine("Exiting application...");
+                    Console.WriteLine("\nExiting application...");
                     break;
 
                 default:
-                    Console.WriteLine("Invalid choice. Try again.");
+                    Console.WriteLine("\nInvalid choice. Try again.");
                     break;
             }
         }
     }
 }
-
