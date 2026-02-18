@@ -13,8 +13,8 @@ public class MovieService
         string name = ValidateName(nameInput);
         int year = ValidateYear(yearInput);
         string plot = ValidatePlot(plotInput);
-        List<string> actors = ValidateActors(actorsInput);
-        string producer = ValidateProducer(producerInput);
+        List<Actor> actors = ValidateActors(actorsInput);
+        Producer producer = ValidateProducer(producerInput);
 
         InMemoryDatabase.Movies.Add(new Movie
         {
@@ -59,13 +59,13 @@ public class MovieService
         return value;
     }
 
-    private List<string> ValidateActors(string input)
+    private List<Actor> ValidateActors(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
             throw new InvalidMovieDataException("At least one actor must be selected.");
 
         string[] parts = input.Split(',');
-        List<string> selectedActors = new List<string>();
+        List<Actor> selectedActors = new List<Actor>();
 
         foreach (string part in parts)
         {
@@ -77,10 +77,10 @@ public class MovieService
             if (index < 1 || index > InMemoryDatabase.Actors.Count)
                 throw new InvalidMovieDataException("Actor selection out of range.");
 
-            string actorName = InMemoryDatabase.Actors[index - 1];
+            Actor actor = InMemoryDatabase.Actors[index - 1];
 
-            if (!selectedActors.Contains(actorName))
-                selectedActors.Add(actorName);
+            if (!selectedActors.Any(a => a.Name == actor.Name))
+                selectedActors.Add(actor);
         }
 
         if (selectedActors.Count == 0)
@@ -91,7 +91,7 @@ public class MovieService
 
 
 
-    private string ValidateProducer(string input)
+    private Producer ValidateProducer(string input)
     {
         string value = input.Trim();
 
@@ -113,7 +113,7 @@ public class MovieService
 
     public List<string> GetMoviesByProducer(string producerName) =>
         InMemoryDatabase.Movies
-            .Where(m => m.Producer == producerName)
+            .Where(m => m.Producer.Name == producerName)
             .Select(m => m.Name)
             .ToList();
 
@@ -128,6 +128,6 @@ public class MovieService
 
     public List<Movie> GetMoviesByActor(string actorName) =>
         InMemoryDatabase.Movies
-            .Where(m => m.Actors.Any(a => a == actorName))
+            .Where(m => m.Actors.Any(a => a.Name == actorName))
             .ToList();
 }
