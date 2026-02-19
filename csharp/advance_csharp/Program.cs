@@ -84,7 +84,7 @@ class Program
                     break;
 
                 case "3":
-                    RunQueries(service);
+                    service.RunQueries();
                     break;
 
                 case "4":
@@ -96,61 +96,5 @@ class Program
                     break;
             }
         }
-    }
-
-    private static void RunQueries(MovieService service)
-    {
-        Console.WriteLine("\n1. Movies released after 2010:");
-        PrintMovies(service.GetMoviesAfter2010());
-
-        Console.WriteLine("\n2. Movies whose producer name is James Cameron:");
-        PrintMovieNames(service.GetMoviesByProducer("James Cameron"));
-
-        Console.WriteLine("\n3. Name and year of release of all movies:");
-        List<(string, int)> movieNamesAndYear = service.GetMovieNamesAndYear();
-        if (movieNamesAndYear.Count == 0)
-        {
-            Console.WriteLine("No matching movies found.");
-        }
-        else
-        {
-            movieNamesAndYear.ForEach(m => Console.WriteLine($"- {m.Item1} ({m.Item2})"));
-        }
-
-        Console.WriteLine("\n4. First movie whose name contains Avatar:");
-        Movie? avatarMovie = service.GetFirstMovieContaining("Avatar");
-        if (avatarMovie == null)
-        {
-            Console.WriteLine("No matching movies found.");
-        }
-        else
-        {
-            Console.WriteLine($"- {avatarMovie.Name} ({avatarMovie.YearOfRelease})");
-        }
-
-        Console.WriteLine("\n5. Movies in which Will Smith has acted:");
-        PrintMovies(service.GetMoviesByActor("Will Smith"));
-    }
-
-    private static void PrintMovies(List<Movie> movies)
-    {
-        if (movies.Count == 0)
-        {
-            Console.WriteLine("No matching movies found.");
-            return;
-        }
-
-        movies.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
-    }
-
-    private static void PrintMovieNames(List<string> movieNames)
-    {
-        if (movieNames.Count == 0)
-        {
-            Console.WriteLine("No matching movies found.");
-            return;
-        }
-
-        movieNames.ForEach(m => Console.WriteLine($"- {m}"));
     }
 }
