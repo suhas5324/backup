@@ -4,11 +4,58 @@ using System.Linq;
 
 public class MovieService
 {
-    public void AddMovie(string nameInput,
-                         string yearInput,
-                         string plotInput,
-                         string actorsInput,
-                         string producerInput)
+    public void DisplayAllMovies()
+    {
+        if (InMemoryDatabase.Movies.Count == 0)
+            throw ImdbException.NoMoviesAvailable();
+
+        InMemoryDatabase.Movies.ForEach(m =>
+        {
+            Console.WriteLine($"\nName: {m.Name}");
+            Console.WriteLine($"Year: {m.YearOfRelease}");
+            Console.WriteLine($"Plot: {m.Plot}");
+            Console.WriteLine($"Producer: {m.Producer.Name}");
+            Console.WriteLine($"Actors: {string.Join(", ", m.Actors.Select(a => a.Name))}");
+        });
+    }
+
+    public void AddMovieFromConsole()
+    {
+        Console.Write("Movie Name: ");
+        string? nameInput = Console.ReadLine();
+
+        Console.Write("Year: ");
+        string? yearInput = Console.ReadLine();
+
+        Console.Write("Plot: ");
+        string? plotInput = Console.ReadLine();
+
+        Console.WriteLine("\nAvailable Actors:");
+        for (int i = 0; i < InMemoryDatabase.Actors.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {InMemoryDatabase.Actors[i].Name}");
+        }
+
+        Console.Write("\nEnter actor numbers (comma separated): ");
+        string? actorsInput = Console.ReadLine();
+
+        Console.WriteLine("\nAvailable Producers:");
+        for (int i = 0; i < InMemoryDatabase.Producers.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {InMemoryDatabase.Producers[i].Name}");
+        }
+
+        Console.Write("\nEnter producer number: ");
+        string? producerInput = Console.ReadLine();
+
+        AddMovie(nameInput, yearInput, plotInput, actorsInput, producerInput);
+    }
+
+    private void AddMovie(string? nameInput,
+                          string? yearInput,
+                          string? plotInput,
+                          string? actorsInput,
+                          string? producerInput)
     {
         string name = ValidateName(nameInput);
         int year = ValidateYear(yearInput);
@@ -26,45 +73,47 @@ public class MovieService
         });
     }
 
-    private string ValidateName(string input)
+    private string ValidateName(string? input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidMovieDataException("Movie name cannot be empty.");
+            throw ImdbException.MovieNameCannotBeEmpty();
 
         return value;
     }
 
-    private int ValidateYear(string input)
+    private int ValidateYear(string? input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
 
         if (!int.TryParse(value, out int year))
-            throw new InvalidMovieDataException("Year must be a valid number.");
+            throw ImdbException.YearMustBeValidNumber();
 
         if (year < 1900 || year > DateTime.Now.Year)
-            throw new InvalidMovieDataException("Year is out of valid range.");
+            throw ImdbException.YearOutOfValidRange();
 
         return year;
     }
 
-    private string ValidatePlot(string input)
+    private string ValidatePlot(string? input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidMovieDataException("Plot cannot be empty.");
+            throw ImdbException.PlotCannotBeEmpty();
 
         return value;
     }
 
-    private List<Actor> ValidateActors(string input)
+    private List<Actor> ValidateActors(string? input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-            throw new InvalidMovieDataException("At least one actor must be selected.");
+        string value = (input ?? string.Empty).Trim();
 
-        string[] parts = input.Split(',');
+        if (string.IsNullOrWhiteSpace(value))
+            throw ImdbException.AtLeastOneActorMustBeSelected();
+
+        string[] parts = value.Split(',');
         List<Actor> selectedActors = new List<Actor>();
 
         foreach (string part in parts)
@@ -72,10 +121,10 @@ public class MovieService
             string trimmed = part.Trim();
 
             if (!int.TryParse(trimmed, out int index))
-                throw new InvalidMovieDataException("Actor selection must be valid numbers.");
+                throw ImdbException.ActorSelectionMustBeValidNumbers();
 
             if (index < 1 || index > InMemoryDatabase.Actors.Count)
-                throw new InvalidMovieDataException("Actor selection out of range.");
+                throw ImdbException.ActorSelectionOutOfRange();
 
             Actor actor = InMemoryDatabase.Actors[index - 1];
 
@@ -84,53 +133,45 @@ public class MovieService
         }
 
         if (selectedActors.Count == 0)
-            throw new InvalidMovieDataException("At least one actor must be selected.");
+            throw ImdbException.AtLeastOneActorMustBeSelected();
 
         return selectedActors;
     }
-
-
-
-    private Producer ValidateProducer(string input)
+    private Producer ValidateProducer(string? input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
+
+        if (value.Contains(','))
+            throw ImdbException.ChooseOnlyOneProducer();
 
         if (!int.TryParse(value, out int index))
-            throw new InvalidMovieDataException("Producer selection must be a valid number.");
+            throw ImdbException.ProducerSelectionMustBeValidNumber();
 
         if (index < 1 || index > InMemoryDatabase.Producers.Count)
-            throw new InvalidMovieDataException("Producer selection out of range.");
+            throw ImdbException.ProducerSelectionOutOfRange();
 
         return InMemoryDatabase.Producers[index - 1];
     }
-
-
-
     public List<Movie> GetMoviesAfter2010() =>
         InMemoryDatabase.Movies
             .Where(m => m.YearOfRelease > 2010)
             .ToList();
-
     public List<string> GetMoviesByProducer(string producerName) =>
         InMemoryDatabase.Movies
             .Where(m => m.Producer.Name == producerName)
             .Select(m => m.Name)
             .ToList();
-
     public List<(string, int)> GetMovieNamesAndYear() =>
         InMemoryDatabase.Movies
             .Select(m => (m.Name, m.YearOfRelease))
             .ToList();
-
     public Movie? GetFirstMovieContaining(string keyword) =>
         InMemoryDatabase.Movies
             .FirstOrDefault(m => m.Name.Contains(keyword));
-
     public List<Movie> GetMoviesByActor(string actorName) =>
         InMemoryDatabase.Movies
             .Where(m => m.Actors.Any(a => a.Name == actorName))
             .ToList();
-
     public void RunQueries()
     {
         Console.WriteLine("\n1. Movies released after 2010:");
@@ -164,7 +205,6 @@ public class MovieService
         Console.WriteLine("\n5. Movies in which Will Smith has acted:");
         PrintMovies(GetMoviesByActor("Will Smith"));
     }
-
     private void PrintMovies(List<Movie> movies)
     {
         if (movies.Count == 0)
@@ -172,10 +212,8 @@ public class MovieService
             Console.WriteLine("No matching movies found.");
             return;
         }
-
         movies.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
     }
-
     private void PrintMovieNames(List<string> movieNames)
     {
         if (movieNames.Count == 0)
@@ -183,7 +221,6 @@ public class MovieService
             Console.WriteLine("No matching movies found.");
             return;
         }
-
         movieNames.ForEach(m => Console.WriteLine($"- {m}"));
     }
 }
