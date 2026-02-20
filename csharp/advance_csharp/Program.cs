@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 class Program
 {
@@ -22,120 +21,68 @@ class Program
             string? choice = inputChoice?.Trim();
             if (string.IsNullOrWhiteSpace(choice))
             {
-                Console.WriteLine("Invalid choice. Please enter a number between 1 and 4.");
+                Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
                 continue;
             }
             switch (choice)
             {
                 case "1":
-                    var movies = service.GetAllMovies();
-                    if (movies == null || movies.Count == 0)
+                    try
                     {
-                        Console.WriteLine("No movies available.");
+                        service.DisplayAllMovies();
                     }
-                    else
+                    catch (ImdbApplicationException ex)
                     {
-                        movies.ForEach(m =>
-                        {
-                            Console.WriteLine($"\nName: {m.Name}");
-                            Console.WriteLine($"Year: {m.YearOfRelease}");
-                            Console.WriteLine($"Plot: {m.Plot}");
-                            Console.WriteLine($"Producer: {m.Producer.Name}");
-                            Console.WriteLine($"Actors: {string.Join(", ", m.Actors.Select(a => a.Name))}");
-                        });
+                        Console.WriteLine($"{ex.Message}");
                     }
                     break;
 
                 case "2":
                     try
                     {
-                        Console.Write("Movie Name: ");
-                        string? name = Console.ReadLine() ?? string.Empty;
-
-                        Console.Write("Year: ");
-                        string? year = Console.ReadLine() ?? string.Empty;
-
-                        Console.Write("Plot: ");
-                        string? plot = Console.ReadLine() ?? string.Empty;
-
-                        Console.WriteLine("\nAvailable Actors:");
-                        var actors = actorService.GetAllActors();
-                        for (int i = 0; i < actors.Count; i++)
-                        {
-                            Console.WriteLine($"{i + 1}. {actors[i].Name}");
-                        }
-
-                        Console.Write("\nEnter actor numbers (comma separated): ");
-                        string? actorNumbers = Console.ReadLine() ?? string.Empty;
-
-                        Console.WriteLine("\nAvailable Producers:");
-                        var producers = producerService.GetAllProducers();
-                        for (int i = 0; i < producers.Count; i++)
-                        {
-                            Console.WriteLine($"{i + 1}. {producers[i].Name}");
-                        }
-
-                        Console.Write("\nEnter producer number: ");
-                        string? producerNumber = Console.ReadLine() ?? string.Empty;
-
-                        service.AddMovie(name, year, plot, actorNumbers, producerNumber);
-
+                        service.AddMovieFromConsole();
                         Console.WriteLine("\nMovie added successfully!");
                     }
-                    catch (InvalidMovieDataException ex)
+                    catch (ImdbApplicationException ex)
                     {
-                        Console.WriteLine($"Validation Error: {ex.Message}");
+                        Console.WriteLine($"{ex.Message}");
                     }
                     break;
 
                 case "3":
                     try
                     {
-                        Console.Write("Actor Name: ");
-                        string? actorName = Console.ReadLine() ?? string.Empty;
-
-                        Console.Write("Date of Birth: ");
-                        string? actorDob = Console.ReadLine() ?? string.Empty;
-
-                        actorService.AddActor(actorName, actorDob);
+                        actorService.AddActorFromConsole();
                         Console.WriteLine("\nActor added successfully!");
                     }
-                    catch (InvalidMovieDataException ex)
+                    catch (ImdbApplicationException ex)
                     {
-                        Console.WriteLine($"Validation Error: {ex.Message}");
+                        Console.WriteLine($"{ex.Message}");
                     }
                     break;
 
                 case "4":
                     try
                     {
-                        Console.Write("Producer Name: ");
-                        string? producerName = Console.ReadLine() ?? string.Empty;
-
-                        Console.Write("Date of Birth: ");
-                        string? producerDob = Console.ReadLine() ?? string.Empty;
-
-                        producerService.AddProducer(producerName, producerDob);
+                        producerService.AddProducerFromConsole();
                         Console.WriteLine("\nProducer added successfully!");
                     }
-                    catch (InvalidMovieDataException ex)
+                    catch (ImdbApplicationException ex)
                     {
-                        Console.WriteLine($"Validation Error: {ex.Message}");
+                        Console.WriteLine($"{ex.Message}");
                     }
+                    
                     break;
 
                 case "5":
                     try
                     {
-                        Console.Write("Enter movie name to delete: ");
-                        string? movieToDelete = Console.ReadLine() ?? string.Empty;
-
-                        service.DeleteMovie(movieToDelete);
+                        service.DeleteMovieFromConsole();
                         Console.WriteLine("Movie deleted successfully.");
                     }
-                    catch (InvalidMovieDataException ex)
+                    catch (ImdbApplicationException ex)
                     {
-                        Console.WriteLine($"Validation Error: {ex.Message}");
+                        Console.WriteLine($"{ex.Message}");
                     }
                     break;
                 case "6":

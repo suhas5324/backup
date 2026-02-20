@@ -15,17 +15,23 @@ public class ActorService
         _actorRepository = actorRepository;
     }
 
-    public void AddActor(string nameInput, string dateOfBirthInput)
+    public void AddActorFromConsole()
     {
-        string name = ValidateActorName(nameInput);
-        DateTime dateOfBirth = ValidateDateOfBirth(dateOfBirthInput);
+        Console.Write("Actor Name: ");
+        string? actorName = Console.ReadLine();
+
+        Console.Write("Date of Birth: ");
+        string? actorDob = Console.ReadLine();
+
+        string name = ValidateActorName(actorName);
+        DateTime dateOfBirth = ValidateDateOfBirth(actorDob);
 
         bool actorExists = _actorRepository
             .GetAllActors()
             .Any(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (actorExists)
-            throw new InvalidMovieDataException("Actor already exists.");
+            throw ImdbApplicationException.ActorAlreadyExistsException();
 
         _actorRepository.AddActor(new Actor
         {
@@ -39,28 +45,28 @@ public class ActorService
         return _actorRepository.GetAllActors();
     }
 
-    private DateTime ValidateDateOfBirth(string input)
+    private DateTime ValidateDateOfBirth(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (!DateTime.TryParse(value, out DateTime dateOfBirth))
-            throw new InvalidMovieDataException("Actor date of birth must be a valid date.");
+            throw ImdbApplicationException.ActorDateOfBirthMustBeValidDateException();
 
         if (dateOfBirth.Date >= DateTime.Today)
-            throw new InvalidMovieDataException("Actor date of birth must be in the past.");
+            throw ImdbApplicationException.ActorDateOfBirthMustBePastException();
 
         if (dateOfBirth.Year < 1900)
-            throw new InvalidMovieDataException("Actor date of birth is out of valid range.");
+            throw ImdbApplicationException.ActorDateOfBirthOutOfRangeException();
 
         return dateOfBirth.Date;
     }
 
-    private string ValidateActorName(string input)
+    private string ValidateActorName(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidMovieDataException("Actor name cannot be empty.");
+            throw ImdbApplicationException.ActorNameCannotBeEmptyException();
 
         return value;
     }

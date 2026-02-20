@@ -1,108 +1,144 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 public class MovieService
 {
     private readonly IMovieRepository _movieRepository;
     private readonly IActorRepository _actorRepository;
     private readonly IProducerRepository _producerRepository;
-
     public MovieService() : this(new MovieRepository(), new ActorRepository(), new ProducerRepository())
     {
     }
-
     public MovieService(IMovieRepository movieRepository, IActorRepository actorRepository, IProducerRepository producerRepository)
     {
         _movieRepository = movieRepository;
         _actorRepository = actorRepository;
         _producerRepository = producerRepository;
     }
-
     public List<Movie> GetAllMovies()
     {
         return _movieRepository.GetAllMovies();
     }
-
-    public void DeleteMovie(string movieName)
+    public void DisplayAllMovies()
     {
-        string name = ValidateName(movieName);
+        var movies = _movieRepository.GetAllMovies();
+
+        if (movies == null || movies.Count == 0)
+            throw ImdbApplicationException.NoMoviesAvailableException();
+
+        movies.ForEach(m =>
+        {
+            Console.WriteLine($"\nName: {m.Name}");
+            Console.WriteLine($"Year: {m.YearOfRelease}");
+            Console.WriteLine($"Plot: {m.Plot}");
+            Console.WriteLine($"Producer: {m.Producer.Name}");
+            Console.WriteLine($"Actors: {string.Join(", ", m.Actors.Select(a => a.Name))}");
+        });
+    }
+    public void AddMovieFromConsole()
+    {
+        Console.Write("Movie Name: ");
+        string? name = Console.ReadLine();
+
+        Console.Write("Year: ");
+        string? year = Console.ReadLine();
+
+        Console.Write("Plot: ");
+        string? plot = Console.ReadLine();
+
+        Console.WriteLine("\nAvailable Actors:");
+        var actors = _actorRepository.GetAllActors();
+        for (int i = 0; i < actors.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {actors[i].Name}");
+        }
+
+        Console.Write("\nEnter actor numbers (comma separated): ");
+        string? actorNumbers = Console.ReadLine();
+
+        Console.WriteLine("\nAvailable Producers:");
+        var producers = _producerRepository.GetAllProducers();
+        for (int i = 0; i < producers.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {producers[i].Name}");
+        }
+
+        Console.Write("\nEnter producer number: ");
+        string? producerNumber = Console.ReadLine();
+
+        string validatedName = ValidateName(name);
+        int validatedYear = ValidateYear(year);
+        string validatedPlot = ValidatePlot(plot);
+        List<Actor> validatedActors = ValidateActors(actorNumbers);
+        Producer validatedProducer = ValidateProducer(producerNumber);
+
+        bool movieExists = _movieRepository.GetAllMovies()
+            .Any(m => string.Equals(m.Name, validatedName, StringComparison.OrdinalIgnoreCase));
+
+        if (movieExists)
+            throw ImdbApplicationException.MovieAlreadyExistsException();
+
+        _movieRepository.AddMovie(new Movie
+        {
+            Name = validatedName,
+            YearOfRelease = validatedYear,
+            Plot = validatedPlot,
+            Actors = validatedActors,
+            Producer = validatedProducer
+        });
+    }
+    public void DeleteMovieFromConsole()
+    {
+        Console.Write("Enter movie name to delete: ");
+        string? movieToDelete = Console.ReadLine();
+        string name = ValidateName(movieToDelete);
 
         var existing = _movieRepository.GetAllMovies()
             .FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (existing == null)
-            throw new InvalidMovieDataException("Movie not found.");
+            throw ImdbApplicationException.MovieNotFoundException();
 
         _movieRepository.DeleteMovie(existing.Name);
     }
-
-    public void AddMovie(string nameInput,
-                         string yearInput,
-                         string plotInput,
-                         string actorsInput,
-                         string producerInput)
-    {
-        string name = ValidateName(nameInput);
-        int year = ValidateYear(yearInput);
-        string plot = ValidatePlot(plotInput);
-        List<Actor> actors = ValidateActors(actorsInput);
-        Producer producer = ValidateProducer(producerInput);
-
-        bool movieExists = _movieRepository.GetAllMovies()
-            .Any(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
-
-        if (movieExists)
-            throw new InvalidMovieDataException("Movie already exists.");
-
-        _movieRepository.AddMovie(new Movie
-        {
-            Name = name,
-            YearOfRelease = year,
-            Plot = plot,
-            Actors = actors,
-            Producer = producer
-        });
-    }
-
-    private string ValidateName(string input)
+    private string ValidateName(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidMovieDataException("Movie name cannot be empty.");
+            throw ImdbApplicationException.MovieNameCannotBeEmptyException();
 
         return value;
     }
-
-    private int ValidateYear(string input)
+    private int ValidateYear(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (!int.TryParse(value, out int year))
-            throw new InvalidMovieDataException("Year must be a valid number.");
+            throw ImdbApplicationException.YearMustBeValidNumberException();
 
         if (year < 1900 || year > DateTime.Now.Year)
-            throw new InvalidMovieDataException("Year is out of valid range.");
+            throw ImdbApplicationException.YearOutOfRangeException();
 
         return year;
     }
-
-    private string ValidatePlot(string input)
+    private string ValidatePlot(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidMovieDataException("Plot cannot be empty.");
+            throw ImdbApplicationException.PlotCannotBeEmptyException();
 
         return value;
     }
-
-    private List<Actor> ValidateActors(string input)
+    private List<Actor> ValidateActors(string? input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-            throw new InvalidMovieDataException("At least one actor must be selected.");
-        string[] parts = input.Split(',');
+        string value = (input ?? string.Empty).Trim();
+
+        if (string.IsNullOrWhiteSpace(value))
+            throw ImdbApplicationException.AtLeastOneActorMustBeSelectedException();
+
+        string[] parts = value.Split(',');
         List<Actor> selectedActors = new List<Actor>();
         var actorsList = _actorRepository.GetAllActors();
 
@@ -111,10 +147,10 @@ public class MovieService
             string trimmed = part.Trim();
 
             if (!int.TryParse(trimmed, out int index))
-                throw new InvalidMovieDataException("Actor selection must be valid numbers.");
+                throw ImdbApplicationException.ActorSelectionMustBeValidNumbersException();
 
             if (index < 1 || index > actorsList.Count)
-                throw new InvalidMovieDataException("Actor selection out of range.");
+                throw ImdbApplicationException.ActorSelectionOutOfRangeException();
 
             Actor actor = actorsList[index - 1];
 
@@ -123,28 +159,24 @@ public class MovieService
         }
 
         if (selectedActors.Count == 0)
-            throw new InvalidMovieDataException("At least one actor must be selected.");
+            throw ImdbApplicationException.AtLeastOneActorMustBeSelectedException();
 
         return selectedActors;
     }
-
-
-
-    private Producer ValidateProducer(string input)
+    private Producer ValidateProducer(string? input)
     {
         string value = (input ?? string.Empty).Trim();
         if (value.Contains(','))
-            throw new InvalidMovieDataException("Only one producer must be selected.");
+            throw ImdbApplicationException.OnlyOneProducerMustBeSelectedException();
 
         if (!int.TryParse(value, out int index))
-            throw new InvalidMovieDataException("Producer selection must be a valid number.");
+            throw ImdbApplicationException.ProducerSelectionMustBeValidNumberException();
 
         var producers = _producerRepository.GetAllProducers();
 
         if (index < 1 || index > producers.Count)
-            throw new InvalidMovieDataException("Producer selection out of range.");
+            throw ImdbApplicationException.ProducerSelectionOutOfRangeException();
 
         return producers[index - 1];
     }
 }
-
