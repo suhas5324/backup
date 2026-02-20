@@ -7,7 +7,7 @@ public class MovieService
     public void DisplayAllMovies()
     {
         if (InMemoryDatabase.Movies.Count == 0)
-            throw ImdbException.NoMoviesAvailable();
+            throw MovieException.NoMoviesAvailable();
 
         InMemoryDatabase.Movies.ForEach(m =>
         {
@@ -19,7 +19,7 @@ public class MovieService
         });
     }
 
-    public void AddMovieFromConsole()
+    public void AddMovie()
     {
         Console.Write("Movie Name: ");
         string? nameInput = Console.ReadLine();
@@ -48,15 +48,6 @@ public class MovieService
         Console.Write("\nEnter producer number: ");
         string? producerInput = Console.ReadLine();
 
-        AddMovie(nameInput, yearInput, plotInput, actorsInput, producerInput);
-    }
-
-    private void AddMovie(string? nameInput,
-                          string? yearInput,
-                          string? plotInput,
-                          string? actorsInput,
-                          string? producerInput)
-    {
         string name = ValidateName(nameInput);
         int year = ValidateYear(yearInput);
         string plot = ValidatePlot(plotInput);
@@ -78,7 +69,7 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbException.MovieNameCannotBeEmpty();
+            throw MovieException.MovieNameCannotBeEmpty();
 
         return value;
     }
@@ -88,10 +79,10 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (!int.TryParse(value, out int year))
-            throw ImdbException.YearMustBeValidNumber();
+            throw MovieException.YearMustBeValidNumber();
 
         if (year < 1900 || year > DateTime.Now.Year)
-            throw ImdbException.YearOutOfValidRange();
+            throw MovieException.YearOutOfValidRange();
 
         return year;
     }
@@ -101,7 +92,7 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbException.PlotCannotBeEmpty();
+            throw MovieException.PlotCannotBeEmpty();
 
         return value;
     }
@@ -111,7 +102,7 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbException.AtLeastOneActorMustBeSelected();
+            throw ActorException.AtLeastOneActorMustBeSelected();
 
         string[] parts = value.Split(',');
         List<Actor> selectedActors = new List<Actor>();
@@ -121,10 +112,10 @@ public class MovieService
             string trimmed = part.Trim();
 
             if (!int.TryParse(trimmed, out int index))
-                throw ImdbException.ActorSelectionMustBeValidNumbers();
+                throw ActorException.ActorSelectionMustBeValidNumbers();
 
             if (index < 1 || index > InMemoryDatabase.Actors.Count)
-                throw ImdbException.ActorSelectionOutOfRange();
+                throw ActorException.ActorSelectionOutOfRange();
 
             Actor actor = InMemoryDatabase.Actors[index - 1];
 
@@ -133,69 +124,75 @@ public class MovieService
         }
 
         if (selectedActors.Count == 0)
-            throw ImdbException.AtLeastOneActorMustBeSelected();
+            throw ActorException.AtLeastOneActorMustBeSelected();
 
         return selectedActors;
     }
+
     private Producer ValidateProducer(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (value.Contains(','))
-            throw ImdbException.ChooseOnlyOneProducer();
+            throw ProducerException.ChooseOnlyOneProducer();
 
         if (!int.TryParse(value, out int index))
-            throw ImdbException.ProducerSelectionMustBeValidNumber();
+            throw ProducerException.ProducerSelectionMustBeValidNumber();
 
         if (index < 1 || index > InMemoryDatabase.Producers.Count)
-            throw ImdbException.ProducerSelectionOutOfRange();
+            throw ProducerException.ProducerSelectionOutOfRange();
 
         return InMemoryDatabase.Producers[index - 1];
     }
-    public List<Movie> GetMoviesAfter2010() =>
-        InMemoryDatabase.Movies
-            .Where(m => m.YearOfRelease > 2010)
-            .ToList();
-    public List<string> GetMoviesByProducer(string producerName) =>
-        InMemoryDatabase.Movies
-            .Where(m => m.Producer.Name == producerName)
-            .Select(m => m.Name)
-            .ToList();
-    public List<(string, int)> GetMovieNamesAndYear() =>
-        InMemoryDatabase.Movies
-            .Select(m => (m.Name, m.YearOfRelease))
-            .ToList();
-    public Movie? GetFirstMovieContaining(string keyword) =>
-        InMemoryDatabase.Movies
-            .FirstOrDefault(m => m.Name.Contains(keyword));
-    public List<Movie> GetMoviesByActor(string actorName) =>
-        InMemoryDatabase.Movies
-            .Where(m => m.Actors.Any(a => a.Name == actorName))
-            .ToList();
+
     public void RunQueries()
     {
         Console.WriteLine("\n1. Movies released after 2010:");
-        PrintMovies(GetMoviesAfter2010());
-
-        Console.WriteLine("\n2. Movies whose producer name is James Cameron:");
-        PrintMovieNames(GetMoviesByProducer("James Cameron"));
-
-        Console.WriteLine("\n3. Name and year of release of all movies:");
-        List<(string, int)> movieNamesAndYear = GetMovieNamesAndYear();
-        if (movieNamesAndYear.Count == 0)
+        List<Movie> moviesAfter2010 = InMemoryDatabase.Movies
+            .Where(m => m.YearOfRelease > 2010)
+            .ToList();
+        if (moviesAfter2010.Count == 0)
         {
-            Console.WriteLine("No matching movies found.");
+            Console.WriteLine("No movies found after 2010.");
         }
         else
         {
-            movieNamesAndYear.ForEach(m => Console.WriteLine($"- {m.Item1} ({m.Item2})"));
+            moviesAfter2010.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
+        }
+
+        Console.WriteLine("\n2. Movies whose producer name is James Cameron:");
+        List<string> jamesCameronMovies = InMemoryDatabase.Movies
+            .Where(m => m.Producer.Name.Equals("James Cameron", StringComparison.OrdinalIgnoreCase))
+            .Select(m => m.Name)
+            .ToList();
+        if (jamesCameronMovies.Count == 0)
+        {
+            Console.WriteLine("No movies found for producer James Cameron.");
+        }
+        else
+        {
+            jamesCameronMovies.ForEach(m => Console.WriteLine($"- {m}"));
+        }
+
+        Console.WriteLine("\n3. Name and year of release of all movies:");
+        List<string> movieNamesAndYears = InMemoryDatabase.Movies
+            .Select(m => $"{m.Name} ({m.YearOfRelease})")
+            .ToList();
+        if (movieNamesAndYears.Count == 0)
+        {
+            Console.WriteLine("No movies available.");
+        }
+        else
+        {
+            movieNamesAndYears.ForEach(m => Console.WriteLine($"- {m}"));
         }
 
         Console.WriteLine("\n4. First movie whose name contains Avatar:");
-        Movie? avatarMovie = GetFirstMovieContaining("Avatar");
+        Movie? avatarMovie = InMemoryDatabase.Movies
+            .FirstOrDefault(m => m.Name.Contains("Avatar", StringComparison.OrdinalIgnoreCase));
         if (avatarMovie == null)
         {
-            Console.WriteLine("No matching movies found.");
+            Console.WriteLine("No movie found containing Avatar.");
         }
         else
         {
@@ -203,24 +200,16 @@ public class MovieService
         }
 
         Console.WriteLine("\n5. Movies in which Will Smith has acted:");
-        PrintMovies(GetMoviesByActor("Will Smith"));
-    }
-    private void PrintMovies(List<Movie> movies)
-    {
-        if (movies.Count == 0)
+        List<Movie> willSmithMovies = InMemoryDatabase.Movies
+            .Where(m => m.Actors.Any(a => a.Name.Equals("Will Smith", StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+        if (willSmithMovies.Count == 0)
         {
-            Console.WriteLine("No matching movies found.");
-            return;
+            Console.WriteLine("No movies found for actor Will Smith.");
         }
-        movies.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
-    }
-    private void PrintMovieNames(List<string> movieNames)
-    {
-        if (movieNames.Count == 0)
+        else
         {
-            Console.WriteLine("No matching movies found.");
-            return;
+            willSmithMovies.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
         }
-        movieNames.ForEach(m => Console.WriteLine($"- {m}"));
     }
 }

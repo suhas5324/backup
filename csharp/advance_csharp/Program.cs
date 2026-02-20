@@ -1,6 +1,4 @@
-﻿using System;
-
-class Program
+﻿class Program
 {
     static void Main()
     {
@@ -20,42 +18,43 @@ class Program
                 Console.WriteLine("Invalid choice. Please enter a number between 1 and 4.");
                 continue;
             }
-            switch (choice)
+            try
             {
-                case "1":
-                    try
-                    {
+                switch (choice)
+                {
+                    case "1":
                         service.DisplayAllMovies();
-                    }
-                    catch (ImdbException ex)
-                    {
-                        Console.WriteLine($"Validation Error: {ex.Message}");
-                    }
-                    break;
+                        break;
 
-                case "2":
-                    try
-                    {
-                        service.AddMovieFromConsole();
+                    case "2":
+                        service.AddMovie();
                         Console.WriteLine("\nMovie added successfully!");
-                    }
-                    catch (ImdbException ex)
-                    {
-                        Console.WriteLine($"Validation Error: {ex.Message}");
-                    }
-                    break;
+                        break;
 
-                case "3":
-                    service.RunQueries();
-                    break;
+                    case "3":
+                        service.RunQueries();
+                        break;
 
-                case "4":
-                    exit = true;
-                    break;
+                    case "4":
+                        exit = true;
+                        break;
 
-                default:
-                    Console.WriteLine("Invalid choice. Please enter a number between 1 and 4.");
-                    break;
+                    default:
+                        Console.WriteLine("Invalid choice. Please enter a number between 1 and 4.");
+                        break;
+                }
+            }
+            catch (MovieException ex)
+            {
+                Console.WriteLine($"Movie Error: {ex.Message}");
+            }
+            catch (ActorException ex)
+            {
+                Console.WriteLine($"Actor Error: {ex.Message}");
+            }
+            catch (ProducerException ex)
+            {
+                Console.WriteLine($"Producer Error: {ex.Message}");
             }
         }
     }
