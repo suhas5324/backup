@@ -1,12 +1,14 @@
-﻿using System;
-
-class Program
+﻿class Program
 {
     static void Main()
     {
-        MovieService service = new MovieService();
-        ActorService actorService = new ActorService();
-        ProducerService producerService = new ProducerService();
+        IMovieRepository movieRepository = new MovieRepository();
+        IActorRepository actorRepository = new ActorRepository();
+        IProducerRepository producerRepository = new ProducerRepository();
+
+        MovieService service = new MovieService(movieRepository, actorRepository, producerRepository);
+        ActorService actorService = new ActorService(actorRepository);
+        ProducerService producerService = new ProducerService(producerRepository);
         bool exit = false;
         while (!exit)
         {
@@ -24,74 +26,55 @@ class Program
                 Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
                 continue;
             }
-            switch (choice)
+            try
             {
-                case "1":
-                    try
-                    {
+                switch (choice)
+                {
+                    case "1":
                         service.DisplayAllMovies();
-                    }
-                    catch (ImdbApplicationException ex)
-                    {
-                        Console.WriteLine($"{ex.Message}");
-                    }
-                    break;
+                        break;
 
-                case "2":
-                    try
-                    {
-                        service.AddMovieFromConsole();
+                    case "2":
+                        service.AddMovie();
                         Console.WriteLine("\nMovie added successfully!");
-                    }
-                    catch (ImdbApplicationException ex)
-                    {
-                        Console.WriteLine($"{ex.Message}");
-                    }
-                    break;
+                        break;
 
-                case "3":
-                    try
-                    {
-                        actorService.AddActorFromConsole();
+                    case "3":
+                        actorService.AddActor();
                         Console.WriteLine("\nActor added successfully!");
-                    }
-                    catch (ImdbApplicationException ex)
-                    {
-                        Console.WriteLine($"{ex.Message}");
-                    }
-                    break;
+                        break;
 
-                case "4":
-                    try
-                    {
-                        producerService.AddProducerFromConsole();
+                    case "4":
+                        producerService.AddProducer();
                         Console.WriteLine("\nProducer added successfully!");
-                    }
-                    catch (ImdbApplicationException ex)
-                    {
-                        Console.WriteLine($"{ex.Message}");
-                    }
-                    
-                    break;
+                        break;
 
-                case "5":
-                    try
-                    {
-                        service.DeleteMovieFromConsole();
+                    case "5":
+                        service.DeleteMovie();
                         Console.WriteLine("Movie deleted successfully.");
-                    }
-                    catch (ImdbApplicationException ex)
-                    {
-                        Console.WriteLine($"{ex.Message}");
-                    }
-                    break;
-                case "6":
-                    exit = true;
-                    Console.WriteLine("Exiting the application. Goodbye!");
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
-                    break;
+                        break;
+
+                    case "6":
+                        exit = true;
+                        Console.WriteLine("Exiting the application. Goodbye!");
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
+                        break;
+                }
+            }
+            catch (MovieException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ActorException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ProducerException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }

@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 public class MovieService
 {
     private readonly IMovieRepository _movieRepository;
     private readonly IActorRepository _actorRepository;
     private readonly IProducerRepository _producerRepository;
-    public MovieService() : this(new MovieRepository(), new ActorRepository(), new ProducerRepository())
-    {
-    }
     public MovieService(IMovieRepository movieRepository, IActorRepository actorRepository, IProducerRepository producerRepository)
     {
         _movieRepository = movieRepository;
@@ -24,7 +18,7 @@ public class MovieService
         var movies = _movieRepository.GetAllMovies();
 
         if (movies == null || movies.Count == 0)
-            throw ImdbApplicationException.NoMoviesAvailableException();
+            throw MovieException.NoMoviesAvailableException();
 
         movies.ForEach(m =>
         {
@@ -35,7 +29,7 @@ public class MovieService
             Console.WriteLine($"Actors: {string.Join(", ", m.Actors.Select(a => a.Name))}");
         });
     }
-    public void AddMovieFromConsole()
+    public void AddMovie()
     {
         Console.Write("Movie Name: ");
         string? name = Console.ReadLine();
@@ -76,7 +70,7 @@ public class MovieService
             .Any(m => string.Equals(m.Name, validatedName, StringComparison.OrdinalIgnoreCase));
 
         if (movieExists)
-            throw ImdbApplicationException.MovieAlreadyExistsException();
+            throw MovieException.MovieAlreadyExistsException();
 
         _movieRepository.AddMovie(new Movie
         {
@@ -87,7 +81,7 @@ public class MovieService
             Producer = validatedProducer
         });
     }
-    public void DeleteMovieFromConsole()
+    public void DeleteMovie()
     {
         Console.Write("Enter movie name to delete: ");
         string? movieToDelete = Console.ReadLine();
@@ -97,7 +91,7 @@ public class MovieService
             .FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (existing == null)
-            throw ImdbApplicationException.MovieNotFoundException();
+            throw MovieException.MovieNotFoundException();
 
         _movieRepository.DeleteMovie(existing.Name);
     }
@@ -106,7 +100,7 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbApplicationException.MovieNameCannotBeEmptyException();
+            throw MovieException.MovieNameCannotBeEmptyException();
 
         return value;
     }
@@ -115,10 +109,10 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (!int.TryParse(value, out int year))
-            throw ImdbApplicationException.YearMustBeValidNumberException();
+            throw MovieException.YearMustBeValidNumberException();
 
         if (year < 1900 || year > DateTime.Now.Year)
-            throw ImdbApplicationException.YearOutOfRangeException();
+            throw MovieException.YearOutOfRangeException();
 
         return year;
     }
@@ -127,7 +121,7 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbApplicationException.PlotCannotBeEmptyException();
+            throw MovieException.PlotCannotBeEmptyException();
 
         return value;
     }
@@ -136,7 +130,7 @@ public class MovieService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbApplicationException.AtLeastOneActorMustBeSelectedException();
+            throw ActorException.AtLeastOneActorMustBeSelectedException();
 
         string[] parts = value.Split(',');
         List<Actor> selectedActors = new List<Actor>();
@@ -147,10 +141,10 @@ public class MovieService
             string trimmed = part.Trim();
 
             if (!int.TryParse(trimmed, out int index))
-                throw ImdbApplicationException.ActorSelectionMustBeValidNumbersException();
+                throw ActorException.ActorSelectionMustBeValidNumbersException();
 
             if (index < 1 || index > actorsList.Count)
-                throw ImdbApplicationException.ActorSelectionOutOfRangeException();
+                throw ActorException.ActorSelectionOutOfRangeException();
 
             Actor actor = actorsList[index - 1];
 
@@ -159,7 +153,7 @@ public class MovieService
         }
 
         if (selectedActors.Count == 0)
-            throw ImdbApplicationException.AtLeastOneActorMustBeSelectedException();
+            throw ActorException.AtLeastOneActorMustBeSelectedException();
 
         return selectedActors;
     }
@@ -167,15 +161,15 @@ public class MovieService
     {
         string value = (input ?? string.Empty).Trim();
         if (value.Contains(','))
-            throw ImdbApplicationException.OnlyOneProducerMustBeSelectedException();
+            throw ProducerException.OnlyOneProducerMustBeSelectedException();
 
         if (!int.TryParse(value, out int index))
-            throw ImdbApplicationException.ProducerSelectionMustBeValidNumberException();
+            throw ProducerException.ProducerSelectionMustBeValidNumberException();
 
         var producers = _producerRepository.GetAllProducers();
 
         if (index < 1 || index > producers.Count)
-            throw ImdbApplicationException.ProducerSelectionOutOfRangeException();
+            throw ProducerException.ProducerSelectionOutOfRangeException();
 
         return producers[index - 1];
     }

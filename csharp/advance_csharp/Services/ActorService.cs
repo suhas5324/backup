@@ -5,17 +5,11 @@ using System.Linq;
 public class ActorService
 {
     private readonly IActorRepository _actorRepository;
-
-    public ActorService() : this(new ActorRepository())
-    {
-    }
-
     public ActorService(IActorRepository actorRepository)
     {
         _actorRepository = actorRepository;
     }
-
-    public void AddActorFromConsole()
+    public void AddActor()
     {
         Console.Write("Actor Name: ");
         string? actorName = Console.ReadLine();
@@ -31,7 +25,7 @@ public class ActorService
             .Any(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (actorExists)
-            throw ImdbApplicationException.ActorAlreadyExistsException();
+            throw ActorException.ActorAlreadyExistsException();
 
         _actorRepository.AddActor(new Actor
         {
@@ -50,13 +44,13 @@ public class ActorService
         string value = (input ?? string.Empty).Trim();
 
         if (!DateTime.TryParse(value, out DateTime dateOfBirth))
-            throw ImdbApplicationException.ActorDateOfBirthMustBeValidDateException();
+            throw ActorException.ActorDateOfBirthMustBeValidDateException();
 
         if (dateOfBirth.Date >= DateTime.Today)
-            throw ImdbApplicationException.ActorDateOfBirthMustBePastException();
+            throw ActorException.ActorDateOfBirthMustBePastException();
 
         if (dateOfBirth.Year < 1900)
-            throw ImdbApplicationException.ActorDateOfBirthOutOfRangeException();
+            throw ActorException.ActorDateOfBirthOutOfRangeException();
 
         return dateOfBirth.Date;
     }
@@ -66,7 +60,7 @@ public class ActorService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ImdbApplicationException.ActorNameCannotBeEmptyException();
+            throw ActorException.ActorNameCannotBeEmptyException();
 
         return value;
     }
