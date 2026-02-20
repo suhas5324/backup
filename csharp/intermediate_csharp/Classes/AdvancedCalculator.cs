@@ -6,9 +6,8 @@ public class AdvancedCalculator : Calculator, IAdvancedCalculator
         SetResult(total);
         return total;
     }
-
     public override double GetResult()
     {
-        return base.GetResult() * 1_000_000;
+        return result * 1_000_000;
     }
 }

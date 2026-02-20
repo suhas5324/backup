@@ -2,21 +2,17 @@ public class InputValidator
 {
     private readonly ICalculator _calculator;
     private readonly IAdvancedCalculator _advancedCalculator;
-
     public InputValidator(ICalculator calculator, IAdvancedCalculator advancedCalculator)
     {
         _calculator = calculator;
         _advancedCalculator = advancedCalculator;
     }
-
     public string AddTwoIntegers()
     {
         Console.Write("Enter first integer: ");
         string? input1 = Console.ReadLine()?.Trim();
-
         if (!int.TryParse(input1, out int firstOperand))
             return "Invalid integer input.";
-
         Console.Write("Enter second integer: ");
         string? input2 = Console.ReadLine()?.Trim();
 
@@ -25,7 +21,6 @@ public class InputValidator
 
         return "Result: " + _calculator.Add(firstOperand, secondOperand);
     }
-
     public string AddThreeIntegers()
     {
         Console.Write("Enter first integer: ");
@@ -48,7 +43,6 @@ public class InputValidator
 
         return "Result: " + _calculator.Add(firstOperand, secondOperand, thirdOperand);
     }
-
     public string AddTwoDoubles()
     {
         Console.Write("Enter first number: ");
@@ -65,7 +59,6 @@ public class InputValidator
 
         return "Result: " + _calculator.Add(firstOperand,secondOperand);
     }
-
     public string Power()
     {
         Console.Write("Enter base: ");
