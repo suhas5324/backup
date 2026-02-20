@@ -1,12 +1,15 @@
 ﻿using System;
-
 class Program
 {
     static void Main()
     {
         ICalculator calculator = new Calculator();
         IAdvancedCalculator advancedCalculator = new AdvancedCalculator();
+<<<<<<< HEAD
         InputValidator validator = new InputValidator();
+=======
+        InputValidator validator = new InputValidator(calculator, advancedCalculator);
+>>>>>>> 1fa2de6 (make result protected and remove redundant code)
 
         bool exit = false;
 
@@ -26,7 +29,6 @@ class Program
                 Console.WriteLine("Invalid choice. Try again.");
                 continue;
             }
-
             switch (choice)
             {
                 case 1:

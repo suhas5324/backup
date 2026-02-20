@@ -1,33 +1,28 @@
-
 public class Calculator : ICalculator
 {
-    
-    private double _result;
-
+    protected static double result;
     public int Add(int a, int b)
     {
-        _result = a + b;
-        return a + b;
+        result = a + b;
+        return (int)result;
     }
-
     public int Add(int a, int b, int c)
     {
-        _result = a + b + c;
-        return a + b + c;
+        
+        result = a + b + c;
+        return (int)result;
     }
-
     public double Add(double a, double b)
     {
-        _result = a + b;
-        return a + b;
+        result = a + b;
+        return result;
     }
-
     public virtual double GetResult()
     {
-        return _result;
+        return result;
     }
-    public void SetResult(double result)
+    protected void SetResult(double value)
     {
-        _result = result;
+        result = value;
     }
 }
