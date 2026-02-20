@@ -4,6 +4,39 @@ using System.Linq;
 
 public class MovieService
 {
+    private readonly IMovieRepository _movieRepository;
+    private readonly IActorRepository _actorRepository;
+    private readonly IProducerRepository _producerRepository;
+
+    public MovieService() : this(new MovieRepository(), new ActorRepository(), new ProducerRepository())
+    {
+    }
+
+    public MovieService(IMovieRepository movieRepository, IActorRepository actorRepository, IProducerRepository producerRepository)
+    {
+        _movieRepository = movieRepository;
+        _actorRepository = actorRepository;
+        _producerRepository = producerRepository;
+    }
+
+    public List<Movie> GetAllMovies()
+    {
+        return _movieRepository.GetAllMovies();
+    }
+
+    public void DeleteMovie(string movieName)
+    {
+        string name = ValidateName(movieName);
+
+        var existing = _movieRepository.GetAllMovies()
+            .FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
+
+        if (existing == null)
+            throw new InvalidMovieDataException("Movie not found.");
+
+        _movieRepository.DeleteMovie(existing.Name);
+    }
+
     public void AddMovie(string nameInput,
                          string yearInput,
                          string plotInput,
@@ -16,7 +49,13 @@ public class MovieService
         List<Actor> actors = ValidateActors(actorsInput);
         Producer producer = ValidateProducer(producerInput);
 
-        InMemoryDatabase.Movies.Add(new Movie
+        bool movieExists = _movieRepository.GetAllMovies()
+            .Any(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
+
+        if (movieExists)
+            throw new InvalidMovieDataException("Movie already exists.");
+
+        _movieRepository.AddMovie(new Movie
         {
             Name = name,
             YearOfRelease = year,
@@ -28,7 +67,7 @@ public class MovieService
 
     private string ValidateName(string input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidMovieDataException("Movie name cannot be empty.");
@@ -38,7 +77,7 @@ public class MovieService
 
     private int ValidateYear(string input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
 
         if (!int.TryParse(value, out int year))
             throw new InvalidMovieDataException("Year must be a valid number.");
@@ -51,7 +90,7 @@ public class MovieService
 
     private string ValidatePlot(string input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidMovieDataException("Plot cannot be empty.");
@@ -63,9 +102,9 @@ public class MovieService
     {
         if (string.IsNullOrWhiteSpace(input))
             throw new InvalidMovieDataException("At least one actor must be selected.");
-
         string[] parts = input.Split(',');
         List<Actor> selectedActors = new List<Actor>();
+        var actorsList = _actorRepository.GetAllActors();
 
         foreach (string part in parts)
         {
@@ -74,10 +113,10 @@ public class MovieService
             if (!int.TryParse(trimmed, out int index))
                 throw new InvalidMovieDataException("Actor selection must be valid numbers.");
 
-            if (index < 1 || index > InMemoryDatabase.Actors.Count)
+            if (index < 1 || index > actorsList.Count)
                 throw new InvalidMovieDataException("Actor selection out of range.");
 
-            Actor actor = InMemoryDatabase.Actors[index - 1];
+            Actor actor = actorsList[index - 1];
 
             if (!selectedActors.Any(a => a.Name == actor.Name))
                 selectedActors.Add(actor);
@@ -93,41 +132,19 @@ public class MovieService
 
     private Producer ValidateProducer(string input)
     {
-        string value = input.Trim();
+        string value = (input ?? string.Empty).Trim();
+        if (value.Contains(','))
+            throw new InvalidMovieDataException("Only one producer must be selected.");
 
         if (!int.TryParse(value, out int index))
             throw new InvalidMovieDataException("Producer selection must be a valid number.");
 
-        if (index < 1 || index > InMemoryDatabase.Producers.Count)
+        var producers = _producerRepository.GetAllProducers();
+
+        if (index < 1 || index > producers.Count)
             throw new InvalidMovieDataException("Producer selection out of range.");
 
-        return InMemoryDatabase.Producers[index - 1];
+        return producers[index - 1];
     }
-
-
-
-    public List<Movie> GetMoviesAfter2010() =>
-        InMemoryDatabase.Movies
-            .Where(m => m.YearOfRelease > 2010)
-            .ToList();
-
-    public List<string> GetMoviesByProducer(string producerName) =>
-        InMemoryDatabase.Movies
-            .Where(m => m.Producer.Name == producerName)
-            .Select(m => m.Name)
-            .ToList();
-
-    public List<(string, int)> GetMovieNamesAndYear() =>
-        InMemoryDatabase.Movies
-            .Select(m => (m.Name, m.YearOfRelease))
-            .ToList();
-
-    public Movie? GetFirstMovieContaining(string keyword) =>
-        InMemoryDatabase.Movies
-            .FirstOrDefault(m => m.Name.Contains(keyword));
-
-    public List<Movie> GetMoviesByActor(string actorName) =>
-        InMemoryDatabase.Movies
-            .Where(m => m.Actors.Any(a => a.Name == actorName))
-            .ToList();
 }
+
