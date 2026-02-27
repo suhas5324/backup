@@ -9,6 +9,7 @@
         MovieService service = new MovieService(movieRepository, actorRepository, producerRepository);
         ActorService actorService = new ActorService(actorRepository);
         ProducerService producerService = new ProducerService(producerRepository);
+        LinqService linqService = new LinqService(movieRepository);
         bool exit = false;
         while (!exit)
         {
@@ -17,13 +18,14 @@
             Console.WriteLine("3. Add Actor");
             Console.WriteLine("4. Add Producer");
             Console.WriteLine("5. Delete movie");
-            Console.WriteLine("6.Exit");
+            Console.WriteLine("6. Run LINQ Queries");
+            Console.WriteLine("7. Exit");
             Console.WriteLine("\nEnter your choice: ");
             string? inputChoice = Console.ReadLine();
             string? choice = inputChoice?.Trim();
             if (string.IsNullOrWhiteSpace(choice))
             {
-                Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
+                Console.WriteLine("Invalid choice. Please enter a number between 1 and 7.");
                 continue;
             }
             try
@@ -55,12 +57,16 @@
                         break;
 
                     case "6":
+                        linqService.RunQueries();
+                        break;
+
+                    case "7":
                         exit = true;
                         Console.WriteLine("Exiting the application. Goodbye!");
                         break;
 
                     default:
-                        Console.WriteLine("Invalid choice. Please enter a number between 1 and 6.");
+                        Console.WriteLine("Invalid choice. Please enter a number between 1 and 7.");
                         break;
                 }
             }
