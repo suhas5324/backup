@@ -21,15 +21,15 @@ public class ProducerService
             .Any(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (producerExists)
-            throw ProducerException.ProducerAlreadyExistsException();
+            throw PersonValidationException.AlreadyExists("Producer");
 
-        _producerRepository.AddProducer(new Producer
+        _producerRepository.AddProducer(new Person
         {
             Name = name,
             DateOfBirth = dateOfBirth
         });
     }
-    public List<Producer> GetAllProducers()
+    public List<Person> GetAllProducers()
     {
         return _producerRepository.GetAllProducers();
     }
@@ -38,7 +38,7 @@ public class ProducerService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ProducerException.ProducerNameCannotBeEmptyException();
+            throw PersonValidationException.NameCannotBeEmpty("Producer");
 
         return value;
     }
@@ -47,13 +47,13 @@ public class ProducerService
         string value = (input ?? string.Empty).Trim();
 
         if (!DateTime.TryParse(value, out DateTime dateOfBirth))
-            throw ProducerException.ProducerDateOfBirthMustBeValidDateException();
+            throw PersonValidationException.DateOfBirthMustBeValidDate("Producer");
 
         if (dateOfBirth.Date >= DateTime.Today)
-            throw ProducerException.ProducerDateOfBirthMustBePastException();
+            throw PersonValidationException.DateOfBirthMustBePast("Producer");
 
         if (dateOfBirth.Year < 1900)
-            throw ProducerException.ProducerDateOfBirthOutOfRangeException();
+            throw PersonValidationException.DateOfBirthOutOfRange("Producer");
 
         return dateOfBirth.Date;
     }

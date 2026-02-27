@@ -74,11 +74,7 @@
             {
                 Console.WriteLine(ex.Message);
             }
-            catch (ActorException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (ProducerException ex)
+            catch (PersonValidationException ex)
             {
                 Console.WriteLine(ex.Message);
             }

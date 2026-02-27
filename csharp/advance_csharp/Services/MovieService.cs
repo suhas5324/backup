@@ -63,8 +63,8 @@ public class MovieService
         string validatedName = ValidateName(name);
         int validatedYear = ValidateYear(year);
         string validatedPlot = ValidatePlot(plot);
-        List<Actor> validatedActors = ValidateActors(actorNumbers);
-        Producer validatedProducer = ValidateProducer(producerNumber);
+        List<Person> validatedActors = ValidateActors(actorNumbers);
+        Person validatedProducer = ValidateProducer(producerNumber);
 
         bool movieExists = _movieRepository.GetAllMovies()
             .Any(m => string.Equals(m.Name, validatedName, StringComparison.OrdinalIgnoreCase));
@@ -125,15 +125,15 @@ public class MovieService
 
         return value;
     }
-    private List<Actor> ValidateActors(string? input)
+    private List<Person> ValidateActors(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ActorException.AtLeastOneActorMustBeSelectedException();
+            throw PersonValidationException.AtLeastOneMustBeSelected("Actor");
 
         string[] parts = value.Split(',');
-        List<Actor> selectedActors = new List<Actor>();
+        List<Person> selectedActors = new List<Person>();
         var actorsList = _actorRepository.GetAllActors();
 
         foreach (string part in parts)
@@ -141,35 +141,35 @@ public class MovieService
             string trimmed = part.Trim();
 
             if (!int.TryParse(trimmed, out int index))
-                throw ActorException.ActorSelectionMustBeValidNumbersException();
+                throw PersonValidationException.SelectionMustBeValidNumbers("Actor");
 
             if (index < 1 || index > actorsList.Count)
-                throw ActorException.ActorSelectionOutOfRangeException();
+                throw PersonValidationException.SelectionOutOfRange("Actor");
 
-            Actor actor = actorsList[index - 1];
+            Person actor = actorsList[index - 1];
 
             if (!selectedActors.Any(a => a.Name == actor.Name))
                 selectedActors.Add(actor);
         }
 
         if (selectedActors.Count == 0)
-            throw ActorException.AtLeastOneActorMustBeSelectedException();
+            throw PersonValidationException.AtLeastOneMustBeSelected("Actor");
 
         return selectedActors;
     }
-    private Producer ValidateProducer(string? input)
+    private Person ValidateProducer(string? input)
     {
         string value = (input ?? string.Empty).Trim();
         if (value.Contains(','))
-            throw ProducerException.OnlyOneProducerMustBeSelectedException();
+            throw PersonValidationException.OnlyOneMustBeSelected("Producer");
 
         if (!int.TryParse(value, out int index))
-            throw ProducerException.ProducerSelectionMustBeValidNumberException();
+            throw PersonValidationException.SelectionMustBeValidNumber("Producer");
 
         var producers = _producerRepository.GetAllProducers();
 
         if (index < 1 || index > producers.Count)
-            throw ProducerException.ProducerSelectionOutOfRangeException();
+            throw PersonValidationException.SelectionOutOfRange("Producer");
 
         return producers[index - 1];
     }

@@ -25,16 +25,16 @@ public class ActorService
             .Any(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (actorExists)
-            throw ActorException.ActorAlreadyExistsException();
+            throw PersonValidationException.AlreadyExists("Actor");
 
-        _actorRepository.AddActor(new Actor
+        _actorRepository.AddActor(new Person
         {
             Name = name,
             DateOfBirth = dateOfBirth
         });
     }
 
-    public List<Actor> GetAllActors()
+    public List<Person> GetAllActors()
     {
         return _actorRepository.GetAllActors();
     }
@@ -44,13 +44,13 @@ public class ActorService
         string value = (input ?? string.Empty).Trim();
 
         if (!DateTime.TryParse(value, out DateTime dateOfBirth))
-            throw ActorException.ActorDateOfBirthMustBeValidDateException();
+            throw PersonValidationException.DateOfBirthMustBeValidDate("Actor");
 
         if (dateOfBirth.Date >= DateTime.Today)
-            throw ActorException.ActorDateOfBirthMustBePastException();
+            throw PersonValidationException.DateOfBirthMustBePast("Actor");
 
         if (dateOfBirth.Year < 1900)
-            throw ActorException.ActorDateOfBirthOutOfRangeException();
+            throw PersonValidationException.DateOfBirthOutOfRange("Actor");
 
         return dateOfBirth.Date;
     }
@@ -60,7 +60,7 @@ public class ActorService
         string value = (input ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(value))
-            throw ActorException.ActorNameCannotBeEmptyException();
+            throw PersonValidationException.NameCannotBeEmpty("Actor");
 
         return value;
     }

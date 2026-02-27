@@ -1,25 +1,25 @@
 public class ProducerRepository : IProducerRepository
 {
-    private readonly List<Producer> _producers = new List<Producer>
+    private readonly List<Person> _producers = new List<Person>
     {
-        new Producer { Name = "James Cameron" },
-        new Producer { Name = "Kevin Feige" },
-        new Producer { Name = "Steven Spielberg" },
-        new Producer { Name = "Christopher Nolan" },
-        new Producer { Name = "Kathleen Kennedy" },
-        new Producer { Name = "Jerry Bruckheimer" },
-        new Producer { Name = "Ridley Scott" },
-        new Producer { Name = "J.J. Abrams" },
-        new Producer { Name = "Quentin Tarantino" },
-        new Producer { Name = "Jordan Peele" }
+        new Person { Name = "James Cameron" },
+        new Person { Name = "Kevin Feige" },
+        new Person { Name = "Steven Spielberg" },
+        new Person { Name = "Christopher Nolan" },
+        new Person { Name = "Kathleen Kennedy" },
+        new Person { Name = "Jerry Bruckheimer" },
+        new Person { Name = "Ridley Scott" },
+        new Person { Name = "J.J. Abrams" },
+        new Person { Name = "Quentin Tarantino" },
+        new Person { Name = "Jordan Peele" }
     };
 
-    public void AddProducer(Producer producer)
+    public void AddProducer(Person producer)
     {
         _producers.Add(producer);
     }
 
-    public List<Producer> GetAllProducers()
+    public List<Person> GetAllProducers()
     {
         return _producers;
     }
