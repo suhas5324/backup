@@ -48,13 +48,9 @@
             {
                 Console.WriteLine($"Movie Error: {ex.Message}");
             }
-            catch (ActorException ex)
+            catch (PersonValidationException ex)
             {
-                Console.WriteLine($"Actor Error: {ex.Message}");
-            }
-            catch (ProducerException ex)
-            {
-                Console.WriteLine($"Producer Error: {ex.Message}");
+                Console.WriteLine($"Validation Error: {ex.Message}");
             }
         }
     }
