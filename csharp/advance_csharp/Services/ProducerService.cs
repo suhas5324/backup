@@ -1,18 +1,14 @@
 public class ProducerService
 {
     private readonly IProducerRepository _producerRepository;
+
     public ProducerService(IProducerRepository producerRepository)
     {
         _producerRepository = producerRepository;
     }
-    public void AddProducer()
+
+    public void AddProducer(string? producerName, string? producerDob)
     {
-        Console.Write("Producer Name: ");
-        string? producerName = Console.ReadLine();
-
-        Console.Write("Date of Birth: ");
-        string? producerDob = Console.ReadLine();
-
         string name = ValidateProducerName(producerName);
         DateTime dateOfBirth = ValidateDateOfBirth(producerDob);
 
@@ -29,10 +25,12 @@ public class ProducerService
             DateOfBirth = dateOfBirth
         });
     }
+
     public List<Person> GetAllProducers()
     {
         return _producerRepository.GetAllProducers();
     }
+
     private string ValidateProducerName(string? input)
     {
         string value = (input ?? string.Empty).Trim();

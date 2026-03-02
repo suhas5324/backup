@@ -11,94 +11,45 @@ public class LinqService
         _movieRepository = movieRepository;
     }
 
-    public void RunQueries()
+    public List<Movie> GetMoviesReleasedAfter(int year)
     {
-        PrintMoviesReleasedAfter2010();
-        PrintMoviesByProducerJamesCameron();
-        PrintAllMovieNamesAndYears();
-        PrintFirstMovieContainingAvatar();
-        PrintMoviesWithWillSmith();
-    }
-
-    private void PrintMoviesReleasedAfter2010()
-    {
-        Console.WriteLine("\n1. Movies released after 2010:");
-        List<Movie> moviesAfter2010 = _movieRepository.GetAllMovies()
-            .Where(m => m.YearOfRelease > 2010)
+        return _movieRepository.GetAllMovies()
+            .Where(m => m.YearOfRelease > year)
             .ToList();
-
-        if (moviesAfter2010.Count == 0)
-        {
-            Console.WriteLine("No movies found after 2010.");
-            return;
-        }
-
-        moviesAfter2010.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
     }
 
-    private void PrintMoviesByProducerJamesCameron()
+    public List<Movie> GetMoviesByProducer(string? producerName)
     {
-        Console.WriteLine("\n2. Movies whose producer name is James Cameron:");
-        List<string> jamesCameronMovies = _movieRepository.GetAllMovies()
+        string name = (producerName ?? string.Empty).Trim();
+
+        return _movieRepository.GetAllMovies()
             .Where(m => m.Producer != null
-                        && m.Producer.Name.Equals("James Cameron", StringComparison.OrdinalIgnoreCase))
-            .Select(m => m.Name)
+                        && m.Producer.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
             .ToList();
-
-        if (jamesCameronMovies.Count == 0)
-        {
-            Console.WriteLine("No movies found for producer James Cameron.");
-            return;
-        }
-
-        jamesCameronMovies.ForEach(m => Console.WriteLine($"- {m}"));
     }
 
-    private void PrintAllMovieNamesAndYears()
+    public List<string> GetAllMovieNamesAndYears()
     {
-        Console.WriteLine("\n3. Name and year of release of all movies:");
-        List<string> movieNamesAndYears = _movieRepository.GetAllMovies()
+        return _movieRepository.GetAllMovies()
             .Select(m => $"{m.Name} ({m.YearOfRelease})")
             .ToList();
-
-        if (movieNamesAndYears.Count == 0)
-        {
-            Console.WriteLine("No movies available.");
-            return;
-        }
-
-        movieNamesAndYears.ForEach(m => Console.WriteLine($"- {m}"));
     }
 
-    private void PrintFirstMovieContainingAvatar()
+    public Movie? GetFirstMovieContaining(string? keyword)
     {
-        Console.WriteLine("\n4. First movie whose name contains Avatar:");
-        Movie? avatarMovie = _movieRepository.GetAllMovies()
-            .FirstOrDefault(m => m.Name.Contains("Avatar", StringComparison.OrdinalIgnoreCase));
+        string value = (keyword ?? string.Empty).Trim();
 
-        if (avatarMovie == null)
-        {
-            Console.WriteLine("No movie found containing Avatar.");
-            return;
-        }
-
-        Console.WriteLine($"- {avatarMovie.Name} ({avatarMovie.YearOfRelease})");
+        return _movieRepository.GetAllMovies()
+            .FirstOrDefault(m => m.Name.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
-    private void PrintMoviesWithWillSmith()
+    public List<Movie> GetMoviesWithActor(string? actorName)
     {
-        Console.WriteLine("\n5. Movies in which Will Smith has acted:");
-        List<Movie> willSmithMovies = _movieRepository.GetAllMovies()
+        string name = (actorName ?? string.Empty).Trim();
+
+        return _movieRepository.GetAllMovies()
             .Where(m => m.Actors != null
-                        && m.Actors.Any(a => a.Name.Equals("Will Smith", StringComparison.OrdinalIgnoreCase)))
+                        && m.Actors.Any(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             .ToList();
-
-        if (willSmithMovies.Count == 0)
-        {
-            Console.WriteLine("No movies found for actor Will Smith.");
-            return;
-        }
-
-        willSmithMovies.ForEach(m => Console.WriteLine($"- {m.Name} ({m.YearOfRelease})"));
     }
 }

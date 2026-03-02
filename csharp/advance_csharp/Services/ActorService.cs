@@ -9,14 +9,9 @@ public class ActorService
     {
         _actorRepository = actorRepository;
     }
-    public void AddActor()
+
+    public void AddActor(string? actorName, string? actorDob)
     {
-        Console.Write("Actor Name: ");
-        string? actorName = Console.ReadLine();
-
-        Console.Write("Date of Birth: ");
-        string? actorDob = Console.ReadLine();
-
         string name = ValidateActorName(actorName);
         DateTime dateOfBirth = ValidateDateOfBirth(actorDob);
 
