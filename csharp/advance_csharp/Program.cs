@@ -66,18 +66,12 @@
             {
                 Console.WriteLine(ex.Message);
             }
-
-            if (!exit)
-            {
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
-            }
         }
     }
 
     private static void ShowMenu()
     {
-        Console.Clear();
+        Console.WriteLine();
         Console.WriteLine("1. List Movies");
         Console.WriteLine("2. Add Movie");
         Console.WriteLine("3. Add Actor");
@@ -89,7 +83,6 @@
 
     private static void ListMovies(MovieService movieService)
     {
-        Console.Clear();
         List<Movie> movies = movieService.GetMoviesForDisplay();
 
         foreach (Movie movie in movies)
@@ -107,7 +100,6 @@
         ActorService actorService,
         ProducerService producerService)
     {
-        Console.Clear();
         Console.Write("Movie Name: ");
         string? name = Console.ReadLine();
 
@@ -143,7 +135,6 @@
 
     private static void AddActor(ActorService actorService)
     {
-        Console.Clear();
         Console.Write("Actor Name: ");
         string? actorName = Console.ReadLine();
 
@@ -156,7 +147,6 @@
 
     private static void AddProducer(ProducerService producerService)
     {
-        Console.Clear();
         Console.Write("Producer Name: ");
         string? producerName = Console.ReadLine();
 
@@ -169,7 +159,6 @@
 
     private static void DeleteMovie(MovieService movieService)
     {
-        Console.Clear();
         Console.Write("Enter movie name to delete: ");
         string? movieName = Console.ReadLine();
 
@@ -179,7 +168,6 @@
 
     private static void RunLinqQueries(LinqService linqService)
     {
-        Console.Clear();
 
         Console.WriteLine("1. Movies released after 2010:");
         List<Movie> moviesAfter2010 = linqService.GetMoviesReleasedAfter(2010);
