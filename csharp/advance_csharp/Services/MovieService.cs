@@ -35,8 +35,8 @@ public class MovieService
         string validatedName = ValidateName(name);
         int validatedYear = ValidateYear(year);
         string validatedPlot = ValidatePlot(plot);
-        List<Person> validatedActors = ValidateActors(actorNumbers);
-        Person validatedProducer = ValidateProducer(producerNumber);
+        List<Actor> validatedActors = ValidateActors(actorNumbers);
+        Producer validatedProducer = ValidateProducer(producerNumber);
 
         bool movieExists = _movieRepository.GetAllMovies()
             .Any(m => string.Equals(m.Name, validatedName, StringComparison.OrdinalIgnoreCase));
@@ -100,7 +100,7 @@ public class MovieService
         return value;
     }
 
-    private List<Person> ValidateActors(string? input)
+    private List<Actor> ValidateActors(string? input)
     {
         string value = (input ?? string.Empty).Trim();
 
@@ -108,7 +108,7 @@ public class MovieService
             throw PersonValidationException.AtLeastOneMustBeSelected("Actor");
 
         string[] parts = value.Split(',');
-        List<Person> selectedActors = new List<Person>();
+        List<Actor> selectedActors = new List<Actor>();
         var actorsList = _actorRepository.GetAllActors();
 
         foreach (string part in parts)
@@ -121,7 +121,7 @@ public class MovieService
             if (index < 1 || index > actorsList.Count)
                 throw PersonValidationException.SelectionOutOfRange("Actor");
 
-            Person actor = actorsList[index - 1];
+            Actor actor = actorsList[index - 1];
 
             if (!selectedActors.Any(a => a.Name == actor.Name))
                 selectedActors.Add(actor);
@@ -133,7 +133,7 @@ public class MovieService
         return selectedActors;
     }
 
-    private Person ValidateProducer(string? input)
+    private Producer ValidateProducer(string? input)
     {
         string value = (input ?? string.Empty).Trim();
         if (value.Contains(','))

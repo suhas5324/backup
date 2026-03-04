@@ -1,0 +1,15 @@
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.GeneratedMSBuildEditorConfig.editorconfig
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.AssemblyInfoInputs.cache
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.AssemblyInfo.cs
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.csproj.CoreCompileInputs.cache
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.sourcelink.json
+D:\Bootcamp\csharp\intermediate_csharp\bin\Debug\net10.0\intermediate_csharp.exe
+D:\Bootcamp\csharp\intermediate_csharp\bin\Debug\net10.0\intermediate_csharp.deps.json
+D:\Bootcamp\csharp\intermediate_csharp\bin\Debug\net10.0\intermediate_csharp.runtimeconfig.json
+D:\Bootcamp\csharp\intermediate_csharp\bin\Debug\net10.0\intermediate_csharp.dll
+D:\Bootcamp\csharp\intermediate_csharp\bin\Debug\net10.0\intermediate_csharp.pdb
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.dll
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\refint\intermediate_csharp.dll
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.pdb
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\intermediate_csharp.genruntimeconfig.cache
+D:\Bootcamp\csharp\intermediate_csharp\obj\Debug\net10.0\ref\intermediate_csharp.dll

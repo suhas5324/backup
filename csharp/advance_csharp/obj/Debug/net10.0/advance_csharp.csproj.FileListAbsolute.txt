@@ -1,0 +1,15 @@
+D:\Bootcamp\csharp\advance_csharp\bin\Debug\net10.0\advance_csharp.exe
+D:\Bootcamp\csharp\advance_csharp\bin\Debug\net10.0\advance_csharp.deps.json
+D:\Bootcamp\csharp\advance_csharp\bin\Debug\net10.0\advance_csharp.runtimeconfig.json
+D:\Bootcamp\csharp\advance_csharp\bin\Debug\net10.0\advance_csharp.dll
+D:\Bootcamp\csharp\advance_csharp\bin\Debug\net10.0\advance_csharp.pdb
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.GeneratedMSBuildEditorConfig.editorconfig
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.AssemblyInfoInputs.cache
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.AssemblyInfo.cs
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.csproj.CoreCompileInputs.cache
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.sourcelink.json
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.dll
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\refint\advance_csharp.dll
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.pdb
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\advance_csharp.genruntimeconfig.cache
+D:\Bootcamp\csharp\advance_csharp\obj\Debug\net10.0\ref\advance_csharp.dll

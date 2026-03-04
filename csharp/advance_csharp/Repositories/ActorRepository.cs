@@ -1,25 +1,25 @@
 public class ActorRepository : IActorRepository
 {
-    private readonly List<Person> _actors = new List<Person>{
-        new Person { Name = "Will Smith" },
-        new Person { Name = "Leonardo DiCaprio" },
-        new Person { Name = "Sam Worthington" },
-        new Person { Name = "Tom Hanks" },
-        new Person { Name = "Denzel Washington" },
-        new Person { Name = "Brad Pitt" },
-        new Person { Name = "Morgan Freeman" },
-        new Person { Name = "Scarlett Johansson" },
-        new Person { Name = "Meryl Streep" },
-        new Person { Name = "Robert De Niro" },
-        new Person { Name = "Joaquin Phoenix" }
+    private readonly List<Actor> _actors = new List<Actor>{
+        new Actor { Name = "Will Smith" },
+        new Actor { Name = "Leonardo DiCaprio" },
+        new Actor { Name = "Sam Worthington" },
+        new Actor { Name = "Tom Hanks" },
+        new Actor { Name = "Denzel Washington" },
+        new Actor { Name = "Brad Pitt" },
+        new Actor { Name = "Morgan Freeman" },
+        new Actor { Name = "Scarlett Johansson" },
+        new Actor { Name = "Meryl Streep" },
+        new Actor { Name = "Robert De Niro" },
+        new Actor { Name = "Joaquin Phoenix" }
     };
 
-    public void AddActor(Person actor)
+    public void AddActor(Actor actor)
     {
         _actors.Add(actor);
     }
 
-    public List<Person> GetAllActors()
+    public List<Actor> GetAllActors()
     {
         return _actors;
     }

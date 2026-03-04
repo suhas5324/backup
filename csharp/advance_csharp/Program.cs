@@ -118,7 +118,7 @@
         string? plot = Console.ReadLine();
 
         Console.WriteLine("\nAvailable Actors:");
-        List<Person> actors = actorService.GetAllActors();
+        List<Actor> actors = actorService.GetAllActors();
         for (int i = 0; i < actors.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {actors[i].Name}");
@@ -128,7 +128,7 @@
         string? actorNumbers = Console.ReadLine();
 
         Console.WriteLine("\nAvailable Producers:");
-        List<Person> producers = producerService.GetAllProducers();
+        List<Producer> producers = producerService.GetAllProducers();
         for (int i = 0; i < producers.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {producers[i].Name}");

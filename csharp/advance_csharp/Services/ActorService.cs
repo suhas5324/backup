@@ -22,14 +22,14 @@ public class ActorService
         if (actorExists)
             throw PersonValidationException.AlreadyExists("Actor");
 
-        _actorRepository.AddActor(new Person
+        _actorRepository.AddActor(new Actor
         {
             Name = name,
             DateOfBirth = dateOfBirth
         });
     }
 
-    public List<Person> GetAllActors()
+    public List<Actor> GetAllActors()
     {
         return _actorRepository.GetAllActors();
     }

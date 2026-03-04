@@ -19,14 +19,14 @@ public class ProducerService
         if (producerExists)
             throw PersonValidationException.AlreadyExists("Producer");
 
-        _producerRepository.AddProducer(new Person
+        _producerRepository.AddProducer(new Producer
         {
             Name = name,
             DateOfBirth = dateOfBirth
         });
     }
 
-    public List<Person> GetAllProducers()
+    public List<Producer> GetAllProducers()
     {
         return _producerRepository.GetAllProducers();
     }
