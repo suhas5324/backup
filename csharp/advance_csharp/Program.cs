@@ -100,6 +100,7 @@
         ActorService actorService,
         ProducerService producerService)
     {
+        Console.WriteLine();
         Console.Write("Movie Name: ");
         string? name = Console.ReadLine();
 
@@ -135,6 +136,7 @@
 
     private static void AddActor(ActorService actorService)
     {
+        Console.WriteLine();
         Console.Write("Actor Name: ");
         string? actorName = Console.ReadLine();
 
@@ -147,6 +149,7 @@
 
     private static void AddProducer(ProducerService producerService)
     {
+        Console.WriteLine();
         Console.Write("Producer Name: ");
         string? producerName = Console.ReadLine();
 
@@ -159,6 +162,7 @@
 
     private static void DeleteMovie(MovieService movieService)
     {
+        Console.WriteLine();
         Console.Write("Enter movie name to delete: ");
         string? movieName = Console.ReadLine();
 
@@ -168,7 +172,7 @@
 
     private static void RunLinqQueries(LinqService linqService)
     {
-
+        Console.WriteLine();
         Console.WriteLine("1. Movies released after 2010:");
         List<Movie> moviesAfter2010 = linqService.GetMoviesReleasedAfter(2010);
         if (moviesAfter2010.Count == 0)
