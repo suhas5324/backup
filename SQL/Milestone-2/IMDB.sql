@@ -4,7 +4,7 @@ GO
 CREATE SCHEMA FOUNDATION;
 GO
 
-CREATE TABLE FOUNDATION.ACTORS(
+CREATE TABLE Foundation.Actors(
     Id INT IDENTITY(1,1),
     ActorName VARCHAR(50) NOT NULL,
     Sex VARCHAR(20),
@@ -18,7 +18,7 @@ CREATE TABLE FOUNDATION.ACTORS(
         CHECK (DateOfBirth < GETDATE())
 );
 
-CREATE TABLE FOUNDATION.PRODUCERS(
+CREATE TABLE Foundation.Producers(
     Id INT IDENTITY(1,1),
     ProducerName VARCHAR(50) NOT NULL,
     Sex VARCHAR(20),
@@ -32,7 +32,7 @@ CREATE TABLE FOUNDATION.PRODUCERS(
         CHECK (DateOfBirth < GETDATE())
 );
 
-CREATE TABLE FOUNDATION.MOVIES(
+CREATE TABLE Foundation.Movies(
     Id INT IDENTITY(1,1),
     MovieName VARCHAR(100) NOT NULL,
     YearOfRelease INT NOT NULL,
@@ -43,31 +43,31 @@ CREATE TABLE FOUNDATION.MOVIES(
     CONSTRAINT PK_Foundation_Movies_Id 
         PRIMARY KEY (Id),
 
-    CONSTRAINT FK_Foundation_Movies_Producer_Id 
+    CONSTRAINT FK_Foundation_Movies_ProducerId 
         FOREIGN KEY (ProducerId) 
-        REFERENCES FOUNDATION.PRODUCERS(Id),
+        REFERENCES Foundation.Producers(Id),
 
     CONSTRAINT CK_Foundation_Movies_YearOfRelease 
         CHECK (YearOfRelease <= YEAR(GETDATE()))
 );
 
-CREATE TABLE FOUNDATION.ACTORS_MOVIE(
+CREATE TABLE Foundation.Actors_Movies(
     Id INT IDENTITY(1,1),
     ActorId INT NOT NULL,
     MovieId INT NOT NULL,
 
-    CONSTRAINT PK_Foundation_Actors_Movie_Id
+    CONSTRAINT PK_Foundation_Actors_Movies_Id
     PRIMARY KEY (Id),
 
-    CONSTRAINT FK_Foundation_Actors_Movie_ActorId
+    CONSTRAINT FK_Foundation_Actors_Movies_ActorId
     FOREIGN KEY (ActorId) 
-    REFERENCES FOUNDATION.ACTORS (Id),
+    REFERENCES Foundation.Actors (Id),
 
-    CONSTRAINT FK_Foundation_Actors_Movie_MovieId
+    CONSTRAINT FK_Foundation_Actors_Movies_MovieId
     FOREIGN KEY (MovieId)
-    REFERENCES FOUNDATION.MOVIES (Id),
+    REFERENCES Foundation.Movies (Id),
 
-    CONSTRAINT UQ_Foundation_Actors_Movie_ActorId_Movie_Id
+    CONSTRAINT UQ_Foundation_Actors_Movies_ActorId_MovieId
     UNIQUE (ActorId,MovieId)
     );
 
@@ -83,7 +83,7 @@ ALTER TABLE Foundation.Movies
 ADD CreatedAt DATETIME,
 	UpdatedAt DATETIME;
 
-ALTER TABLE Foundation.Actors_Movie
+ALTER TABLE Foundation.Actors_Movies
 ADD CreatedAt DATETIME,
 	UpdatedAt DATETIME;
 
@@ -100,8 +100,8 @@ ALTER TABLE Foundation.Movies
 ADD CONSTRAINT DF_Foundation_Movies_CreatedAt
 DEFAULT GETDATE() FOR CreatedAt;
 
-ALTER TABLE Foundation.Actors_Movie
-ADD CONSTRAINT DF_Foundation_ActorsMovie_CreatedAt
+ALTER TABLE Foundation.Actors_Movies
+ADD CONSTRAINT DF_Foundation_Actors_Movies_CreatedAt
 DEFAULT GETDATE() FOR CreatedAt;
 
 ALTER TABLE Foundation.Movies
@@ -150,18 +150,18 @@ VALUES
 ('Movie 5',2019,'Plot 5','url5',2,'English',300);
 
 
-INSERT INTO Foundation.Actors_Movie (ActorId, MovieId)
+INSERT INTO Foundation.Actors_Movies (ActorId, MovieId)
 VALUES
 (1,1),
 (2,1),
 (3,1);
 
-INSERT INTO Foundation.Actors_Movie (ActorId, MovieId)
+INSERT INTO Foundation.Actors_Movies (ActorId, MovieId)
 VALUES
 (1,2),
 (2,2);
 
-INSERT INTO Foundation.Actors_Movie (ActorId, MovieId)
+INSERT INTO Foundation.Actors_Movies (ActorId, MovieId)
 VALUES
 (3,3),
 (4,4),
