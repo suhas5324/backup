@@ -10,14 +10,14 @@ public class MovieService
         _actorRepository = actorRepository;
         _producerRepository = producerRepository;
     }
-    public List<Movie> GetAllMovies()
+    public List<Movie> GetAll()
     {
-        return _movieRepository.GetAllMovies();
+        return _movieRepository.GetAll();
     }
 
-    public List<Movie> GetMoviesForDisplay()
+    public List<Movie> List()
     {
-        var movies = _movieRepository.GetAllMovies();
+        var movies = _movieRepository.GetAll();
 
         if (movies == null || movies.Count == 0)
             throw MovieException.NoMoviesAvailableException();
@@ -25,7 +25,7 @@ public class MovieService
         return movies;
     }
 
-    public void AddMovie(
+    public void Add(
         string? name,
         string? year,
         string? plot,
@@ -38,13 +38,13 @@ public class MovieService
         List<Actor> validatedActors = ValidateActors(actorNumbers);
         Producer validatedProducer = ValidateProducer(producerNumber);
 
-        bool movieExists = _movieRepository.GetAllMovies()
+        bool movieExists = _movieRepository.GetAll()
             .Any(m => string.Equals(m.Name, validatedName, StringComparison.OrdinalIgnoreCase));
 
         if (movieExists)
             throw MovieException.MovieAlreadyExistsException();
 
-        _movieRepository.AddMovie(new Movie
+        _movieRepository.Add(new Movie
         {
             Name = validatedName,
             YearOfRelease = validatedYear,
@@ -54,17 +54,17 @@ public class MovieService
         });
     }
 
-    public void DeleteMovie(string? movieToDelete)
+    public void Delete(string? movieToDelete)
     {
         string name = ValidateName(movieToDelete);
 
-        var existing = _movieRepository.GetAllMovies()
+        var existing = _movieRepository.GetAll()
             .FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (existing == null)
             throw MovieException.MovieNotFoundException();
 
-        _movieRepository.DeleteMovie(existing.Name);
+        _movieRepository.Delete(existing.Name);
     }
 
     private string ValidateName(string? input)
@@ -109,7 +109,7 @@ public class MovieService
 
         string[] parts = value.Split(',');
         List<Actor> selectedActors = new List<Actor>();
-        var actorsList = _actorRepository.GetAllActors();
+        var actorsList = _actorRepository.GetAll();
 
         foreach (string part in parts)
         {
@@ -142,7 +142,7 @@ public class MovieService
         if (!int.TryParse(value, out int index))
             throw PersonValidationException.SelectionMustBeValidNumber("Producer");
 
-        var producers = _producerRepository.GetAllProducers();
+        var producers = _producerRepository.GetAll();
 
         if (index < 1 || index > producers.Count)
             throw PersonValidationException.SelectionOutOfRange("Producer");
@@ -150,3 +150,4 @@ public class MovieService
         return producers[index - 1];
     }
 }
+

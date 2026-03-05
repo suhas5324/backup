@@ -1,5 +1,6 @@
 public interface IProducerRepository
 {
-    void AddProducer(Producer producer);
-    List<Producer> GetAllProducers();
+    void Add(Producer producer);
+    List<Producer> GetAll();
 }
+

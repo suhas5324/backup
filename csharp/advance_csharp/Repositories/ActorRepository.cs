@@ -14,13 +14,14 @@ public class ActorRepository : IActorRepository
         new Actor { Name = "Joaquin Phoenix" }
     };
 
-    public void AddActor(Actor actor)
+    public void Add(Actor actor)
     {
         _actors.Add(actor);
     }
 
-    public List<Actor> GetAllActors()
+    public List<Actor> GetAll()
     {
         return _actors;
     }
 }
+

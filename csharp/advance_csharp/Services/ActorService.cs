@@ -10,28 +10,28 @@ public class ActorService
         _actorRepository = actorRepository;
     }
 
-    public void AddActor(string? actorName, string? actorDob)
+    public void Add(string? actorName, string? actorDob)
     {
         string name = ValidateActorName(actorName);
         DateTime dateOfBirth = ValidateDateOfBirth(actorDob);
 
         bool actorExists = _actorRepository
-            .GetAllActors()
+            .GetAll()
             .Any(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (actorExists)
             throw PersonValidationException.AlreadyExists("Actor");
 
-        _actorRepository.AddActor(new Actor
+        _actorRepository.Add(new Actor
         {
             Name = name,
             DateOfBirth = dateOfBirth
         });
     }
 
-    public List<Actor> GetAllActors()
+    public List<Actor> GetAll()
     {
-        return _actorRepository.GetAllActors();
+        return _actorRepository.GetAll();
     }
 
     private DateTime ValidateDateOfBirth(string? input)
@@ -60,3 +60,4 @@ public class ActorService
         return value;
     }
 }
+

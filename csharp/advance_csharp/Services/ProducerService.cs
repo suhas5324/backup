@@ -7,28 +7,28 @@ public class ProducerService
         _producerRepository = producerRepository;
     }
 
-    public void AddProducer(string? producerName, string? producerDob)
+    public void Add(string? producerName, string? producerDob)
     {
         string name = ValidateProducerName(producerName);
         DateTime dateOfBirth = ValidateDateOfBirth(producerDob);
 
         bool producerExists = _producerRepository
-            .GetAllProducers()
+            .GetAll()
             .Any(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (producerExists)
             throw PersonValidationException.AlreadyExists("Producer");
 
-        _producerRepository.AddProducer(new Producer
+        _producerRepository.Add(new Producer
         {
             Name = name,
             DateOfBirth = dateOfBirth
         });
     }
 
-    public List<Producer> GetAllProducers()
+    public List<Producer> GetAll()
     {
-        return _producerRepository.GetAllProducers();
+        return _producerRepository.GetAll();
     }
 
     private string ValidateProducerName(string? input)
@@ -56,3 +56,4 @@ public class ProducerService
         return dateOfBirth.Date;
     }
 }
+

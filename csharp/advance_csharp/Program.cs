@@ -1,4 +1,4 @@
-﻿class Program
+class Program
 {
     static void Main()
     {
@@ -25,23 +25,23 @@
                 switch (choice.Trim())
                 {
                     case "1":
-                        ListMovies(movieService);
+                        List(movieService);
                         break;
 
                     case "2":
-                        AddMovie(movieService, actorService, producerService);
+                        Add(movieService, actorService, producerService);
                         break;
 
                     case "3":
-                        AddActor(actorService);
+                        Add(actorService);
                         break;
 
                     case "4":
-                        AddProducer(producerService);
+                        Add(producerService);
                         break;
 
                     case "5":
-                        DeleteMovie(movieService);
+                        Delete(movieService);
                         break;
 
                     case "6":
@@ -81,9 +81,9 @@
         Console.WriteLine("7. Exit");
     }
 
-    private static void ListMovies(MovieService movieService)
+    private static void List(MovieService movieService)
     {
-        List<Movie> movies = movieService.GetMoviesForDisplay();
+        List<Movie> movies = movieService.List();
 
         foreach (Movie movie in movies)
         {
@@ -95,7 +95,7 @@
         }
     }
 
-    private static void AddMovie(
+    private static void Add(
         MovieService movieService,
         ActorService actorService,
         ProducerService producerService)
@@ -111,7 +111,7 @@
         string? plot = Console.ReadLine();
 
         Console.WriteLine("\nAvailable Actors:");
-        List<Actor> actors = actorService.GetAllActors();
+        List<Actor> actors = actorService.GetAll();
         for (int i = 0; i < actors.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {actors[i].Name}");
@@ -121,7 +121,7 @@
         string? actorNumbers = Console.ReadLine();
 
         Console.WriteLine("\nAvailable Producers:");
-        List<Producer> producers = producerService.GetAllProducers();
+        List<Producer> producers = producerService.GetAll();
         for (int i = 0; i < producers.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {producers[i].Name}");
@@ -130,11 +130,11 @@
         Console.Write("\nEnter producer number: ");
         string? producerNumber = Console.ReadLine();
 
-        movieService.AddMovie(name, year, plot, actorNumbers, producerNumber);
+        movieService.Add(name, year, plot, actorNumbers, producerNumber);
         Console.WriteLine("\nMovie added successfully!");
     }
 
-    private static void AddActor(ActorService actorService)
+    private static void Add(ActorService actorService)
     {
         Console.WriteLine();
         Console.Write("Actor Name: ");
@@ -143,11 +143,11 @@
         Console.Write("Date of Birth: ");
         string? actorDob = Console.ReadLine();
 
-        actorService.AddActor(actorName, actorDob);
+        actorService.Add(actorName, actorDob);
         Console.WriteLine("\nActor added successfully!");
     }
 
-    private static void AddProducer(ProducerService producerService)
+    private static void Add(ProducerService producerService)
     {
         Console.WriteLine();
         Console.Write("Producer Name: ");
@@ -156,17 +156,17 @@
         Console.Write("Date of Birth: ");
         string? producerDob = Console.ReadLine();
 
-        producerService.AddProducer(producerName, producerDob);
+        producerService.Add(producerName, producerDob);
         Console.WriteLine("\nProducer added successfully!");
     }
 
-    private static void DeleteMovie(MovieService movieService)
+    private static void Delete(MovieService movieService)
     {
         Console.WriteLine();
         Console.Write("Enter movie name to delete: ");
         string? movieName = Console.ReadLine();
 
-        movieService.DeleteMovie(movieName);
+        movieService.Delete(movieName);
         Console.WriteLine("Movie deleted successfully.");
     }
 
@@ -229,3 +229,4 @@
         }
     }
 }
+

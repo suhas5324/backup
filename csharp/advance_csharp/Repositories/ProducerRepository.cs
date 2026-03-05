@@ -14,13 +14,14 @@ public class ProducerRepository : IProducerRepository
         new Producer { Name = "Jordan Peele" }
     };
 
-    public void AddProducer(Producer producer)
+    public void Add(Producer producer)
     {
         _producers.Add(producer);
     }
 
-    public List<Producer> GetAllProducers()
+    public List<Producer> GetAll()
     {
         return _producers;
     }
 }
+

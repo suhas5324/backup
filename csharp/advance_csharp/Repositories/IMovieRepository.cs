@@ -1,6 +1,6 @@
 public interface IMovieRepository
 {
-    void AddMovie(Movie movie);
-    List<Movie> GetAllMovies();
-    void DeleteMovie(string name);
+    void Add(Movie movie);
+    List<Movie> GetAll();
+    void Delete(string name);
 }

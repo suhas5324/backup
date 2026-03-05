@@ -1,5 +1,6 @@
 public interface IActorRepository
 {
-    void AddActor(Actor actor);
-    List<Actor> GetAllActors();
+    void Add(Actor actor);
+    List<Actor> GetAll();
 }
+

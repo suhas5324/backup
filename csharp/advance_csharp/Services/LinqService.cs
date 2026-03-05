@@ -13,7 +13,7 @@ public class LinqService
 
     public List<Movie> GetMoviesReleasedAfter(int year)
     {
-        return _movieRepository.GetAllMovies()
+        return _movieRepository.GetAll()
             .Where(m => m.YearOfRelease > year)
             .ToList();
     }
@@ -22,7 +22,7 @@ public class LinqService
     {
         string name = (producerName ?? string.Empty).Trim();
 
-        return _movieRepository.GetAllMovies()
+        return _movieRepository.GetAll()
             .Where(m => m.Producer != null
                         && m.Producer.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
             .ToList();
@@ -30,7 +30,7 @@ public class LinqService
 
     public List<string> GetAllMovieNamesAndYears()
     {
-        return _movieRepository.GetAllMovies()
+        return _movieRepository.GetAll()
             .Select(m => $"{m.Name} ({m.YearOfRelease})")
             .ToList();
     }
@@ -39,7 +39,7 @@ public class LinqService
     {
         string value = (keyword ?? string.Empty).Trim();
 
-        return _movieRepository.GetAllMovies()
+        return _movieRepository.GetAll()
             .FirstOrDefault(m => m.Name.Contains(value, StringComparison.OrdinalIgnoreCase));
     }
 
@@ -47,9 +47,10 @@ public class LinqService
     {
         string name = (actorName ?? string.Empty).Trim();
 
-        return _movieRepository.GetAllMovies()
+        return _movieRepository.GetAll()
             .Where(m => m.Actors != null
                         && m.Actors.Any(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             .ToList();
     }
 }
+
