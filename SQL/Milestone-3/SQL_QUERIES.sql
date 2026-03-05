@@ -11,7 +11,7 @@ FROM Foundation.Actors
 -- 2.Write a query to get the list of Actors who have worked with a given producer X.
 SELECT DISTINCT A.ActorName
 FROM Foundation.Actors A
- JOIN Foundation.Actors_Movie AM
+ JOIN Foundation.Actors_Movies AM
     ON A.Id = AM.ActorId
  JOIN Foundation.Movies M
     ON AM.MovieId = M.Id
@@ -25,8 +25,8 @@ SELECT
     A1.ActorName AS Actor1,
     A2.ActorName AS Actor2,
     COUNT(*) AS MoviesTogether
-FROM Foundation.Actors_Movie AM1
-JOIN Foundation.Actors_Movie AM2
+FROM Foundation.Actors_Movies AM1
+JOIN Foundation.Actors_Movies AM2
     ON AM1.MovieId = AM2.MovieId
     AND AM1.ActorId < AM2.ActorId
 JOIN Foundation.Actors A1
@@ -57,8 +57,8 @@ JOIN Foundation.Actors A2
 WHERE NOT EXISTS
 (
     SELECT 1
-    FROM Foundation.Actors_Movie AM1
-    JOIN Foundation.Actors_Movie AM2
+    FROM Foundation.Actors_Movies AM1
+    JOIN Foundation.Actors_Movies AM2
         ON AM1.MovieId = AM2.MovieId
     WHERE AM1.ActorId = A1.Id
       AND AM2.ActorId = A2.Id
@@ -86,7 +86,7 @@ SELECT
     M.MovieLanguage,
     SUM(M.Profit) AS TotalProfit
 FROM Foundation.Movies M
-JOIN Foundation.Actors_Movie AM 
+JOIN Foundation.Actors_Movies AM 
     ON M.Id = AM.MovieId
 JOIN Foundation.Actors A 
     ON AM.ActorId = A.Id

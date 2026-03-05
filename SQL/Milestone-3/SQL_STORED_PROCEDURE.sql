@@ -18,7 +18,7 @@ BEGIN
 
     SET @MovieId = SCOPE_IDENTITY();
 
-    INSERT INTO Foundation.Actors_Movie (ActorId, MovieId)
+    INSERT INTO Foundation.Actors_Movies (ActorId, MovieId)
     SELECT CAST(value AS INT), @MovieId
     FROM STRING_SPLIT(@ActorIds, ',');
 
@@ -33,7 +33,7 @@ CREATE PROCEDURE Foundation.usp_DeleteMovie
 AS
 BEGIN
 
-    DELETE FROM Foundation.Actors_Movie
+    DELETE FROM Foundation.Actors_Movies
     WHERE MovieId = @MovieId;
 
     DELETE FROM Foundation.Movies
@@ -51,7 +51,7 @@ AS
 BEGIN
 
     DELETE AM
-    FROM Foundation.Actors_Movie AM
+    FROM Foundation.Actors_Movies AM
     INNER JOIN Foundation.Movies M
         ON AM.MovieId = M.Id
     WHERE M.ProducerId = @ProducerId;
@@ -73,7 +73,7 @@ CREATE PROCEDURE Foundation.usp_DeleteActor
 AS
 BEGIN
 
-    DELETE FROM Foundation.Actors_Movie
+    DELETE FROM Foundation.Actors_Movies
     WHERE ActorId = @ActorId;
 
     DELETE FROM Foundation.Actors
