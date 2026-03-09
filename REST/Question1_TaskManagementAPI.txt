@@ -1,0 +1,161 @@
+Question 1: RESTful API Design - Task Management System
+
+Base URL: /v1
+
+1) Users and Authentication
+
+- Register User
+  Endpoint: POST /users
+  Request Body:
+  {
+    "name": "Unknown",
+    "email": "example-gmail@example.com",
+    "password": "StrongPass@123"
+  }
+  Response Status: 201 Created
+
+- Update User Profile
+  Endpoint: PUT /users/{userId}
+  Request Body:
+  {
+    "name": "Anonymous",
+    "timezone": "Asia/Kolkata",
+    "avatar_url": "example.png"
+  }
+  Response Status: 200 OK
+
+- Login
+  Endpoint: POST /auth/login
+  Request Body:
+  {
+    "email": "example-email@example.com",
+    "password": "StrongPass@123"
+  }
+  Response Status: 200 OK
+
+- Logout
+  Endpoint: POST /auth/logout
+  Request Body:
+  {
+    "refresh_token": "token_value"
+  }
+  Response Status: 204 No Content
+
+2) Task CRUD + Filtering + Pagination + Sorting
+
+- Create Task
+  Endpoint: POST /tasks
+  Request Body:
+  {
+    "title": "value",
+    "description": "value",
+    "status": "pending/completed",
+    "priority": "high/low/moderate",
+    "due_date": "2026-03-20",
+    "assignee_id": "u_123",
+    "project_id": "p_001"
+  }
+  Response Status: 201 Created
+
+- Retrieve Tasks (with filtering, pagination, sorting)
+  Endpoint:
+  GET /tasks?status=in_progress&priority=high&due_date_from=2026-03-01&due_date_to=2026-03-31&page=1&page_size=20&sort_by=due_date&sort_order=asc
+  Response Status: 200 OK
+
+  Supported query parameters:
+  - status (pending/in_progress/completed)
+  - priority (low/medium/high)
+  - due_date_from
+  - due_date_to
+  - page
+  - page_size
+  - sort_by (due_date/priority/status/created_at)
+  - sort_order (asc/desc)
+
+- Retrieve Single Task
+  Endpoint: GET /tasks/{taskId}
+  Response Status: 200 OK
+
+- Update Task
+  Endpoint: PATCH /tasks/{taskId}
+  Request Body:
+  {
+    "title": "Prepare sprint board v2",
+    "priority": "medium",
+    "due_date": "2026-03-22"
+  }
+  Response Status: 200 OK
+
+- Delete Task
+  Endpoint: DELETE /tasks/{taskId}
+  Response Status: 204 No Content
+
+3) Task Status Update
+
+- Mark Task as Completed / In-Progress / Pending
+  Endpoint: PATCH /tasks/{taskId}/status
+  Request Body:
+  {
+    "status": "completed"
+  }
+  Allowed values: pending, in_progress, completed
+  Response Status: 200 OK
+
+4) Projects + Task Association
+
+- Create Project
+  Endpoint: POST /projects
+  Request Body:
+  {
+    "name": "Website Revamp",
+    "description": "Q2 redesign"
+  }
+  Response Status: 201 Created
+
+- Retrieve Tasks for a Specific Project
+  Endpoint: GET /projects/{projectId}/tasks
+  Response Status: 200 OK
+
+5) Nested Subtask Routes
+
+- Create Subtask under Task
+  Endpoint: POST /tasks/{taskId}/subtasks
+  Request Body:
+  {
+    "title": "Create wireframes",
+    "status": "pending",
+    "due_date": "2026-03-15"
+  }
+  Response Status: 201 Created
+
+- Retrieve Subtasks for a Task
+  Endpoint: GET /tasks/{taskId}/subtasks
+  Response Status: 200 OK
+
+6) Nested Comment Routes under Task
+
+- Add Comment to Task
+  Endpoint: POST /tasks/{taskId}/comments
+  Request Body:
+  {
+    "body": "Blocked by API dependency"
+  }
+  Response Status: 201 Created
+
+- Retrieve Comments for Task
+  Endpoint: GET /tasks/{taskId}/comments
+  Response Status: 200 OK
+
+7) Tasks Assigned to a Specific User
+
+- Retrieve Assigned Tasks
+  Endpoint: GET /users/{userId}/tasks
+  Response Status: 200 OK
+
+Common Error Status Codes
+- 400 Bad Request
+- 401 Unauthorized
+- 403 Forbidden
+- 404 Not Found
+- 409 Conflict
+- 422 Unprocessable Entity
