@@ -319,9 +319,10 @@ StyleCopReport.xml
 *.ipdb
 *_wpftmp.csproj
 *.tlog
-
+*.csproj
+*.sln
 # Chutzpah Test files
-
+.dotnet
 # Visual C++ cache files
 
 # Visual Studio profiler
