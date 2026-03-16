@@ -6,7 +6,7 @@ GO
 
 CREATE TABLE Foundation.Actors (
 	Id INT IDENTITY(1, 1)
-	,ActorName VARCHAR(50) NOT NULL
+	,Name VARCHAR(50) NOT NULL
 	,Sex VARCHAR(20)
 	,DateOfBirth DATE
 	,Bio VARCHAR(100)
@@ -16,7 +16,7 @@ CREATE TABLE Foundation.Actors (
 
 CREATE TABLE Foundation.Producers (
 	Id INT IDENTITY(1, 1)
-	,ProducerName VARCHAR(50) NOT NULL
+	,Name VARCHAR(50) NOT NULL
 	,Sex VARCHAR(20)
 	,DateOfBirth DATE
 	,Bio VARCHAR(100)
@@ -26,7 +26,7 @@ CREATE TABLE Foundation.Producers (
 
 CREATE TABLE Foundation.Movies (
 	Id INT IDENTITY(1, 1)
-	,MovieName VARCHAR(100) NOT NULL
+	,Name VARCHAR(100) NOT NULL
 	,YearOfRelease INT NOT NULL
 	,Plot VARCHAR(500)
 	,PosterImagePath VARCHAR(500)
@@ -73,11 +73,11 @@ FOR CreatedAt;
 ALTER TABLE Foundation.Actors_Movies ADD CONSTRAINT DF_Foundation_Actors_Movies_CreatedAt DEFAULT GETDATE ()
 FOR CreatedAt;
 
-ALTER TABLE Foundation.Movies ADD MovieLanguage VARCHAR(50)
+ALTER TABLE Foundation.Movies ADD Language VARCHAR(50)
 	,Profit INT;
 
 INSERT INTO Foundation.Producers (
-	ProducerName
+	Name
 	,DateOfBirth
 	,Bio
 	)
@@ -93,7 +93,7 @@ VALUES (
 	);
 
 INSERT INTO Foundation.Actors (
-	ActorName
+	Name
 	,DateOfBirth
 	,Bio
 	)
@@ -119,12 +119,12 @@ VALUES (
 	);
 
 INSERT INTO Foundation.Movies (
-	MovieName
+	Name
 	,YearOfRelease
 	,Plot
 	,PosterImagePath
 	,ProducerId
-	,MovieLanguage
+	,Language
 	,Profit
 	)
 VALUES (
