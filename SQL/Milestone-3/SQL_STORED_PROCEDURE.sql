@@ -11,30 +11,41 @@ AS
 BEGIN
 	DECLARE @MovieId INT;
 
-	INSERT INTO Foundation.Movies (
-		MovieName
-		,YearOfRelease
-		,Plot
-		,PosterImagePath
-		,ProducerId
-		)
-	VALUES (
-		@Name
-		,@YearOfRelease
-		,@Plot
-		,@PosterImagePath
-		,@ProducerId
-		);
+	BEGIN TRY
+		BEGIN TRANSACTION;
 
-	SET @MovieId = SCOPE_IDENTITY();
+		INSERT INTO Foundation.Movies (
+			MovieName
+			,YearOfRelease
+			,Plot
+			,PosterImagePath
+			,ProducerId
+			)
+		VALUES (
+			@Name
+			,@YearOfRelease
+			,@Plot
+			,@PosterImagePath
+			,@ProducerId
+			);
 
-	INSERT INTO Foundation.Actors_Movies (
-		ActorId
-		,MovieId
-		)
-	SELECT CAST(value AS INT)
-		,@MovieId
-	FROM STRING_SPLIT(@ActorIds, ',');
+		SET @MovieId = SCOPE_IDENTITY();
+
+		INSERT INTO Foundation.Actors_Movies (
+			ActorId
+			,MovieId
+			)
+		SELECT CAST(value AS INT)
+			,@MovieId
+		FROM STRING_SPLIT(@ActorIds, ',');
+
+		COMMIT TRANSACTION;
+	END TRY
+
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0
+			ROLLBACK TRANSACTION;
+	END CATCH
 END;
 
 -- Question 2

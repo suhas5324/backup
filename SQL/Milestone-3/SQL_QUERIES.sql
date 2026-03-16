@@ -1,10 +1,6 @@
 -- 1.Write a query to get the age of the Actors in Days(Number of days).
 SELECT ActorName
-	,CASE 
-		WHEN DateOfBirth IS NOT NULL
-			THEN DATEDIFF(DAY, DateOfBirth, GETDATE())
-		ELSE NULL
-		END AS AgeInTotalDays
+	,DATEDIFF(DAY, DateOfBirth, GETDATE()) AS AgeInTotalDays
 FROM Foundation.Actors
 
 -- 2.Write a query to get the list of Actors who have worked with a given producer X.
@@ -29,25 +25,21 @@ GROUP BY A1.ActorName
 HAVING COUNT(*) >= 2
 
 -- 4.Write a query to get the youngest actor.
-SELECT *
+SELECT TOP 1 *
 FROM Foundation.Actors
-WHERE DateOfBirth = (
-		SELECT MAX(DateOfBirth)
-		FROM Foundation.Actors
-		);
+ORDER BY DateOfBirth DESC;
 
 -- 5.Write a query to get the actors who have never worked together.
 SELECT A1.ActorName AS Actor1
 	,A2.ActorName AS Actor2
 FROM Foundation.Actors A1
 JOIN Foundation.Actors A2 ON A1.Id < A2.Id
-WHERE NOT EXISTS (
-		SELECT 1
-		FROM Foundation.Actors_Movies AM1
-		JOIN Foundation.Actors_Movies AM2 ON AM1.MovieId = AM2.MovieId
-		WHERE AM1.ActorId = A1.Id
-			AND AM2.ActorId = A2.Id
-		)
+LEFT JOIN Foundation.Actors_Movie AM1 ON A1.Id = AM1.ActorId
+LEFT JOIN Foundation.Actors_Movie AM2 ON A2.Id = AM2.ActorId
+	AND AM1.MovieId = AM2.MovieId
+GROUP BY A1.ActorName
+	,A2.ActorName
+HAVING COUNT(AM2.ActorId) = 0;
 
 -- 6.Write a query to get the number of movies in each language.
 SELECT MovieLanguage
