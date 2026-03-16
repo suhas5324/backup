@@ -15,7 +15,7 @@ BEGIN
 		BEGIN TRANSACTION;
 
 		INSERT INTO Foundation.Movies (
-			MovieName
+			Name
 			,YearOfRelease
 			,Plot
 			,PosterImagePath
@@ -49,45 +49,45 @@ BEGIN
 END;
 
 -- Question 2
-CREATE PROCEDURE Foundation.usp_DeleteMovie (@MovieId INT)
+CREATE PROCEDURE Foundation.usp_DeleteMovie (@Id INT)
 AS
 BEGIN
 	DELETE
 	FROM Foundation.Actors_Movies
-	WHERE MovieId = @MovieId;
+	WHERE MovieId = @Id;
 
 	DELETE
 	FROM Foundation.Movies
-	WHERE Id = @MovieId;
+	WHERE Id = @Id;
 END;
 
 -- Question 3
-CREATE PROCEDURE Foundation.usp_DeleteProducer (@ProducerId INT)
+CREATE PROCEDURE Foundation.usp_DeleteProducer (@Id INT)
 AS
 BEGIN
 	DELETE AM
 	FROM Foundation.Actors_Movies AM
 	INNER JOIN Foundation.Movies M ON AM.MovieId = M.Id
-	WHERE M.ProducerId = @ProducerId;
+	WHERE M.ProducerId = @Id;
 
 	DELETE
 	FROM Foundation.Movies
-	WHERE ProducerId = @ProducerId;
+	WHERE ProducerId = @Id;
 
 	DELETE
 	FROM Foundation.Producers
-	WHERE Id = @ProducerId;
+	WHERE Id = @Id;
 END;
 
 -- Question 4
-CREATE PROCEDURE Foundation.usp_DeleteActor (@ActorId INT)
+CREATE PROCEDURE Foundation.usp_DeleteActor (@Id INT)
 AS
 BEGIN
 	DELETE
 	FROM Foundation.Actors_Movies
-	WHERE ActorId = @ActorId;
+	WHERE ActorId = @Id;
 
 	DELETE
 	FROM Foundation.Actors
-	WHERE Id = @ActorId;
+	WHERE Id = @Id;
 END;
