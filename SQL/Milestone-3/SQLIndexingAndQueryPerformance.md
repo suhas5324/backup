@@ -32,12 +32,7 @@ This allows SQL Server to directly locate the movie using an Index Seek instead 
 
 **QUESTION 2:**
 
-**Users most frequently search for movies by name using the following query:**
-
-**SELECT \* FROM Foundation.Movies WHERE name = 'Bugonia';**
-
-**Which type of index would be most efficient for this query? Write the SQL statement to create that index.**
-
+**When a PRIMARY KEY constraint is created on a table, is a clustered index automatically created?**
 
 
 **ANSWER:**
