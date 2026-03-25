@@ -1,4 +1,3 @@
-﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IMDB_WebApplication.Controllers
@@ -8,7 +7,7 @@ namespace IMDB_WebApplication.Controllers
     public class ActorsController : ControllerBase
     {
         [HttpPost]
-        public IActionResult Create([FromBody] Actor actor)
+        public IActionResult Create()
         {
             return StatusCode(201);
         }
@@ -26,7 +25,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Actor actor)
+        public IActionResult Update(int id)
         {
             return NoContent();
         }

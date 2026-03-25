@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 public class GenresController : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create([FromBody] Genre genre)
+    public IActionResult Create()
     {
         return StatusCode(201);
     }
@@ -23,7 +23,7 @@ public class GenresController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromBody] Genre genre)
+    public IActionResult Update(int id)
     {
         return NoContent();
     }

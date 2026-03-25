@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 public class ReviewsController : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create(int movieId, [FromBody] Review review)
+    public IActionResult Create(int movieId)
     {
         return StatusCode(201);
     }
@@ -23,7 +23,7 @@ public class ReviewsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int movieId, int id, [FromBody] Review review)
+    public IActionResult Update(int movieId, int id)
     {
         return NoContent();
     }

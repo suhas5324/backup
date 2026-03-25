@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 public class MoviesController : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create([FromBody] Movie movie)
+    public IActionResult Create()
     {
         return StatusCode(201);
     }
@@ -23,7 +23,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromBody] Movie movie)
+    public IActionResult Update(int id)
     {
         return NoContent();
     }

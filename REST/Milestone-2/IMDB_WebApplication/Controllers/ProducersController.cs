@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 public class ProducersController : ControllerBase
 {
     [HttpPost]
-    public IActionResult Create([FromBody] Producer producer)
+    public IActionResult Create()
     {
         return StatusCode(201);
     }
@@ -23,7 +23,7 @@ public class ProducersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromBody] Producer producer)
+    public IActionResult Update(int id)
     {
         return NoContent();
     }
