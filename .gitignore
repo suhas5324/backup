@@ -312,23 +312,17 @@ ScaffoldingReadMe.txt
 
 # StyleCop
 StyleCopReport.xml
-
+**/Milestone-2/
 # Files built by Visual Studio
 *_h.h
 *.iobj
 *.ipdb
 *_wpftmp.csproj
 *.tlog
-<<<<<<< HEAD
 *.csproj
 *.sln
 # Chutzpah Test files
 .dotnet
-=======
-
-# Chutzpah Test files
-
->>>>>>> 5f35264 (Improve input validation and file handling robustness)
 # Visual C++ cache files
 
 # Visual Studio profiler
