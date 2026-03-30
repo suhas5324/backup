@@ -320,7 +320,7 @@ StyleCopReport.xml
 *.ipdb
 *_wpftmp.csproj
 *.tlog
-
+*.dotnet*
 # Chutzpah Test files
 
 # Visual C++ cache files
