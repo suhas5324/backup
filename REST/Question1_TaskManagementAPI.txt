@@ -72,6 +72,30 @@ Base URL: /v1
   - sort_by (due_date/priority/status/created_at)
   - sort_order (asc/desc)
 
+- Retrieve Tasks by Status
+  Endpoint: GET /tasks?status={pending}
+  Response Status: 200 OK
+
+- Retrieve Tasks by Priority
+  Endpoint: GET /tasks?priority={medium}
+  Response Status: 200 OK
+
+- Retrieve Tasks by Due Date From
+  Endpoint: GET /tasks?due_date_from={2026-03-30}
+  Response Status: 200 OK
+
+- Retrieve Tasks by Due Date To
+  Endpoint: GET /tasks?due_date_to={2024-04-03}
+  Response Status: 200 OK
+
+- Retrieve Tasks with Pagination
+  Endpoint: GET /tasks?page={1}&page_size={1}
+  Response Status: 200 OK
+
+- Retrieve Tasks with Sorting
+  Endpoint: GET /tasks?sort_by={due_date}&sort_order={asc}
+  Response Status: 200 OK
+
 - Retrieve Single Task
   Endpoint: GET /tasks/{taskId}
   Response Status: 200 OK
@@ -93,12 +117,15 @@ Base URL: /v1
 3) Task Status Update
 
 - Mark Task as Completed / In-Progress / Pending
-  Endpoint: PATCH /tasks/{taskId}/status
-  Request Body:
-  {
-    "status": "completed"
-  }
-  Allowed values: pending, in_progress, completed
+  Endpoint: PATCH /tasks/{taskId}?status=completed
+  Response Status: 200 OK
+
+- Mark Task as In-Progress
+  Endpoint: PATCH /tasks/{taskId}?status=in_progress
+  Response Status: 200 OK
+
+- Mark Task as Pending
+  Endpoint: PATCH /tasks/{taskId}?status=pending
   Response Status: 200 OK
 
 4) Projects + Task Association
@@ -112,8 +139,42 @@ Base URL: /v1
   }
   Response Status: 201 Created
 
-- Retrieve Tasks for a Specific Project
-  Endpoint: GET /projects/{projectId}/tasks
+- Retrieve Tasks for a Specific Project (with filtering, pagination, sorting)
+  Endpoint: GET /projects/{projectId}/tasks?status=pending&priority=high&due_date_from=2026-03-01&due_date_to=2026-03-31&page=1&page_size=20&sort_by=due_date&sort_order=desc
+  Response Status: 200 OK
+
+  Supported query parameters:
+  - status (pending/in_progress/completed)
+  - priority (low/medium/high)
+  - due_date_from
+  - due_date_to
+  - page
+  - page_size
+  - sort_by (due_date/priority/status/created_at)
+  - sort_order (asc/desc)
+
+- Retrieve Tasks for a Specific Project by Status
+  Endpoint: GET /projects/{projectId}/tasks?status=pending
+  Response Status: 200 OK
+
+- Retrieve Tasks for a Specific Project by Priority
+  Endpoint: GET /projects/{projectId}/tasks?priority=high
+  Response Status: 200 OK
+
+- Retrieve Tasks for a Specific Project by Due Date From
+  Endpoint: GET /projects/{projectId}/tasks?due_date_from=2026-03-01
+  Response Status: 200 OK
+
+- Retrieve Tasks for a Specific Project by Due Date To
+  Endpoint: GET /projects/{projectId}/tasks?due_date_to=2026-03-31
+  Response Status: 200 OK
+
+- Retrieve Tasks for a Specific Project with Pagination
+  Endpoint: GET /projects/{projectId}/tasks?page=1&page_size=20
+  Response Status: 200 OK
+
+- Retrieve Tasks for a Specific Project with Sorting
+  Endpoint: GET /projects/{projectId}/tasks?sort_by=due_date&sort_order=desc
   Response Status: 200 OK
 
 5) Nested Subtask Routes
