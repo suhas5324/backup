@@ -9,7 +9,7 @@ Question 2: Endpoint to Controller Mapping (Order Management)
    Why: Fetches a product by ID; product resource responsibility.
 
 3) POST /v1/carts/{cartId}/items
-   Controller: CartItemsController
+   Controller: ItemsController
    Why: Adds item(s) to an existing cart; nested cart-items resource operation.
 
 4) POST /v1/users
@@ -25,7 +25,7 @@ Question 2: Endpoint to Controller Mapping (Order Management)
    Why: Lists product categories; category resource retrieval.
 
 7) POST /v1/products/{productId}/reviews
-   Controller: ProductReviewsController
+   Controller: ReviewsController
    Why: Creates review under a specific product; nested reviews resource.
 
 8) PUT /v1/orders/{orderId}
@@ -33,7 +33,7 @@ Question 2: Endpoint to Controller Mapping (Order Management)
    Why: Replaces/updates full order representation by order ID.
 
 9) POST /v1/users/{userId}/addresses
-   Controller: UserAddressesController
+   Controller: AddressesController
    Why: Adds address to a specific user; nested user-addresses resource.
 
 10) POST /v1/auth/login
@@ -49,13 +49,13 @@ Question 2: Endpoint to Controller Mapping (Order Management)
     Why: Full update of particular user profile/entity.
 
 13) GET /v1/products/{productId}/discounts
-    Controller: ProductDiscountsController
+    Controller: DiscountsController
     Why: Retrieves discount data tied to a specific product.
 
 14) GET /v1/products/{productId}/availability
-    Controller: ProductAvailabilityController
+    Controller: AvailabilityController
     Why: Checks inventory/availability state for a specific product.
 
 15) GET /v1/users/{userId}/orders
-    Controller: UserOrdersController
+    Controller: OrdersController
     Why: Retrieves orders scoped to one user via nested user context.
