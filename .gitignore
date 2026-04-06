@@ -282,7 +282,7 @@ __pycache__/
 
 # Mono auto generated files
 mono_crash.*
-
+**/Milestone-3/
 # Build results
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
