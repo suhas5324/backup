@@ -40,18 +40,23 @@ namespace IMDB_WebApplication.Repositories.Implementations
         }
         public IList<Movie> Get()
         {
-            string query = @"SELECT * FROM foundation.movies";
+            string query = @"SELECT *
+FROM foundation.movies";
             return Get(query);
         }
         public IList<Movie> GetAll(int year)
         {
-            string query = @"SELECT * FROM foundation.movies WHERE yearofrelease = @Year";
+            string query = @"SELECT *
+FROM foundation.movies
+WHERE yearofrelease = @Year";
             return GetAll(query, new { Year = year });
         }
 
         public Movie Get(int id)
         {
-            string query = @"SELECT * FROM foundation.movies WHERE id = @Id";
+            string query = @"SELECT *
+FROM foundation.movies
+WHERE id = @Id";
             return Get(query, new { Id = id });
         }
         public Movie Update(int id, Movie movie)
@@ -82,7 +87,9 @@ namespace IMDB_WebApplication.Repositories.Implementations
         }
         public Movie Delete(int id)
         {
-            string query = @"DELETE FROM foundation.movies WHERE id = @Id";
+            string query = @"DELETE
+FROM foundation.movies
+WHERE id = @Id";
 
             var movie = Get(id);
 

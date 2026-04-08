@@ -30,6 +30,7 @@ namespace IMDB_WebApplication.Services.Implementations
             
             var producer = mapper.Map<Producer>(request);
             producer.Name = request.Name.Trim();
+            producer.DateOfBirth = request.DateOfBirth;
             producer.Bio = request.Bio?.Trim();
             producer.Gender = request.Gender?.Trim();
 
@@ -70,6 +71,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var producer = mapper.Map<Producer>(request);
             producer.Id = id;
             producer.Name = request.Name.Trim();
+            producer.DateOfBirth = request.DateOfBirth;
             producer.Bio = request.Bio?.Trim();
             producer.Gender = request.Gender?.Trim();
 

@@ -29,6 +29,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             var actor = mapper.Map<Actor>(request);
             actor.Name = request.Name.Trim();
+            actor.DateOfBirth = request.DateOfBirth;
             actor.Bio = request.Bio?.Trim();
             actor.Gender = request.Gender?.Trim();
 
@@ -69,6 +70,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var actor = mapper.Map<Actor>(request);
             actor.Id = id;
             actor.Name = request.Name.Trim();
+            actor.DateOfBirth = request.DateOfBirth;
             actor.Bio = request.Bio?.Trim();
             actor.Gender = request.Gender?.Trim();
 

@@ -1,13 +1,14 @@
+using IMDB.API.Services.Implementations;
+using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Implementations;
 using IMDB_WebApplication.Repositories.Interfaces;
-using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Services.Implementations;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Supabase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +33,6 @@ namespace IMDB.API
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var secretKey = Configuration["JWT:Secret"];
@@ -69,7 +69,7 @@ namespace IMDB.API
             services.AddSingleton<IActorRepository, ActorRepository>();
             services.AddSingleton<IGenreService, GenreService>();
             services.AddSingleton<IGenreRepository, GenreRepository>();
-            services.AddSingleton<IMovieService, MovieService>();
+            services.AddScoped<IMovieService, MovieService>();
             services.AddSingleton<IMovieRepository, MovieRepository>();
             services.AddSingleton<IProducerService, ProducerService>();
             services.AddSingleton<IProducerRepository, ProducerRepository>();
@@ -79,9 +79,21 @@ namespace IMDB.API
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.Configure<ConnectionString>(Configuration.GetSection("ConnectionString"));
-        }
+            services.AddSingleton<Client>(sp =>
+            {
+                var config = sp.GetRequiredService<IConfiguration>();
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+                var url = config["Supabase:Url"];
+                var key = config["Supabase:Key"];
+
+                var client = new Client(url, key);
+                client.InitializeAsync().Wait();
+
+                return client;
+            });
+
+            services.AddScoped<SupabaseService>();
+        }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

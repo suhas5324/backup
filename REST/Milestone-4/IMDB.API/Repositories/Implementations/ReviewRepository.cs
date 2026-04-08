@@ -15,34 +15,46 @@ namespace IMDB_WebApplication.Repositories.Implementations
 
         public void Create(Review review)
         {
-            string query=@"Insert into foundation.reviews (movieid, message)
-             values (@MovieId,@Message)";
+            string query=@"INSERT INTO foundation.reviews (
+	movieid
+	,message
+	)
+VALUES (
+	@MovieId
+	,@Message
+	)";
             Create(query, new { MovieId = review.MovieId, Message = review.Message });
         }
 
         public IList<Review> Get(int movieId)
         {
-            string query = @"Select * from foundation.reviews where movieid = @MovieId";
+            string query = @"SELECT *
+FROM foundation.reviews
+WHERE movieid = @MovieId";
             return GetAll(query, new { MovieId = movieId });
         }
 
         public Review Get(int movieId, int id)
         {
-            string query = @"Select * from foundation.reviews where id = @Id and movieid = @MovieId";
+            string query = @"SELECT *
+FROM foundation.reviews
+WHERE id = @Id AND movieid = @MovieId";
             return Get(query, new { Id = id, MovieId = movieId });
         }
 
         public Review Update(int movieId, int id, Review review)
         {
-            string query = @"Update foundation.reviews 
-            set message = @Message where id = @Id and movieid = @MovieId";
+            string query = @"UPDATE foundation.reviews
+SET message = @Message
+WHERE id = @Id AND movieid = @MovieId";
             Update(query, new { Id = id, MovieId = movieId, Message = review.Message });
             return Get(movieId, id);
         }
 
         public Review Delete(int movieId, int id)
         {
-            string query = @"Delete from foundation.reviews where id = @Id and movieid = @MovieId";
+            string query = @"DELETE FROM foundation.reviews
+WHERE id = @Id AND movieid = @MovieId";
             var review = Get(movieId, id);
             if (review != null)
             {

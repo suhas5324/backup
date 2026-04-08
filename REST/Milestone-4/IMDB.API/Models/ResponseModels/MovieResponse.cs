@@ -9,6 +9,6 @@ namespace IMDB_WebApplication.Models.Responses
         public int YearOfRelease { get; set; }
         public string Plot { get; set; }
         public int ProducerId { get; set; }
-        public string CoverImage { get; set; }
+        public string? CoverImage { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using IMDB.API.Services.Implementations;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
@@ -12,14 +13,16 @@ namespace IMDB_WebApplication.Services.Implementations
     public class MovieService : IMovieService
     {
         private readonly IMovieRepository movieRepository;
-        // private readonly IProducerRepository producerRepository;
         private readonly IMapper mapper;
-
-        public MovieService(IMovieRepository movieRepository, IProducerRepository producerRepository, IMapper mapper)
+        private readonly SupabaseService supabaseService;
+        public MovieService(
+            IMovieRepository movieRepository,
+            IMapper mapper,
+            SupabaseService supabaseService)
         {
             this.movieRepository = movieRepository;
-            //this.producerRepository = producerRepository;
             this.mapper = mapper;
+            this.supabaseService = supabaseService;
         }
 
         public MovieResponse Create(MovieRequest request)
@@ -29,19 +32,28 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-
             var movie = mapper.Map<Movie>(request);
+
             movie.Name = request.Name.Trim();
             movie.Plot = request.Plot?.Trim();
-            movie.CoverImage = request.CoverImage?.Trim();
             movie.ProducerId = request.ProducerId;
-            movie.actorIds = string.Join(",", request.actorIds);
+            if (request.CoverImage != null && request.CoverImage.Length > 0)
+            {
+                movie.CoverImage = supabaseService.UploadFile(request.CoverImage).Result;
+            }
+
+            movie.actorIds = (request.actorIds != null && request.actorIds.Any())
+                ? string.Join(",", request.actorIds)
+                : null;
             movie.genreIds = (request.genreIds != null && request.genreIds.Any())
-    ? string.Join(",", request.genreIds)
-    : null;
+                ? string.Join(",", request.genreIds)
+                : null;
+
             movieRepository.Create(movie);
+
             var movies = movieRepository.Get();
-            movie.Id = movies.Count == 0 ? 1 : movies.Max(existingMovie => existingMovie.Id);
+            movie.Id = movies.Count == 0 ? 1 : movies.Max(x => x.Id);
+
             return mapper.Map<MovieResponse>(movie);
         }
 
@@ -68,23 +80,44 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            if (movieRepository.Get(id) == null)
+            var existingMovie = movieRepository.Get(id);
+            if (existingMovie == null)
             {
                 return null;
             }
 
             var movie = mapper.Map<Movie>(request);
+
             movie.Id = id;
             movie.Name = request.Name.Trim();
             movie.Plot = request.Plot?.Trim();
-            movie.CoverImage = request.CoverImage?.Trim();
             movie.ProducerId = request.ProducerId;
-            movie.actorIds = string.Join(",", request.actorIds);
+
+            if (request.CoverImage != null && request.CoverImage.Length > 0)
+            {
+                var newImageUrl = supabaseService.UploadFile(request.CoverImage).Result;
+
+                if (!string.IsNullOrEmpty(existingMovie.CoverImage))
+                {
+                    supabaseService.DeleteFile(existingMovie.CoverImage).Wait();
+                }
+
+                movie.CoverImage = newImageUrl;
+            }
+            else
+            {
+                movie.CoverImage = existingMovie.CoverImage;
+            }
+
+            movie.actorIds = (request.actorIds != null && request.actorIds.Any())
+                ? string.Join(",", request.actorIds)
+                : null;
             movie.genreIds = (request.genreIds != null && request.genreIds.Any())
-               ? string.Join(",", request.genreIds)
-               : null;
+                ? string.Join(",", request.genreIds)
+                : null;
 
             var updatedMovie = movieRepository.Update(id, movie);
+
             return mapper.Map<MovieResponse>(updatedMovie);
         }
 
@@ -94,8 +127,20 @@ namespace IMDB_WebApplication.Services.Implementations
             {
                 return null;
             }
-            var movie = movieRepository.Delete(id);
-            return mapper.Map<MovieResponse>(movie);
+
+            var movie = movieRepository.Get(id);
+
+            if (movie == null)
+                return null;
+
+            if (!string.IsNullOrEmpty(movie.CoverImage))
+            {
+                supabaseService.DeleteFile(movie.CoverImage).Wait();
+            }
+
+            var deletedMovie = movieRepository.Delete(id);
+
+            return mapper.Map<MovieResponse>(deletedMovie);
         }
 
     }

@@ -19,9 +19,14 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] MovieRequest request)
+        public IActionResult Create([FromForm] MovieRequest request)
         {
             var movie = movieService.Create(request);
+            if (movie == null)
+            {
+                return BadRequest("Invalid movie payload");
+            }
+
             return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
         }
 
@@ -44,11 +49,16 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] MovieRequest request)
+        public IActionResult Update(int id, [FromForm] MovieRequest request)
         {
             var updatedMovie = movieService.Update(id, request);
             if (updatedMovie == null)
             {
+                if (request == null || string.IsNullOrWhiteSpace(request.Name) || request.ProducerId <= 0 || id <= 0)
+                {
+                    return BadRequest("Invalid movie payload");
+                }
+
                 return NotFound("Movie not found");
             }
 

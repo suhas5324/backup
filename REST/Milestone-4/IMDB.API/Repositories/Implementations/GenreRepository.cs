@@ -15,29 +15,37 @@ namespace IMDB_WebApplication.Repositories.Implementations
         }
         public void Create(Genre genre)
         {
-            string query=@"Insert into foundation.genres (name) values(@Name)";
+            string query=@"INSERT INTO foundation.genres (name)
+VALUES (@Name)";
             Create(query, new { Name = genre.Name });
 
         }
         public IList<Genre> Get()
         {
-            string query = @"Select * from foundation.genres;";
+            string query = @"SELECT *
+FROM foundation.genres";
             return Get(query);
         }
         public Genre Get(int id)
         {
-            string query = @"Select * from foundation.genres where id=@id;";
-            return Get(query, new { id });
+            string query = @"SELECT *
+FROM foundation.genres
+WHERE id = @Id";
+            return Get(query, new { Id = id });
         }
         public Genre Update(int id,Genre genre)
         {
-            string query= @"Update foundation.genres set name=@Name where id=@id;";
+            string query= @"UPDATE foundation.genres
+SET name = @Name
+WHERE id = @Id";
             Update(query, new { Id = id, Name = genre.Name });
             return Get(id);
         }
         public Genre Delete(int id)
         {
-           string query = @"Delete from foundation.genres where id=@id;";
+           string query = @"DELETE
+FROM foundation.genres
+WHERE id = @Id";
             var genre = Get(id);
             if(genre!=null)
             Delete(query, new { id });

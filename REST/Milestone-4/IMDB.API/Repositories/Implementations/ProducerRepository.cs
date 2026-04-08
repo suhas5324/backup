@@ -18,34 +18,53 @@ namespace IMDB_WebApplication.Repositories.Implementations
 
         public void Create(Producer producer)
         {
-            string query = @"Insert into foundation.producers (name,bio,dateofbirth,gender)
-             values (@Name,@Bio,@DateOfBirth,@Gender);";
+            string query = @"INSERT INTO foundation.producers (
+	name
+	,bio
+	,dateofbirth
+	,gender
+	)
+VALUES (
+	@Name
+	,@Bio
+	,@DateOfBirth
+	,@Gender
+	);";
             Create(query, new { Name = producer.Name, Bio = producer.Bio, DateOfBirth = producer.DateOfBirth, Gender = producer.Gender });
         }
 
         public IList<Producer> Get()
         {
-            string query = @"Select * from foundation.producers;";
+            string query = @"SELECT *
+FROM foundation.producers";
             return Get(query);
         }
 
         public Producer Get(int id)
         {
-            string query = @"Select * from foundation.producers where id=@id;";
-            return Get(query, new { id = id });
+            string query = @"SELECT *
+FROM foundation.producers
+WHERE id = @Id";
+            return Get(query, new { Id = id });
         }
 
         public Producer Update(int id, Producer producer)
         {
-            string query = @"Update foundation.producers set name = @Name, bio = @Bio, dateofbirth = @DateOfBirth, gender = @Gender 
-            where id = @Id";
+            string query = @"UPDATE foundation.producers
+SET name = @Name
+	,bio = @Bio
+	,dateofbirth = @DateOfBirth
+	,gender = @Gender
+WHERE id = @Id";
             //  using var connection = new SqlConnection(_connectionString.IMDB);
-            Update(query, new { Id = id, Name = producer.Name, Bio = producer.Bio,DateOfBirth=producer.DateOfBirth });
+            Update(query, new { Id = id, Name = producer.Name, Bio = producer.Bio,DateOfBirth=producer.DateOfBirth, Gender = producer.Gender});
             return Get(id);
         }
         public Producer Delete(int id)
         {
-            string query = @"Delete from foundation.producers where id = @Id";
+            string query = @"DELETE
+FROM foundation.producers
+WHERE id = @Id";
             //  using var connection = new SqlConnection(_connectionString.IMDB);
             var producer = Get(id);
             if (producer != null)

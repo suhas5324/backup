@@ -11,8 +11,9 @@ namespace IMDB_WebApplication.Models.DBModels
         public string Plot { get; set; }
         [Required]
         public int ProducerId { get; set; }
+        [Required]
         public string actorIds { get; set; }
         public string genreIds { get; set; }
-        public string CoverImage { get; set; }
+        public string? CoverImage { get; set; }
     }
 }

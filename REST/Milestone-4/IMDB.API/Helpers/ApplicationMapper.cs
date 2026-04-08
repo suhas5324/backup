@@ -16,7 +16,7 @@ namespace IMDB_WebApplication.Helpers
             CreateMap<SignupRequest, User>().ReverseMap();
 
             CreateMap<ProducerRequest, Producer>().ReverseMap();
-            CreateMap<Producer,ProducerResponse>().ReverseMap();
+            CreateMap<ProducerResponse, Producer>().ReverseMap();
 
             CreateMap<GenreRequest,Genre>().ReverseMap();
             CreateMap<Genre,GenreResponse>().ReverseMap();
