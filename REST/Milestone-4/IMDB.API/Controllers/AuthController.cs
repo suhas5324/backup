@@ -38,17 +38,14 @@ namespace IMDB_WebApplication.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var accessToken = await authService.LoginAsync(request);
+            var loginResponse = await authService.LoginAsync(request);
 
-            if (accessToken == null)
+            if (loginResponse == null)
             {
                 return Unauthorized("Invalid email or password.");
             }
 
-            return Ok(new LoginResponse
-            {
-                AccessToken = accessToken
-            });
+            return Ok(loginResponse);
         }
 
         [HttpPost("logout")]
@@ -56,7 +53,7 @@ namespace IMDB_WebApplication.Controllers
         public async Task<IActionResult> Logout()
         {
             await authService.LogOutAsync();
-            return StatusCode(StatusCodes.Status204NoContent);
+            return NoContent();
         }
     }
 }

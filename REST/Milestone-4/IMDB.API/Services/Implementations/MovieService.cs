@@ -12,7 +12,7 @@ namespace IMDB_WebApplication.Services.Implementations
     public class MovieService : IMovieService
     {
         private readonly IMovieRepository movieRepository;
-       // private readonly IProducerRepository producerRepository;
+        // private readonly IProducerRepository producerRepository;
         private readonly IMapper mapper;
 
         public MovieService(IMovieRepository movieRepository, IProducerRepository producerRepository, IMapper mapper)
@@ -36,7 +36,9 @@ namespace IMDB_WebApplication.Services.Implementations
             movie.CoverImage = request.CoverImage?.Trim();
             movie.ProducerId = request.ProducerId;
             movie.actorIds = string.Join(",", request.actorIds);
-            movie.genreIds = string.Join(",", request.genreIds);
+            movie.genreIds = (request.genreIds != null && request.genreIds.Any())
+    ? string.Join(",", request.genreIds)
+    : null;
             movieRepository.Create(movie);
             var movies = movieRepository.Get();
             movie.Id = movies.Count == 0 ? 1 : movies.Max(existingMovie => existingMovie.Id);
@@ -78,7 +80,9 @@ namespace IMDB_WebApplication.Services.Implementations
             movie.CoverImage = request.CoverImage?.Trim();
             movie.ProducerId = request.ProducerId;
             movie.actorIds = string.Join(",", request.actorIds);
-            movie.genreIds = string.Join(",", request.genreIds);
+            movie.genreIds = (request.genreIds != null && request.genreIds.Any())
+               ? string.Join(",", request.genreIds)
+               : null;
 
             var updatedMovie = movieRepository.Update(id, movie);
             return mapper.Map<MovieResponse>(updatedMovie);

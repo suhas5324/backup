@@ -1,83 +1,48 @@
+using Dapper;
+using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
-using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Repositories.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
-    public class UserRepository : IUserRepository
-{
-    private readonly static List<User> _users=new List<User>() ;
-    private readonly IConfiguration _configuration;
-
-    public UserRepository(IConfiguration configuration)
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        _configuration = configuration;
-    }
-
-    public Task<IdentityResult> SignUpAsync(SignupRequest registerModel)
-    {
-        var user = new User
+        public UserRepository(IOptions<ConnectionString> options)
+            : base(options.Value.IMDB)
         {
-            Id = Guid.NewGuid().ToString(),
-            UserName = registerModel.Email,
-            Email = registerModel.Email,
-            PasswordHash = registerModel.Password
-        };
-
-        _users.Add(user);
-
-        return Task.FromResult(IdentityResult.Success);
-    }
-
-    public Task<string> LoginAsync(LoginRequest loginModel)
-    {
-        var user = _users.FirstOrDefault(u =>
-            u.Email == loginModel.Email &&
-            u.PasswordHash == loginModel.Password);
-
-        if (user == null)
-        {
-            return Task.FromResult<string>(null);
         }
 
-        var authClaims = new List<Claim>
+        public async Task<User> GetByEmailAsync(string normalizedEmail)
         {
-            new Claim(ClaimTypes.Name, loginModel.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+            const string query = @"
+                SELECT id, username, email, normalizedemail, passwordhash
+                FROM foundation.users
+                WHERE normalizedemail = @NormalizedEmail";
 
-        var authSigninKey = new SymmetricSecurityKey(
-            Encoding.ASCII.GetBytes(_configuration["JWT:Secret"])
-        );
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<User>(query, new { NormalizedEmail = normalizedEmail });
+        }
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddMinutes(30),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(
-                authSigninKey,
-                SecurityAlgorithms.HmacSha256Signature)
-        );
+        public async Task CreateAsync(User user)
+        {
+            const string query = @"
+                INSERT INTO foundation.users
+                    (username, email, normalizedemail, passwordhash)
+                OUTPUT INSERTED.id
+                VALUES
+                    (@UserName, @Email, @NormalizedEmail, @PasswordHash)";
 
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return Task.FromResult(tokenString);
+            using var connection = new SqlConnection(_connectionString);
+            user.Id = await connection.ExecuteScalarAsync<int>(query, new
+            {
+                user.UserName,
+                user.Email,
+                user.NormalizedEmail,
+                user.PasswordHash
+            });
+        }
     }
-
-    public Task LogOutAsync()
-    {
-        return Task.CompletedTask;
-    }
-}
 }

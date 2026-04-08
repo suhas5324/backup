@@ -15,13 +15,11 @@ namespace IMDB_WebApplication.Repositories.Implementations
             : base(options.Value.IMDB)
         {
         }
-
-        // ✅ CREATE → Stored Procedure (DIRECT DAPPER)
         public void Create(Movie movie)
         {
             using var connection = new SqlConnection(_connectionString);
 
-            var procedure = "foundation.sp_InsertMovie";
+            var procedure = "dbo.usp_AddMovie";
 
             var values = new
             {
@@ -31,6 +29,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 ProducerId = movie.ProducerId,
                 actorIds = movie.actorIds,
                 genreIds = movie.genreIds,
+                PosterImagePath=movie.CoverImage
             };
 
             connection.Execute(
@@ -39,34 +38,27 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 commandType: CommandType.StoredProcedure
             );
         }
-
-        // ✅ GET ALL → BaseRepository
         public IList<Movie> Get()
         {
             string query = @"SELECT * FROM foundation.movies";
             return Get(query);
         }
-
-        // ✅ GET BY YEAR → BaseRepository
         public IList<Movie> GetAll(int year)
         {
             string query = @"SELECT * FROM foundation.movies WHERE yearofrelease = @Year";
             return GetAll(query, new { Year = year });
         }
 
-        // ✅ GET BY ID → BaseRepository
         public Movie Get(int id)
         {
             string query = @"SELECT * FROM foundation.movies WHERE id = @Id";
             return Get(query, new { Id = id });
         }
-
-        // ✅ UPDATE → Stored Procedure (DIRECT DAPPER)
         public Movie Update(int id, Movie movie)
         {
             using var connection = new SqlConnection(_connectionString);
 
-            var procedure = "foundation.sp_UpdateMovie";
+            var procedure = "dbo.usp_UpdateMovie";
 
             var values = new
             {
@@ -75,6 +67,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 YearOfRelease = movie.YearOfRelease,
                 Plot = movie.Plot,
                 ProducerId = movie.ProducerId,
+                PosterImagePath=movie.CoverImage,
                 actorIds = movie.actorIds,
                 genreIds = movie.genreIds,
             };
@@ -87,8 +80,6 @@ namespace IMDB_WebApplication.Repositories.Implementations
 
             return Get(id);
         }
-
-        // ✅ DELETE → BaseRepository
         public Movie Delete(int id)
         {
             string query = @"DELETE FROM foundation.movies WHERE id = @Id";

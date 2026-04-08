@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] int year)
+        public IActionResult GetAll([FromQuery] [Required] int year)
         {
             return Ok(movieService.GetAll(year));
         }

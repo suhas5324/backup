@@ -277,9 +277,9 @@ __pycache__/
 
 # User-specific files
 *.rsuser
-
+SQL/
 # User-specific files (MonoDevelop/Xamarin Studio)
-
+.build
 # Mono auto generated files
 mono_crash.*
 **/Milestone-3/
@@ -288,13 +288,12 @@ mono_crash.*
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 [Ll]ogs/
-
 # Visual Studio 2015/2017 cache/options directory
 # Uncomment if you have tasks that create the project's static files in wwwroot
-
+csharp/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
-
+Git/
 # MSTest test Results
 
 # NUnit

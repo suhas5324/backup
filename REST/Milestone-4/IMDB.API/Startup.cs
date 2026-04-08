@@ -1,8 +1,10 @@
 using IMDB_WebApplication.Repositories.Implementations;
 using IMDB_WebApplication.Repositories.Interfaces;
+using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Services.Implementations;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -75,6 +77,7 @@ namespace IMDB.API
             services.AddSingleton<IReviewRepository, ReviewRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.Configure<ConnectionString>(Configuration.GetSection("ConnectionString"));
         }
 
@@ -92,8 +95,8 @@ namespace IMDB.API
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
