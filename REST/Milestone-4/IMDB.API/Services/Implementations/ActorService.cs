@@ -35,7 +35,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             actorRepository.Create(actor);
             var actors=actorRepository.Get();
-            actor.Id= actors.Count==0 ? 1 : actors.Max(a => a.Id); // Get the last inserted actor's ID
+            actor.Id= actors.Count==0 ? 1 : actors.Max(a => a.Id); 
             return mapper.Map<ActorResponse>(actor);
         }
 

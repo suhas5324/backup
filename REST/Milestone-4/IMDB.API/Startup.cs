@@ -61,7 +61,32 @@ namespace IMDB.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "IMDB_WebApplication", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "IMDB API", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Enter 'Bearer {your token}'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+            new OpenApiSecurityScheme
+                {
+                Reference = new OpenApiReference
+                    {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                    }
+                },
+            new string[] {}
+            }
+        });
             });
 
             services.AddAutoMapper(typeof(Startup));

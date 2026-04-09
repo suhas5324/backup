@@ -7,7 +7,7 @@ namespace IMDB_WebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ActorsController : ControllerBase
     {
         private readonly IActorService actorService;

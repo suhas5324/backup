@@ -56,7 +56,6 @@ SET name = @Name
 	,dateofbirth = @DateOfBirth
 	,gender = @Gender
 WHERE id = @Id";
-            //  using var connection = new SqlConnection(_connectionString.IMDB);
             Update(query, new { Id = id, Name = producer.Name, Bio = producer.Bio,DateOfBirth=producer.DateOfBirth, Gender = producer.Gender});
             return Get(id);
         }
@@ -65,7 +64,6 @@ WHERE id = @Id";
             string query = @"DELETE
 FROM foundation.producers
 WHERE id = @Id";
-            //  using var connection = new SqlConnection(_connectionString.IMDB);
             var producer = Get(id);
             if (producer != null)
             {
