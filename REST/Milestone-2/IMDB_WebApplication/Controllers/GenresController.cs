@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -7,7 +8,7 @@ public class GenresController : ControllerBase
     [HttpPost]
     public IActionResult Create()
     {
-        return StatusCode(201);
+        return Created("api/genres",null);
     }
 
     [HttpGet]

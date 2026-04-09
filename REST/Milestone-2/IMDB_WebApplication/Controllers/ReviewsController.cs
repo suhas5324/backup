@@ -7,7 +7,7 @@ public class ReviewsController : ControllerBase
     [HttpPost]
     public IActionResult Create(int movieId)
     {
-        return StatusCode(201);
+        return Created($"api/movies/{movieId}/reviews", null);
     }
 
     [HttpGet]

@@ -9,7 +9,7 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost]
         public IActionResult Create()
         {
-            return StatusCode(201);
+            return Created("api/actors", null);
         }
 
         [HttpGet]

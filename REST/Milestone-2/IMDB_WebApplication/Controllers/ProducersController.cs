@@ -7,7 +7,7 @@ public class ProducersController : ControllerBase
     [HttpPost]
     public IActionResult Create()
     {
-        return StatusCode(201);
+        return Created("api/producers", null);
     }
 
     [HttpGet]
