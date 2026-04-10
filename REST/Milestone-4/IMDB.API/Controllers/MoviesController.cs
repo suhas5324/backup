@@ -49,7 +49,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromForm] MovieRequest request)
+        public IActionResult Update([FromRoute] int id, [FromForm] MovieRequest request)
         {
             var updatedMovie = movieService.Update(id, request);
             if (updatedMovie == null)
@@ -66,7 +66,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             var deletedMovie = movieService.Delete(id);
             if (deletedMovie == null)

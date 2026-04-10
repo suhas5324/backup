@@ -31,7 +31,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get([FromRoute] int id)
         {
 
             var genre = genreService.Get(id);
@@ -44,7 +44,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] GenreRequest request)
+        public IActionResult Update([FromRoute]int id, [FromBody] GenreRequest request)
         {
 
             var updatedGenre = genreService.Update(id, request);
@@ -57,7 +57,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             var deletedGenre = genreService.Delete(id);
             if (deletedGenre == null)

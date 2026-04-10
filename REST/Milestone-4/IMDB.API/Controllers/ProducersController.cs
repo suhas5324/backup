@@ -31,7 +31,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get([FromRoute] int id)
         {
             var producer = producerService.Get(id);
             if (producer == null)
@@ -43,7 +43,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] ProducerRequest request)
+        public IActionResult Update([FromRoute] int id, [FromBody] ProducerRequest request)
         {
             var updatedProducer = producerService.Update(id, request);
             if (updatedProducer == null)
@@ -55,7 +55,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             var deletedProducer = producerService.Delete(id);
             if (deletedProducer == null)
