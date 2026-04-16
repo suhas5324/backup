@@ -29,7 +29,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 ProducerId = movie.ProducerId,
                 actorIds = movie.actorIds,
                 genreIds = movie.genreIds,
-                PosterImagePath=movie.CoverImage
+                CoverImage=movie.CoverImage
             };
 
             connection.Execute(
@@ -43,13 +43,6 @@ namespace IMDB_WebApplication.Repositories.Implementations
             string query = @"SELECT *
 FROM foundation.movies";
             return Get(query);
-        }
-        public IList<Movie> GetAll(int year)
-        {
-            string query = @"SELECT *
-FROM foundation.movies
-WHERE yearofrelease = @Year";
-            return GetAll(query, new { Year = year });
         }
 
         public Movie Get(int id)
@@ -72,7 +65,7 @@ WHERE id = @Id";
                 YearOfRelease = movie.YearOfRelease,
                 Plot = movie.Plot,
                 ProducerId = movie.ProducerId,
-                PosterImagePath=movie.CoverImage,
+                CoverImage=movie.CoverImage,
                 actorIds = movie.actorIds,
                 genreIds = movie.genreIds,
             };

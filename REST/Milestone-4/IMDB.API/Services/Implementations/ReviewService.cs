@@ -1,4 +1,3 @@
-using AutoMapper;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
@@ -13,13 +12,11 @@ namespace IMDB_WebApplication.Services.Implementations
     {
         private readonly IReviewRepository reviewRepository;
         private readonly IMovieRepository movieRepository;
-        private readonly IMapper mapper;
 
-        public ReviewService(IReviewRepository reviewRepository, IMovieRepository movieRepository, IMapper mapper)
+        public ReviewService(IReviewRepository reviewRepository, IMovieRepository movieRepository)
         {
             this.reviewRepository = reviewRepository;
             this.movieRepository = movieRepository;
-            this.mapper = mapper;
         }
 
         public ReviewResponse Create(int movieId, ReviewRequest request)
@@ -34,14 +31,21 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var review = mapper.Map<Review>(request);
-            review.MovieId = movieId;
-            review.Message = request.Message.Trim();
+            var review = new Review
+            {
+                MovieId = movieId,
+                Message = request.Message.Trim()
+            };
 
             reviewRepository.Create(review);
             var reviews = reviewRepository.Get(movieId);
             review.Id = reviews.Count == 0 ? 1 : reviews.Max(existingReview => existingReview.Id);
-            return mapper.Map<ReviewResponse>(review);
+            return new ReviewResponse
+            {
+                Id = review.Id,
+                MovieId = review.MovieId,
+                Message = review.Message
+            };
         }
 
         public IList<ReviewResponse> Get(int movieId)
@@ -51,7 +55,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            return mapper.Map<IList<ReviewResponse>>(reviewRepository.Get(movieId));
+            return reviewRepository.Get(movieId).Select(r => new ReviewResponse
+            {
+                Id = r.Id,
+                MovieId = r.MovieId,
+                Message = r.Message
+            }).ToList();
         }
 
         public ReviewResponse Get(int movieId, int id)
@@ -61,7 +70,17 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            return mapper.Map<ReviewResponse>(reviewRepository.Get(movieId, id));
+            var review = reviewRepository.Get(movieId, id);
+            if (review == null)
+            {
+                return null;
+            }
+            return new ReviewResponse
+            {
+                Id = review.Id,
+                MovieId = review.MovieId,
+                Message = review.Message
+            };
         }
 
         public ReviewResponse Update(int movieId, int id, ReviewRequest request)
@@ -76,12 +95,20 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var review = mapper.Map<Review>(request);
-            review.Id = id;
-            review.MovieId = movieId;
-            review.Message = request.Message.Trim();
+            var review = new Review
+            {
+                Id = id,
+                MovieId = movieId,
+                Message = request.Message.Trim()
+            };
 
-            return mapper.Map<ReviewResponse>(reviewRepository.Update(movieId, id, review));
+            var updatedReview = reviewRepository.Update(movieId, id, review);
+            return new ReviewResponse
+            {
+                Id = updatedReview.Id,
+                MovieId = updatedReview.MovieId,
+                Message = updatedReview.Message
+            };
         }
 
         public ReviewResponse Delete(int movieId, int id)
@@ -91,7 +118,17 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            return mapper.Map<ReviewResponse>(reviewRepository.Delete(movieId, id));
+            var review = reviewRepository.Delete(movieId, id);
+            if (review == null)
+            {
+                return null;
+            }
+            return new ReviewResponse
+            {
+                Id = review.Id,
+                MovieId = review.MovieId,
+                Message = review.Message
+            };
         }
 
         private bool MovieExists(int movieId)

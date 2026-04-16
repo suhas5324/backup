@@ -1,4 +1,3 @@
-using AutoMapper;
 using IMDB.API.Services.Implementations;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
@@ -13,15 +12,12 @@ namespace IMDB_WebApplication.Services.Implementations
     public class MovieService : IMovieService
     {
         private readonly IMovieRepository movieRepository;
-        private readonly IMapper mapper;
         private readonly SupabaseService supabaseService;
         public MovieService(
             IMovieRepository movieRepository,
-            IMapper mapper,
             SupabaseService supabaseService)
         {
             this.movieRepository = movieRepository;
-            this.mapper = mapper;
             this.supabaseService = supabaseService;
         }
 
@@ -32,11 +28,14 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var movie = mapper.Map<Movie>(request);
+            var movie = new Movie
+            {
+                Name = request.Name.Trim(),
+                YearOfRelease = request.YearOfRelease ?? 0,
+                Plot = request.Plot?.Trim(),
+                ProducerId = request.ProducerId,
+            };
 
-            movie.Name = request.Name.Trim();
-            movie.Plot = request.Plot?.Trim();
-            movie.ProducerId = request.ProducerId;
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
                 movie.CoverImage = supabaseService.UploadFile(request.CoverImage).Result;
@@ -54,12 +53,28 @@ namespace IMDB_WebApplication.Services.Implementations
             var movies = movieRepository.Get();
             movie.Id = movies.Count == 0 ? 1 : movies.Max(x => x.Id);
 
-            return mapper.Map<MovieResponse>(movie);
+            return new MovieResponse
+            {
+                Id = movie.Id,
+                Name = movie.Name,
+                YearOfRelease = movie.YearOfRelease,
+                Plot = movie.Plot,
+                ProducerId = movie.ProducerId,
+                CoverImage = movie.CoverImage
+            };
         }
 
-        public IList<MovieResponse> GetAll(int year)
+        public IList<MovieResponse> Get()
         {
-            return movieRepository.GetAll(year).Select(mapper.Map<MovieResponse>).ToList();
+            return movieRepository.Get().Select(m => new MovieResponse
+            {
+                Id = m.Id,
+                Name = m.Name,
+                YearOfRelease = m.YearOfRelease,
+                Plot = m.Plot,
+                ProducerId = m.ProducerId,
+                CoverImage = m.CoverImage
+            }).ToList();
         }
 
         public MovieResponse Get(int id)
@@ -70,7 +85,19 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var movie = movieRepository.Get(id);
-            return mapper.Map<MovieResponse>(movie);
+            if (movie == null)
+            {
+                return null;
+            }
+            return new MovieResponse
+            {
+                Id = movie.Id,
+                Name = movie.Name,
+                YearOfRelease = movie.YearOfRelease,
+                Plot = movie.Plot,
+                ProducerId = movie.ProducerId,
+                CoverImage = movie.CoverImage
+            };
         }
 
         public MovieResponse Update(int id, MovieRequest request)
@@ -86,12 +113,14 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var movie = mapper.Map<Movie>(request);
-
-            movie.Id = id;
-            movie.Name = request.Name.Trim();
-            movie.Plot = request.Plot?.Trim();
-            movie.ProducerId = request.ProducerId;
+            var movie = new Movie
+            {
+                Id = id,
+                Name = request.Name.Trim(),
+                YearOfRelease = request.YearOfRelease ?? 0,
+                Plot = request.Plot?.Trim(),
+                ProducerId = request.ProducerId,
+            };
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
@@ -118,7 +147,15 @@ namespace IMDB_WebApplication.Services.Implementations
 
             var updatedMovie = movieRepository.Update(id, movie);
 
-            return mapper.Map<MovieResponse>(updatedMovie);
+            return new MovieResponse
+            {
+                Id = updatedMovie.Id,
+                Name = updatedMovie.Name,
+                YearOfRelease = updatedMovie.YearOfRelease,
+                Plot = updatedMovie.Plot,
+                ProducerId = updatedMovie.ProducerId,
+                CoverImage = updatedMovie.CoverImage
+            };
         }
 
         public MovieResponse Delete(int id)
@@ -140,7 +177,15 @@ namespace IMDB_WebApplication.Services.Implementations
 
             var deletedMovie = movieRepository.Delete(id);
 
-            return mapper.Map<MovieResponse>(deletedMovie);
+            return new MovieResponse
+            {
+                Id = deletedMovie.Id,
+                Name = deletedMovie.Name,
+                YearOfRelease = deletedMovie.YearOfRelease,
+                Plot = deletedMovie.Plot,
+                ProducerId = deletedMovie.ProducerId,
+                CoverImage = deletedMovie.CoverImage
+            };
         }
 
     }

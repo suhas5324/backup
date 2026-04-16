@@ -89,7 +89,6 @@ namespace IMDB.API
         });
             });
 
-            services.AddAutoMapper(typeof(Startup));
             services.AddSingleton<IActorService, ActorService>();
             services.AddSingleton<IActorRepository, ActorRepository>();
             services.AddSingleton<IGenreService, GenreService>();

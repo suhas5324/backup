@@ -31,9 +31,9 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] [Required] int year)
+        public IActionResult Get()
         {
-            return Ok(movieService.GetAll(year));
+            return Ok(movieService.Get());
         }
 
         [HttpGet("{id}")]

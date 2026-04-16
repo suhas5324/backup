@@ -1,4 +1,3 @@
-using AutoMapper;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
@@ -12,12 +11,10 @@ namespace IMDB_WebApplication.Services.Implementations
     public class GenreService : IGenreService
     {
         private readonly IGenreRepository genreRepository;
-        private readonly IMapper mapper;
 
-        public GenreService(IGenreRepository genreRepository, IMapper mapper)
+        public GenreService(IGenreRepository genreRepository)
         {
             this.genreRepository = genreRepository;
-            this.mapper = mapper;
         }
 
         public GenreResponse Create(GenreRequest request)
@@ -27,20 +24,28 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-           
-            var genre = mapper.Map<Genre>(request);
-           
-            genre.Name = request.Name.Trim();
+            var genre = new Genre
+            {
+                Name = request.Name.Trim()
+            };
 
             genreRepository.Create(genre);
             var genres = genreRepository.Get();
             genre.Id = genres.Count == 0 ? 1 : genres.Max(existingGenre => existingGenre.Id);
-            return mapper.Map<GenreResponse>(genre);
+            return new GenreResponse
+            {
+                Id = genre.Id,
+                Name = genre.Name
+            };
         }
 
         public IList<GenreResponse> Get()
         {
-            return mapper.Map<IList<GenreResponse>>(genreRepository.Get());
+            return genreRepository.Get().Select(g => new GenreResponse
+            {
+                Id = g.Id,
+                Name = g.Name
+            }).ToList();
         }
 
         public GenreResponse Get(int id)
@@ -51,7 +56,15 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var genre = genreRepository.Get(id);
-            return mapper.Map<GenreResponse>(genre);
+            if (genre == null)
+            {
+                return null;
+            }
+            return new GenreResponse
+            {
+                Id = genre.Id,
+                Name = genre.Name
+            };
         }
 
         public GenreResponse Update(int id, GenreRequest request)
@@ -66,11 +79,18 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var genre = mapper.Map<Genre>(request);
-            genre.Id = id;
-            genre.Name = request.Name.Trim();
+            var genre = new Genre
+            {
+                Id = id,
+                Name = request.Name.Trim()
+            };
 
-            return mapper.Map<GenreResponse>(genreRepository.Update(id, genre));
+            var updatedGenre = genreRepository.Update(id, genre);
+            return new GenreResponse
+            {
+                Id = updatedGenre.Id,
+                Name = updatedGenre.Name
+            };
         }
 
         public GenreResponse Delete(int id)
@@ -81,7 +101,15 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var genre = genreRepository.Delete(id);
-            return mapper.Map<GenreResponse>(genre);
+            if (genre == null)
+            {
+                return null;
+            }
+            return new GenreResponse
+            {
+                Id = genre.Id,
+                Name = genre.Name
+            };
         }
 
     }

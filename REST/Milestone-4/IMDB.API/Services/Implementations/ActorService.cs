@@ -1,4 +1,3 @@
-using AutoMapper;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Models.Responses;
@@ -12,12 +11,10 @@ namespace IMDB_WebApplication.Services.Implementations
     public class ActorService : IActorService
     {
         private readonly IActorRepository actorRepository;
-        private readonly IMapper mapper;
 
-        public ActorService(IActorRepository actorRepository, IMapper mapper)
+        public ActorService(IActorRepository actorRepository)
         {
             this.actorRepository = actorRepository;
-            this.mapper = mapper;
         }
 
         public ActorResponse Create(ActorRequest request)
@@ -27,21 +24,37 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var actor = mapper.Map<Actor>(request);
-            actor.Name = request.Name.Trim();
-            actor.DateOfBirth = request.DateOfBirth;
-            actor.Bio = request.Bio?.Trim();
-            actor.Gender = request.Gender?.Trim();
+            var actor = new Actor
+            {
+                Name = request.Name.Trim(),
+                DateOfBirth = request.DateOfBirth,
+                Bio = request.Bio?.Trim(),
+                Gender = request.Gender?.Trim()
+            };
 
             actorRepository.Create(actor);
-            var actors=actorRepository.Get();
-            actor.Id= actors.Count==0 ? 1 : actors.Max(a => a.Id); 
-            return mapper.Map<ActorResponse>(actor);
+            var actors = actorRepository.Get();
+            actor.Id = actors.Count == 0 ? 1 : actors.Max(a => a.Id);
+            return new ActorResponse
+            {
+                Id = actor.Id,
+                Name = actor.Name,
+                Bio = actor.Bio,
+                DateofBirth = actor.DateOfBirth,
+                Gender = actor.Gender
+            };
         }
 
         public IList<ActorResponse> Get()
         {
-            return mapper.Map<List<ActorResponse>>(actorRepository.Get());
+            return actorRepository.Get().Select(a => new ActorResponse
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Bio = a.Bio,
+                DateofBirth = a.DateOfBirth,
+                Gender = a.Gender
+            }).ToList();
         }
 
         public ActorResponse Get(int id)
@@ -52,7 +65,18 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var actor = actorRepository.Get(id);
-            return mapper.Map<ActorResponse>(actor);
+            if (actor == null)
+            {
+                return null;
+            }
+            return new ActorResponse
+            {
+                Id = actor.Id,
+                Name = actor.Name,
+                Bio = actor.Bio,
+                DateofBirth = actor.DateOfBirth,
+                Gender = actor.Gender
+            };
         }
 
         public ActorResponse Update(int id, ActorRequest request)
@@ -67,14 +91,24 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var actor = mapper.Map<Actor>(request);
-            actor.Id = id;
-            actor.Name = request.Name.Trim();
-            actor.DateOfBirth = request.DateOfBirth;
-            actor.Bio = request.Bio?.Trim();
-            actor.Gender = request.Gender?.Trim();
+            var actor = new Actor
+            {
+                Id = id,
+                Name = request.Name.Trim(),
+                DateOfBirth = request.DateOfBirth,
+                Bio = request.Bio?.Trim(),
+                Gender = request.Gender?.Trim()
+            };
 
-            return mapper.Map<ActorResponse>(actorRepository.Update(id, actor));
+            var updatedActor = actorRepository.Update(id, actor);
+            return new ActorResponse
+            {
+                Id = updatedActor.Id,
+                Name = updatedActor.Name,
+                Bio = updatedActor.Bio,
+                DateofBirth = updatedActor.DateOfBirth,
+                Gender = updatedActor.Gender
+            };
         }
 
         public ActorResponse Delete(int id)
@@ -85,7 +119,18 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var actor = actorRepository.Delete(id);
-            return mapper.Map<ActorResponse>(actor);
+            if (actor == null)
+            {
+                return null;
+            }
+            return new ActorResponse
+            {
+                Id = actor.Id,
+                Name = actor.Name,
+                Bio = actor.Bio,
+                DateofBirth = actor.DateOfBirth,
+                Gender = actor.Gender
+            };
         }
 
     }

@@ -1,4 +1,3 @@
-using AutoMapper;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
@@ -12,12 +11,10 @@ namespace IMDB_WebApplication.Services.Implementations
     public class ProducerService : IProducerService
     {
         private readonly IProducerRepository producerRepository;
-        private readonly IMapper mapper;
 
-        public ProducerService(IProducerRepository producerRepository, IMapper mapper)
+        public ProducerService(IProducerRepository producerRepository)
         {
             this.producerRepository = producerRepository;
-            this.mapper = mapper;
         }
 
         public ProducerResponse Create(ProducerRequest request)
@@ -27,22 +24,37 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            
-            var producer = mapper.Map<Producer>(request);
-            producer.Name = request.Name.Trim();
-            producer.DateOfBirth = request.DateOfBirth;
-            producer.Bio = request.Bio?.Trim();
-            producer.Gender = request.Gender?.Trim();
+            var producer = new Producer
+            {
+                Name = request.Name.Trim(),
+                DateOfBirth = request.DateOfBirth,
+                Bio = request.Bio?.Trim(),
+                Gender = request.Gender?.Trim()
+            };
 
             producerRepository.Create(producer);
             var producers = producerRepository.Get();
             producer.Id = producers.Count == 0 ? 1 : producers.Max(existingProducer => existingProducer.Id);
-            return mapper.Map<ProducerResponse>(producer);
+            return new ProducerResponse
+            {
+                Id = producer.Id,
+                Name = producer.Name,
+                Bio = producer.Bio,
+                DateOfBirth = producer.DateOfBirth,
+                Gender = producer.Gender
+            };
         }
 
         public IList<ProducerResponse> Get()
         {
-            return mapper.Map<IList<ProducerResponse>>(producerRepository.Get());
+            return producerRepository.Get().Select(p => new ProducerResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Bio = p.Bio,
+                DateOfBirth = p.DateOfBirth,
+                Gender = p.Gender
+            }).ToList();
         }
 
         public ProducerResponse Get(int id)
@@ -53,7 +65,18 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var producer = producerRepository.Get(id);
-            return mapper.Map<ProducerResponse>(producer);
+            if (producer == null)
+            {
+                return null;
+            }
+            return new ProducerResponse
+            {
+                Id = producer.Id,
+                Name = producer.Name,
+                Bio = producer.Bio,
+                DateOfBirth = producer.DateOfBirth,
+                Gender = producer.Gender
+            };
         }
 
         public ProducerResponse Update(int id, ProducerRequest request)
@@ -68,14 +91,24 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
-            var producer = mapper.Map<Producer>(request);
-            producer.Id = id;
-            producer.Name = request.Name.Trim();
-            producer.DateOfBirth = request.DateOfBirth;
-            producer.Bio = request.Bio?.Trim();
-            producer.Gender = request.Gender?.Trim();
+            var producer = new Producer
+            {
+                Id = id,
+                Name = request.Name.Trim(),
+                DateOfBirth = request.DateOfBirth,
+                Bio = request.Bio?.Trim(),
+                Gender = request.Gender?.Trim()
+            };
 
-            return mapper.Map<ProducerResponse>(producerRepository.Update(id, producer));
+            var updatedProducer = producerRepository.Update(id, producer);
+            return new ProducerResponse
+            {
+                Id = updatedProducer.Id,
+                Name = updatedProducer.Name,
+                Bio = updatedProducer.Bio,
+                DateOfBirth = updatedProducer.DateOfBirth,
+                Gender = updatedProducer.Gender
+            };
         }
 
         public ProducerResponse Delete(int id)
@@ -86,7 +119,18 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             var producer = producerRepository.Delete(id);
-            return mapper.Map<ProducerResponse>(producer);
+            if (producer == null)
+            {
+                return null;
+            }
+            return new ProducerResponse
+            {
+                Id = producer.Id,
+                Name = producer.Name,
+                Bio = producer.Bio,
+                DateOfBirth = producer.DateOfBirth,
+                Gender = producer.Gender
+            };
         }
 
     }

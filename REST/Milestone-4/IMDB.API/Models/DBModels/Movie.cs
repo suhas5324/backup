@@ -7,8 +7,8 @@ namespace IMDB_WebApplication.Models.DBModels
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public int YearOfRelease { get; set; }
-        public string Plot { get; set; }
+        public int? YearOfRelease { get; set; }
+        public string? Plot { get; set; }
         [Required]
         public int ProducerId { get; set; }
         [Required]
