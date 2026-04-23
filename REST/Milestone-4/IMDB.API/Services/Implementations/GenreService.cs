@@ -3,6 +3,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,11 +20,6 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public GenreResponse Create(GenreRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Name))
-            {
-                return null;
-            }
-
             var genre = new Genre
             {
                 Name = request.Name.Trim()
@@ -52,7 +48,7 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
             }
 
             var genre = genreRepository.Get(id);
@@ -69,9 +65,9 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public GenreResponse Update(int id, GenreRequest request)
         {
-            if (id <= 0 || request == null || string.IsNullOrWhiteSpace(request.Name))
+            if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
             }
 
             if (genreRepository.Get(id) == null)
@@ -97,7 +93,7 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
             }
 
             var genre = genreRepository.Delete(id);

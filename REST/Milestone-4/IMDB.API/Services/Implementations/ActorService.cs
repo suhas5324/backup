@@ -3,6 +3,7 @@ using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,11 +20,6 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ActorResponse Create(ActorRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Name))
-            {
-                return null;
-            }
-
             var actor = new Actor
             {
                 Name = request.Name.Trim(),
@@ -61,7 +57,7 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
             }
 
             var actor = actorRepository.Get(id);
@@ -81,9 +77,9 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ActorResponse Update(int id, ActorRequest request)
         {
-            if (id <= 0 || request == null || string.IsNullOrWhiteSpace(request.Name))
+            if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
             }
 
             if (actorRepository.Get(id) == null)
@@ -115,7 +111,7 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
             }
 
             var actor = actorRepository.Delete(id);

@@ -3,6 +3,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,9 +22,9 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ReviewResponse Create(int movieId, ReviewRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Message))
+            if (movieId <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
             }
 
             if (!MovieExists(movieId))
@@ -50,6 +51,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public IList<ReviewResponse> Get(int movieId)
         {
+            if (movieId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+            }
+
             if (!MovieExists(movieId))
             {
                 return null;
@@ -65,7 +71,17 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ReviewResponse Get(int movieId, int id)
         {
-            if (id <= 0 || !MovieExists(movieId))
+            if (movieId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+            }
+
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
+            }
+
+            if (!MovieExists(movieId))
             {
                 return null;
             }
@@ -85,9 +101,14 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ReviewResponse Update(int movieId, int id, ReviewRequest request)
         {
-            if (id <= 0 || request == null || string.IsNullOrWhiteSpace(request.Message))
+            if (movieId <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+            }
+
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
             }
 
             if (!MovieExists(movieId) || reviewRepository.Get(movieId, id) == null)
@@ -113,7 +134,17 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ReviewResponse Delete(int movieId, int id)
         {
-            if (id <= 0 || !MovieExists(movieId))
+            if (movieId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+            }
+
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
+            }
+
+            if (!MovieExists(movieId))
             {
                 return null;
             }

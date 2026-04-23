@@ -32,11 +32,6 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public async Task<IdentityResult> SignUpAsync(SignupRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Email and password are required." });
-            }
-
             var email = request.Email.Trim();
             var normalizedEmail = email.ToUpperInvariant();
             var existingUser = await userRepository.GetByEmailAsync(normalizedEmail);
@@ -60,11 +55,6 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-            {
-                return null;
-            }
-
             var email = request.Email.Trim();
             var user = await userRepository.GetByEmailAsync(email.ToUpperInvariant());
             if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))

@@ -89,16 +89,16 @@ namespace IMDB.API
         });
             });
 
-            services.AddSingleton<IActorService, ActorService>();
-            services.AddSingleton<IActorRepository, ActorRepository>();
-            services.AddSingleton<IGenreService, GenreService>();
-            services.AddSingleton<IGenreRepository, GenreRepository>();
+            services.AddScoped<IActorService, ActorService>();
+            services.AddScoped<IActorRepository, ActorRepository>();
+            services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IMovieService, MovieService>();
-            services.AddSingleton<IMovieRepository, MovieRepository>();
-            services.AddSingleton<IProducerService, ProducerService>();
-            services.AddSingleton<IProducerRepository, ProducerRepository>();
-            services.AddSingleton<IReviewService, ReviewService>();
-            services.AddSingleton<IReviewRepository, ReviewRepository>();
+            services.AddScoped<IMovieRepository, MovieRepository>();
+            services.AddScoped<IProducerService, ProducerService>();
+            services.AddScoped<IProducerRepository, ProducerRepository>();
+            services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

@@ -4,6 +4,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,21 +13,29 @@ namespace IMDB_WebApplication.Services.Implementations
     public class MovieService : IMovieService
     {
         private readonly IMovieRepository movieRepository;
+        private readonly IProducerRepository producerRepository;
+        private readonly IActorRepository actorRepository;
         private readonly SupabaseService supabaseService;
         public MovieService(
             IMovieRepository movieRepository,
+            IProducerRepository producerRepository,
+            IActorRepository actorRepository,
             SupabaseService supabaseService)
         {
             this.movieRepository = movieRepository;
+            this.producerRepository = producerRepository;
+            this.actorRepository = actorRepository;
             this.supabaseService = supabaseService;
         }
 
         public MovieResponse Create(MovieRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Name) || request.ProducerId <= 0)
+            if (request.ProducerId <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(request.ProducerId),"Producer id must be greater than zero.");
             }
+
+            ValidateMovieRequest(request);
 
             var movie = new Movie
             {
@@ -81,7 +90,7 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
             }
 
             var movie = movieRepository.Get(id);
@@ -102,9 +111,14 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public MovieResponse Update(int id, MovieRequest request)
         {
-            if (id <= 0 || request == null || string.IsNullOrWhiteSpace(request.Name) || request.ProducerId <= 0)
+            if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
+            }
+
+            if (request.ProducerId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(request.ProducerId), "Producer id must be greater than zero.");
             }
 
             var existingMovie = movieRepository.Get(id);
@@ -112,6 +126,8 @@ namespace IMDB_WebApplication.Services.Implementations
             {
                 return null;
             }
+
+            ValidateMovieRequest(request);
 
             var movie = new Movie
             {
@@ -162,7 +178,7 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
             }
 
             var movie = movieRepository.Get(id);
@@ -186,6 +202,32 @@ namespace IMDB_WebApplication.Services.Implementations
                 ProducerId = deletedMovie.ProducerId,
                 CoverImage = deletedMovie.CoverImage
             };
+        }
+
+        private void ValidateMovieRequest(MovieRequest request)
+        {
+            if (producerRepository.Get(request.ProducerId) == null)
+            {
+                throw new ArgumentException($"Producer with id {request.ProducerId} does not exist.", nameof(request.ProducerId));
+            }
+
+            if (!request.actorIds.Any())
+            {
+                throw new ArgumentException("At least one actor id is required.", nameof(request.actorIds));
+            }
+
+            foreach (var actorId in request.actorIds)
+            {
+                if (actorId <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(request.actorIds), "Actor id must be greater than zero.");
+                }
+
+                if (actorRepository.Get(actorId) == null)
+                {
+                    throw new ArgumentException($"Actor with id {actorId} does not exist.", nameof(request.actorIds));
+                }
+            }
         }
 
     }

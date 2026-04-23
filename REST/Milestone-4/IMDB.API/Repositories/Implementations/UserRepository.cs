@@ -17,10 +17,13 @@ namespace IMDB_WebApplication.Repositories.Implementations
 
         public async Task<User> GetByEmailAsync(string normalizedEmail)
         {
-            const string query = @"
-                SELECT id, username, email, normalizedemail, passwordhash
-                FROM foundation.users
-                WHERE normalizedemail = @NormalizedEmail";
+            const string query = @"SELECT id
+	,username
+	,email
+	,normalizedemail
+	,passwordhash
+FROM foundation.users
+WHERE normalizedemail = @NormalizedEmail";
 
             using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<User>(query, new { NormalizedEmail = normalizedEmail });
@@ -28,15 +31,22 @@ namespace IMDB_WebApplication.Repositories.Implementations
 
         public async Task CreateAsync(User user)
         {
-            const string query = @"
-                INSERT INTO foundation.users
-                    (username, email, normalizedemail, passwordhash)
-                OUTPUT INSERTED.id
-                VALUES
-                    (@UserName, @Email, @NormalizedEmail, @PasswordHash)";
+            const string query = @"INSERT INTO foundation.users (
+	username
+	,email
+	,normalizedemail
+	,passwordhash
+	)
+OUTPUT INSERTED.id
+VALUES (
+	@UserName
+	,@Email
+	,@NormalizedEmail
+	,@PasswordHash
+	)";
 
             using var connection = new SqlConnection(_connectionString);
-            user.Id = await connection.ExecuteScalarAsync<int>(query, new
+            user.Id = await connection.Execute(query, new
             {
                 user.UserName,
                 user.Email,
