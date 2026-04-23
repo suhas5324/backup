@@ -10,7 +10,6 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -30,14 +29,14 @@ namespace IMDB_WebApplication.Services.Implementations
             this.configuration = configuration;
         }
 
-        public async Task<IdentityResult> SignUpAsync(SignupRequest request)
+        public bool SignUp(SignupRequest request)
         {
             var email = request.Email.Trim();
             var normalizedEmail = email.ToUpperInvariant();
-            var existingUser = await userRepository.GetByEmailAsync(normalizedEmail);
+            var existingUser = userRepository.GetByEmail(normalizedEmail);
             if (existingUser != null)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "A user with this email already exists." });
+                return false;
             }
 
             var user = new User
@@ -48,15 +47,15 @@ namespace IMDB_WebApplication.Services.Implementations
             };
 
             user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
-            await userRepository.CreateAsync(user);
+            userRepository.Create(user);
 
-            return IdentityResult.Success;
+            return true;
         }
 
-        public async Task<LoginResponse> LoginAsync(LoginRequest request)
+        public LoginResponse Login(LoginRequest request)
         {
             var email = request.Email.Trim();
-            var user = await userRepository.GetByEmailAsync(email.ToUpperInvariant());
+            var user = userRepository.GetByEmail(email.ToUpperInvariant());
             if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 return null;
@@ -77,11 +76,6 @@ namespace IMDB_WebApplication.Services.Implementations
                 TokenType = "Bearer",
                 ExpiresAtUtc = expiresAtUtc
             };
-        }
-
-        public Task LogOutAsync()
-        {
-            return Task.CompletedTask;
         }
 
         private string GenerateAccessToken(User user, DateTime expiresAtUtc)

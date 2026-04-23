@@ -37,9 +37,8 @@ namespace IMDB_WebApplication.Services.Implementations
                 MovieId = movieId,
                 Message = request.Message.Trim()
             };
-
             reviewRepository.Create(review);
-            var reviews = reviewRepository.Get(movieId);
+             var reviews = reviewRepository.Get(movieId);
             review.Id = reviews.Count == 0 ? 1 : reviews.Max(existingReview => existingReview.Id);
             return new ReviewResponse
             {

@@ -1,10 +1,7 @@
-using Dapper;
 using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
@@ -15,7 +12,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
         {
         }
 
-        public async Task<User> GetByEmailAsync(string normalizedEmail)
+        public User GetByEmail(string normalizedEmail)
         {
             const string query = @"SELECT id
 	,username
@@ -25,11 +22,10 @@ namespace IMDB_WebApplication.Repositories.Implementations
 FROM foundation.users
 WHERE normalizedemail = @NormalizedEmail";
 
-            using var connection = new SqlConnection(_connectionString);
-            return await connection.QuerySingleOrDefaultAsync<User>(query, new { NormalizedEmail = normalizedEmail });
+            return Get(query, new { NormalizedEmail = normalizedEmail });
         }
 
-        public async Task CreateAsync(User user)
+        public void Create(User user)
         {
             const string query = @"INSERT INTO foundation.users (
 	username
@@ -37,7 +33,6 @@ WHERE normalizedemail = @NormalizedEmail";
 	,normalizedemail
 	,passwordhash
 	)
-OUTPUT INSERTED.id
 VALUES (
 	@UserName
 	,@Email
@@ -45,8 +40,7 @@ VALUES (
 	,@PasswordHash
 	)";
 
-            using var connection = new SqlConnection(_connectionString);
-            user.Id = await connection.Execute(query, new
+            Create(query, new
             {
                 user.UserName,
                 user.Email,

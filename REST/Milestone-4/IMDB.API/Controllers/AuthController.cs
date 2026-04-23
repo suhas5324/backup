@@ -1,11 +1,7 @@
 using IMDB_WebApplication.Models.RequestModels;
-using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -22,13 +18,13 @@ namespace IMDB_WebApplication.Controllers
 
         [HttpPost("signup")]
         [AllowAnonymous]
-        public async Task<IActionResult> Signup([FromBody] SignupRequest request)
+        public IActionResult Signup([FromBody] SignupRequest request)
         {
-            var result = await authService.SignUpAsync(request);
+            var result = authService.SignUp(request);
 
-            if (!result.Succeeded)
+            if (!result)
             {
-                return BadRequest(result.Errors.Select(error => error.Description));
+                return BadRequest("A user with this email already exists.");
             }
 
             return Ok("User registered successfully.");
@@ -36,9 +32,9 @@ namespace IMDB_WebApplication.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public IActionResult Login([FromBody] LoginRequest request)
         {
-            var loginResponse = await authService.LoginAsync(request);
+            var loginResponse = authService.Login(request);
 
             if (loginResponse == null)
             {
@@ -46,14 +42,6 @@ namespace IMDB_WebApplication.Controllers
             }
 
             return Ok(loginResponse);
-        }
-
-        [HttpPost("logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            await authService.LogOutAsync();
-            return NoContent();
         }
     }
 }
