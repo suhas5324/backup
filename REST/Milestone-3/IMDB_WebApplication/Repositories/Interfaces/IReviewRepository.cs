@@ -1,0 +1,14 @@
+using IMDB_WebApplication.Models.DBModels;
+using System.Collections.Generic;
+
+namespace IMDB_WebApplication.Repositories.Interfaces
+{
+    public interface IReviewRepository
+    {
+        void Create(Review review);
+        IList<Review> Get(int movieId);
+        Review Get(int movieId, int id);
+        Review Update(int movieId, int id, Review review);
+        Review Delete(int movieId, int id);
+    }
+}
