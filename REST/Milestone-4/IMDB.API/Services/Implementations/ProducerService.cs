@@ -20,9 +20,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ProducerResponse Create(ProducerRequest request)
         {
+            var producerName = ValidateProducerRequest(request);
+
             var producer = new Producer
             {
-                Name = request.Name.Trim(),
+                Name = producerName,
                 DateOfBirth = request.DateOfBirth,
                 Bio = request.Bio?.Trim(),
                 Gender = request.Gender?.Trim()
@@ -87,10 +89,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
+            var producerName = ValidateProducerRequest(request);
+
             var producer = new Producer
             {
                 Id = id,
-                Name = request.Name.Trim(),
+                Name = producerName,
                 DateOfBirth = request.DateOfBirth,
                 Bio = request.Bio?.Trim(),
                 Gender = request.Gender?.Trim()
@@ -127,6 +131,34 @@ namespace IMDB_WebApplication.Services.Implementations
                 DateOfBirth = producer.DateOfBirth,
                 Gender = producer.Gender
             };
+        }
+
+        private static string ValidateProducerRequest(ProducerRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                throw new ArgumentException("Producer name is required.", nameof(ProducerRequest.Name));
+            }
+
+            if (request.DateOfBirth.HasValue)
+            {
+                var minimumDateOfBirth = new DateTime(1900, 1, 1);
+                var dateOfBirth = request.DateOfBirth.Value.Date;
+
+                if (dateOfBirth < minimumDateOfBirth || dateOfBirth > DateTime.Today)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(ProducerRequest.DateOfBirth),
+                        "Date of birth must be between January 1, 1900 and today.");
+                }
+            }
+
+            return request.Name.Trim();
         }
 
     }

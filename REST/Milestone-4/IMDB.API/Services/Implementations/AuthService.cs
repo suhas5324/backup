@@ -31,7 +31,23 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public bool SignUp(SignupRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                throw new ArgumentException("Email is required.", nameof(SignupRequest.Email));
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                throw new ArgumentException("Password is required.", nameof(SignupRequest.Password));
+            }
+
             var email = request.Email.Trim();
+            var password = request.Password;
             var normalizedEmail = email.ToUpperInvariant();
             var existingUser = userRepository.GetByEmail(normalizedEmail);
             if (existingUser != null)
@@ -46,7 +62,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 NormalizedEmail = normalizedEmail
             };
 
-            user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
+            user.PasswordHash = passwordHasher.HashPassword(user, password);
             userRepository.Create(user);
 
             return true;
@@ -54,14 +70,30 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public LoginResponse Login(LoginRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                throw new ArgumentException("Email is required.", nameof(LoginRequest.Email));
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                throw new ArgumentException("Password is required.", nameof(LoginRequest.Password));
+            }
+
             var email = request.Email.Trim();
+            var password = request.Password;
             var user = userRepository.GetByEmail(email.ToUpperInvariant());
             if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 return null;
             }
 
-            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             if (verificationResult == PasswordVerificationResult.Failed)
             {
                 return null;

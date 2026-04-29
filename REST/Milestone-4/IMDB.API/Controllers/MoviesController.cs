@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -21,13 +21,15 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost]
         public IActionResult Create([FromForm] MovieRequest request)
         {
-            var movie = movieService.Create(request);
-            if (movie == null)
+            try
             {
-                return BadRequest("Invalid movie payload");
+                var movie = movieService.Create(request);
+                return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
             }
-
-            return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet]
@@ -37,44 +39,60 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute]int id)
+        public IActionResult Get([FromRoute] int id)
         {
-            var movie = movieService.Get(id);
-            if (movie == null)
+            try
             {
-                return NotFound("Movie not found");
-            }
+                var movie = movieService.Get(id);
+                if (movie == null)
+                {
+                    return NotFound("Movie not found");
+                }
 
-            return Ok(movie);
+                return Ok(movie);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromForm] MovieRequest request)
         {
-            var updatedMovie = movieService.Update(id, request);
-            if (updatedMovie == null)
+            try
             {
-                if (request == null || string.IsNullOrWhiteSpace(request.Name) || request.ProducerId <= 0 || id <= 0)
+                var updatedMovie = movieService.Update(id, request);
+                if (updatedMovie == null)
                 {
-                    return BadRequest("Invalid movie payload");
+                    return NotFound("Movie not found");
                 }
 
-                return NotFound("Movie not found");
+                return NoContent();
             }
-
-            return NoContent();
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            var deletedMovie = movieService.Delete(id);
-            if (deletedMovie == null)
+            try
             {
-                return NotFound("Movie not found");
-            }
+                var deletedMovie = movieService.Delete(id);
+                if (deletedMovie == null)
+                {
+                    return NotFound("Movie not found");
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

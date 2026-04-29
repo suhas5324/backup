@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Supabase;
 using System;
 using System.Collections.Generic;
@@ -59,36 +58,6 @@ namespace IMDB.API
                     };
                 });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "IMDB API", Version = "v1" });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "Enter 'Bearer {your token}'",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-            new OpenApiSecurityScheme
-                {
-                Reference = new OpenApiReference
-                    {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme
-                    }
-                },
-            new string[] {}
-            }
-        });
-            });
-
             services.AddScoped<IActorService, ActorService>();
             services.AddScoped<IActorRepository, ActorRepository>();
             services.AddScoped<IGenreService, GenreService>();
@@ -123,8 +92,6 @@ namespace IMDB.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IMDB.API v1"));
             }
 
             app.UseHttpsRedirection();

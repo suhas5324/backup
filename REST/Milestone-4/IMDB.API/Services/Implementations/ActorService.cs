@@ -20,9 +20,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public ActorResponse Create(ActorRequest request)
         {
+            var actorName = ValidateActorRequest(request);
+
             var actor = new Actor
             {
-                Name = request.Name.Trim(),
+                Name = actorName,
                 DateOfBirth = request.DateOfBirth,
                 Bio = request.Bio?.Trim(),
                 Gender = request.Gender?.Trim()
@@ -87,10 +89,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
+            var actorName = ValidateActorRequest(request);
+
             var actor = new Actor
             {
                 Id = id,
-                Name = request.Name.Trim(),
+                Name = actorName,
                 DateOfBirth = request.DateOfBirth,
                 Bio = request.Bio?.Trim(),
                 Gender = request.Gender?.Trim()
@@ -127,6 +131,34 @@ namespace IMDB_WebApplication.Services.Implementations
                 DateofBirth = actor.DateOfBirth,
                 Gender = actor.Gender
             };
+        }
+
+        private static string ValidateActorRequest(ActorRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                throw new ArgumentException("Actor name is required.", nameof(ActorRequest.Name));
+            }
+
+            if (request.DateOfBirth.HasValue)
+            {
+                var minimumDateOfBirth = new DateTime(1900, 1, 1);
+                var dateOfBirth = request.DateOfBirth.Value.Date;
+
+                if (dateOfBirth < minimumDateOfBirth || dateOfBirth > DateTime.Today)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(ActorRequest.DateOfBirth),
+                        "Date of birth must be between January 1, 1900 and today.");
+                }
+            }
+
+            return request.Name.Trim();
         }
 
     }

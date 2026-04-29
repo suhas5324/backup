@@ -32,10 +32,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
+            var reviewMessage = ValidateReviewRequest(request);
+
             var review = new Review
             {
                 MovieId = movieId,
-                Message = request.Message.Trim()
+                Message = reviewMessage
             };
             reviewRepository.Create(review);
              var reviews = reviewRepository.Get(movieId);
@@ -115,11 +117,13 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
+            var reviewMessage = ValidateReviewRequest(request);
+
             var review = new Review
             {
                 Id = id,
                 MovieId = movieId,
-                Message = request.Message.Trim()
+                Message = reviewMessage
             };
 
             var updatedReview = reviewRepository.Update(movieId, id, review);
@@ -164,6 +168,21 @@ namespace IMDB_WebApplication.Services.Implementations
         private bool MovieExists(int movieId)
         {
             return movieId > 0 && movieRepository.Get(movieId) != null;
+        }
+
+        private static string ValidateReviewRequest(ReviewRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Message))
+            {
+                throw new ArgumentException("Review message is required.", nameof(ReviewRequest.Message));
+            }
+
+            return request.Message.Trim();
         }
     }
 }

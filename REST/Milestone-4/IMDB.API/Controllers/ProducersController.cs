@@ -2,6 +2,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -20,8 +21,15 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] ProducerRequest request)
         {
-            var producer = producerService.Create(request);
-            return CreatedAtAction(nameof(Get), new { id = producer.Id }, producer);
+            try
+            {
+                var producer = producerService.Create(request);
+                return CreatedAtAction(nameof(Get), new { id = producer.Id }, producer);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet]
@@ -33,37 +41,58 @@ namespace IMDB_WebApplication.Controllers
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-            var producer = producerService.Get(id);
-            if (producer == null)
+            try
             {
-                return NotFound("Producer not found");
-            }
+                var producer = producerService.Get(id);
+                if (producer == null)
+                {
+                    return NotFound("Producer not found");
+                }
 
-            return Ok(producer);
+                return Ok(producer);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromBody] ProducerRequest request)
         {
-            var updatedProducer = producerService.Update(id, request);
-            if (updatedProducer == null)
+            try
             {
-                return NotFound("Producer not found");
-            }
+                var updatedProducer = producerService.Update(id, request);
+                if (updatedProducer == null)
+                {
+                    return NotFound("Producer not found");
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            var deletedProducer = producerService.Delete(id);
-            if (deletedProducer == null)
+            try
             {
-                return NotFound("Producer not found");
-            }
+                var deletedProducer = producerService.Delete(id);
+                if (deletedProducer == null)
+                {
+                    return NotFound("Producer not found");
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

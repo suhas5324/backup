@@ -1,7 +1,8 @@
-﻿using IMDB_WebApplication.Models.RequestModels;
+using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -20,8 +21,15 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] ActorRequest request)
         {
-            var actor = actorService.Create(request);
-            return CreatedAtAction(nameof(Get), new { id = actor.Id }, actor);
+            try
+            {
+                var actor = actorService.Create(request);
+                return CreatedAtAction(nameof(Get), new { id = actor.Id }, actor);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet]
@@ -33,39 +41,58 @@ namespace IMDB_WebApplication.Controllers
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-
-            var actor = actorService.Get(id);
-            if (actor == null)
+            try
             {
-                return NotFound("Actor not found");
-            }
+                var actor = actorService.Get(id);
+                if (actor == null)
+                {
+                    return NotFound("Actor not found");
+                }
 
-            return Ok(actor);
+                return Ok(actor);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute]int id, [FromBody] ActorRequest request)
+        public IActionResult Update([FromRoute] int id, [FromBody] ActorRequest request)
         {
-
-            var updatedActor = actorService.Update(id, request);
-            if (updatedActor == null)
+            try
             {
-                return NotFound("Actor not found");
-            }
+                var updatedActor = actorService.Update(id, request);
+                if (updatedActor == null)
+                {
+                    return NotFound("Actor not found");
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            var deletedActor = actorService.Delete(id);
-            if (deletedActor == null)
+            try
             {
-                return NotFound("Actor not found");
-            }
+                var deletedActor = actorService.Delete(id);
+                if (deletedActor == null)
+                {
+                    return NotFound("Actor not found");
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

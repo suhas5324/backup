@@ -20,9 +20,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public GenreResponse Create(GenreRequest request)
         {
+            var genreName = ValidateGenreRequest(request);
+
             var genre = new Genre
             {
-                Name = request.Name.Trim()
+                Name = genreName
             };
 
             genreRepository.Create(genre);
@@ -75,10 +77,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 return null;
             }
 
+            var genreName = ValidateGenreRequest(request);
+
             var genre = new Genre
             {
                 Id = id,
-                Name = request.Name.Trim()
+                Name = genreName
             };
 
             var updatedGenre = genreRepository.Update(id, genre);
@@ -106,6 +110,21 @@ namespace IMDB_WebApplication.Services.Implementations
                 Id = genre.Id,
                 Name = genre.Name
             };
+        }
+
+        private static string ValidateGenreRequest(GenreRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                throw new ArgumentException("Genre name is required.", nameof(GenreRequest.Name));
+            }
+
+            return request.Name.Trim();
         }
 
     }

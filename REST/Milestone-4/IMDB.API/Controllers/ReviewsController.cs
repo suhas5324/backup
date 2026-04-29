@@ -2,6 +2,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -20,71 +21,96 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost("")]
         public IActionResult Create([FromRoute] int movieId, [FromBody] ReviewRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Message))
+            try
             {
-                return BadRequest("Invalid review request.");
-            }
+                var review = reviewService.Create(movieId, request);
+                if (review == null)
+                {
+                    return NotFound("Movie not found");
+                }
 
-            var review = reviewService.Create(movieId, request);
-            if (review == null)
+                return CreatedAtAction(nameof(Get), new { movieId, id = review.Id }, review);
+            }
+            catch (ArgumentException exception)
             {
-                return NotFound("Movie not found");
+                return BadRequest(exception.Message);
             }
-
-            return CreatedAtAction(nameof(Get), new { movieId, id = review.Id }, review);
         }
 
         [HttpGet("")]
         public IActionResult Get([FromRoute] int movieId)
         {
-            var reviews = reviewService.Get(movieId);
-            if (reviews == null)
+            try
             {
-                return NotFound("Movie not found");
-            }
+                var reviews = reviewService.Get(movieId);
+                if (reviews == null)
+                {
+                    return NotFound("Movie not found");
+                }
 
-            return Ok(reviews);
+                return Ok(reviews);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int movieId, [FromRoute] int id)
         {
-            var review = reviewService.Get(movieId, id);
-            if (review == null)
+            try
             {
-                return NotFound("Movie or review not found");
-            }
+                var review = reviewService.Get(movieId, id);
+                if (review == null)
+                {
+                    return NotFound("Movie or review not found");
+                }
 
-            return Ok(review);
+                return Ok(review);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int movieId, [FromRoute] int id, [FromBody] ReviewRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.Message))
+            try
             {
-                return BadRequest("Invalid review request.");
-            }
+                var updatedReview = reviewService.Update(movieId, id, request);
+                if (updatedReview == null)
+                {
+                    return NotFound("Movie or review not found");
+                }
 
-            var updatedReview = reviewService.Update(movieId, id, request);
-            if (updatedReview == null)
+                return NoContent();
+            }
+            catch (ArgumentException exception)
             {
-                return NotFound("Movie or review not found");
+                return BadRequest(exception.Message);
             }
-
-            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int movieId, [FromRoute] int id)
         {
-            var deletedReview = reviewService.Delete(movieId, id);
-            if (deletedReview == null)
+            try
             {
-                return NotFound("Movie or review not found");
-            }
+                var deletedReview = reviewService.Delete(movieId, id);
+                if (deletedReview == null)
+                {
+                    return NotFound("Movie or review not found");
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

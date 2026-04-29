@@ -15,31 +15,29 @@ namespace IMDB_WebApplication.Services.Implementations
         private readonly IMovieRepository movieRepository;
         private readonly IProducerRepository producerRepository;
         private readonly IActorRepository actorRepository;
+        private readonly IGenreRepository genreRepository;
         private readonly SupabaseService supabaseService;
         public MovieService(
             IMovieRepository movieRepository,
             IProducerRepository producerRepository,
             IActorRepository actorRepository,
+            IGenreRepository genreRepository,
             SupabaseService supabaseService)
         {
             this.movieRepository = movieRepository;
             this.producerRepository = producerRepository;
             this.actorRepository = actorRepository;
+            this.genreRepository = genreRepository;
             this.supabaseService = supabaseService;
         }
 
         public MovieResponse Create(MovieRequest request)
         {
-            if (request.ProducerId <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(request.ProducerId),"Producer id must be greater than zero.");
-            }
-
-            ValidateMovieRequest(request);
+            var movieName = ValidateMovieRequest(request);
 
             var movie = new Movie
             {
-                Name = request.Name.Trim(),
+                Name = movieName,
                 YearOfRelease = request.YearOfRelease ?? 0,
                 Plot = request.Plot?.Trim(),
                 ProducerId = request.ProducerId,
@@ -116,23 +114,18 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
             }
 
-            if (request.ProducerId <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(request.ProducerId), "Producer id must be greater than zero.");
-            }
-
             var existingMovie = movieRepository.Get(id);
             if (existingMovie == null)
             {
                 return null;
             }
 
-            ValidateMovieRequest(request);
+            var movieName = ValidateMovieRequest(request);
 
             var movie = new Movie
             {
                 Id = id,
-                Name = request.Name.Trim(),
+                Name = movieName,
                 YearOfRelease = request.YearOfRelease ?? 0,
                 Plot = request.Plot?.Trim(),
                 ProducerId = request.ProducerId,
@@ -204,30 +197,76 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        private void ValidateMovieRequest(MovieRequest request)
+        private string ValidateMovieRequest(MovieRequest request)
         {
-            if (producerRepository.Get(request.ProducerId) == null)
+            if (request == null)
             {
-                throw new ArgumentException($"Producer with id {request.ProducerId} does not exist.", nameof(request.ProducerId));
+                throw new ArgumentNullException(nameof(request), "Request payload is required.");
             }
 
-            if (!request.actorIds.Any())
+            if (string.IsNullOrWhiteSpace(request.Name))
             {
-                throw new ArgumentException("At least one actor id is required.", nameof(request.actorIds));
+                throw new ArgumentException("Movie name is required.", nameof(MovieRequest.Name));
+            }
+
+            if (request.ProducerId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(MovieRequest.ProducerId), "Producer id must be greater than zero.");
+            }
+
+            if (producerRepository.Get(request.ProducerId) == null)
+            {
+                throw new ArgumentException($"Producer with id {request.ProducerId} does not exist.", nameof(MovieRequest.ProducerId));
+            }
+
+            if (request.actorIds == null || !request.actorIds.Any())
+            {
+                throw new ArgumentException("At least one actor id is required.", nameof(MovieRequest.actorIds));
             }
 
             foreach (var actorId in request.actorIds)
             {
                 if (actorId <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(request.actorIds), "Actor id must be greater than zero.");
+                    throw new ArgumentOutOfRangeException(nameof(MovieRequest.actorIds), "Actor id must be greater than zero.");
                 }
 
                 if (actorRepository.Get(actorId) == null)
                 {
-                    throw new ArgumentException($"Actor with id {actorId} does not exist.", nameof(request.actorIds));
+                    throw new ArgumentException($"Actor with id {actorId} does not exist.", nameof(MovieRequest.actorIds));
                 }
             }
+
+            if (request.genreIds != null && request.genreIds.Any())
+            {
+                foreach (var genreId in request.genreIds)
+                {
+                    if (genreId <= 0)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(MovieRequest.genreIds), "Genre id must be greater than zero.");
+                    }
+
+                    if (genreRepository.Get(genreId) == null)
+                    {
+                        throw new ArgumentException($"Genre with id {genreId} does not exist.", nameof(MovieRequest.genreIds));
+                    }
+                }
+            }
+
+            if (request.YearOfRelease.HasValue)
+            {
+                var yearOfRelease = request.YearOfRelease.Value;
+                var currentYear = DateTime.Today.Year;
+
+                if (yearOfRelease < 1888 || yearOfRelease > currentYear)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(MovieRequest.YearOfRelease),
+                        $"Year of release must be between 1888 and {currentYear}.");
+                }
+            }
+
+            return request.Name.Trim();
         }
 
     }
