@@ -48,14 +48,14 @@ namespace IMDB_WebApplication.Services.Implementations
                 movie.CoverImage = supabaseService.UploadFile(request.CoverImage).Result;
             }
 
-            movie.actorIds = (request.actorIds != null && request.actorIds.Any())
+            string actorIds = (request.actorIds != null && request.actorIds.Any())
                 ? string.Join(",", request.actorIds)
                 : null;
-            movie.genreIds = (request.genreIds != null && request.genreIds.Any())
+            string genreIds = (request.genreIds != null && request.genreIds.Any())
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            movieRepository.Create(movie);
+            movieRepository.Create(movie, actorIds, genreIds);
 
             var movies = movieRepository.Get();
             movie.Id = movies.Count == 0 ? 1 : movies.Max(x => x.Id);
@@ -147,14 +147,14 @@ namespace IMDB_WebApplication.Services.Implementations
                 movie.CoverImage = existingMovie.CoverImage;
             }
 
-            movie.actorIds = (request.actorIds != null && request.actorIds.Any())
+            string actorIds = (request.actorIds != null && request.actorIds.Any())
                 ? string.Join(",", request.actorIds)
                 : null;
-            movie.genreIds = (request.genreIds != null && request.genreIds.Any())
+            string genreIds = (request.genreIds != null && request.genreIds.Any())
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            var updatedMovie = movieRepository.Update(id, movie);
+            var updatedMovie = movieRepository.Update(id, movie,actorIds, genreIds);
 
             return new MovieResponse
             {

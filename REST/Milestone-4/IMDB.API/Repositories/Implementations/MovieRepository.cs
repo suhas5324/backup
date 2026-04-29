@@ -15,7 +15,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
             : base(options.Value.IMDB)
         {
         }
-        public void Create(Movie movie)
+        public void Create(Movie movie,string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -27,8 +27,8 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 YearOfRelease = movie.YearOfRelease,
                 Plot = movie.Plot,
                 ProducerId = movie.ProducerId,
-                actorIds = movie.actorIds,
-                genreIds = movie.genreIds,
+                actorIds = actorIds,
+                genreIds = genreIds,
                 CoverImage=movie.CoverImage
             };
 
@@ -52,7 +52,7 @@ FROM foundation.movies
 WHERE id = @Id";
             return Get(query, new { Id = id });
         }
-        public Movie Update(int id, Movie movie)
+        public Movie Update(int id, Movie movie, string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -66,8 +66,8 @@ WHERE id = @Id";
                 Plot = movie.Plot,
                 ProducerId = movie.ProducerId,
                 CoverImage=movie.CoverImage,
-                actorIds = movie.actorIds,
-                genreIds = movie.genreIds,
+                actorIds = actorIds,
+                genreIds = genreIds,
             };
 
             connection.Execute(

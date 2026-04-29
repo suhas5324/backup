@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace IMDB_WebApplication.Models.DBModels
 {
@@ -8,6 +8,6 @@ namespace IMDB_WebApplication.Models.DBModels
         public string Name { get; set; }
         public string? Bio { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public string Gender { get; set; }
+        public string? Gender { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-namespace IMDB_WebApplication.Models.DBModels
+﻿namespace IMDB_WebApplication.Models.DBModels
 {
     public class Movie
     {
@@ -7,8 +7,6 @@ namespace IMDB_WebApplication.Models.DBModels
         public int? YearOfRelease { get; set; }
         public string? Plot { get; set; }
         public int ProducerId { get; set; }
-        public string actorIds { get; set; }
-        public string genreIds { get; set; }
         public string? CoverImage { get; set; }
     }
 }
