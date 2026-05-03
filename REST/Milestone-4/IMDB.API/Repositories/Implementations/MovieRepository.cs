@@ -15,7 +15,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
             : base(options.Value.IMDB)
         {
         }
-        public void Create(Movie movie,string actorIds, string genreIds)
+        public Movie Create(Movie movie, string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -29,15 +29,18 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 ProducerId = movie.ProducerId,
                 actorIds = actorIds,
                 genreIds = genreIds,
-                CoverImage=movie.CoverImage
+                CoverImage = movie.CoverImage
             };
 
-            connection.Execute(
+            var createdMovieId = connection.QuerySingle<int>(
                 procedure,
                 values,
                 commandType: CommandType.StoredProcedure
             );
+
+            return Get(createdMovieId);
         }
+
         public IList<Movie> Get()
         {
             string query = @"SELECT *
@@ -52,7 +55,7 @@ FROM foundation.movies
 WHERE id = @Id";
             return Get(query, new { Id = id });
         }
-        public Movie Update(int id, Movie movie, string actorIds, string genreIds)
+        public void Update(int id, Movie movie, string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -65,7 +68,7 @@ WHERE id = @Id";
                 YearOfRelease = movie.YearOfRelease,
                 Plot = movie.Plot,
                 ProducerId = movie.ProducerId,
-                CoverImage=movie.CoverImage,
+                CoverImage = movie.CoverImage,
                 actorIds = actorIds,
                 genreIds = genreIds,
             };
@@ -75,23 +78,13 @@ WHERE id = @Id";
                 values,
                 commandType: CommandType.StoredProcedure
             );
-
-            return Get(id);
         }
-        public Movie Delete(int id)
+        public void Delete(int id)
         {
             string query = @"DELETE
 FROM foundation.movies
 WHERE id = @Id";
-
-            var movie = Get(id);
-
-            if (movie != null)
-            {
-                Delete(query, new { Id = id });
-            }
-
-            return movie;
+            Delete(query, new { Id = id });
         }
     }
 }

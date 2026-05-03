@@ -63,7 +63,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var updatedMovie = movieService.Update(id, request);
-                if (updatedMovie == null)
+                if (!updatedMovie)
                 {
                     return NotFound("Movie not found");
                 }
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var deletedMovie = movieService.Delete(id);
-                if (deletedMovie == null)
+                if (!deletedMovie)
                 {
                     return NotFound("Movie not found");
                 }

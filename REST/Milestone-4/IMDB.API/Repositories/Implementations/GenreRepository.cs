@@ -1,6 +1,8 @@
+using Dapper;
 using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,14 @@ namespace IMDB_WebApplication.Repositories.Implementations
         public GenreRepository(IOptions<ConnectionString> options) : base(options.Value.IMDB)
         {
         }
-        public void Create(Genre genre)
+        public Genre Create(Genre genre)
         {
             string query=@"INSERT INTO foundation.genres (name)
+OUTPUT INSERTED.id
 VALUES (@Name)";
-            Create(query, new { Name = genre.Name });
+            using var connection = new SqlConnection(_connectionString);
+            var id = connection.ExecuteScalar<int>(query, new { Name = genre.Name });
+            return Get(id);
 
         }
         public IList<Genre> Get()
@@ -32,23 +37,19 @@ FROM foundation.genres
 WHERE id = @Id";
             return Get(query, new { Id = id });
         }
-        public Genre Update(int id,Genre genre)
+        public void Update(int id,Genre genre)
         {
             string query= @"UPDATE foundation.genres
 SET name = @Name
 WHERE id = @Id";
             Update(query, new { Id = id, Name = genre.Name });
-            return Get(id);
         }
-        public Genre Delete(int id)
+        public void Delete(int id)
         {
            string query = @"DELETE
 FROM foundation.genres
 WHERE id = @Id";
-            var genre = Get(id);
-            if(genre!=null)
-            Delete(query, new { id });
-            return genre;
+            Delete(query, new { Id = id });
         }
 
     }

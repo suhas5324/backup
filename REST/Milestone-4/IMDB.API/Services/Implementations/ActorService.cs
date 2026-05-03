@@ -30,16 +30,14 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            actorRepository.Create(actor);
-            var actors = actorRepository.Get();
-            actor.Id = actors.Count == 0 ? 1 : actors.Max(a => a.Id);
+            var createdActor = actorRepository.Create(actor);
             return new ActorResponse
             {
-                Id = actor.Id,
-                Name = actor.Name,
-                Bio = actor.Bio,
-                DateofBirth = actor.DateOfBirth,
-                Gender = actor.Gender
+                Id = createdActor.Id,
+                Name = createdActor.Name,
+                Bio = createdActor.Bio,
+                DateofBirth = createdActor.DateOfBirth,
+                Gender = createdActor.Gender
             };
         }
 
@@ -77,7 +75,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public ActorResponse Update(int id, ActorRequest request)
+        public bool Update(int id, ActorRequest request)
         {
             if (id <= 0)
             {
@@ -86,7 +84,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (actorRepository.Get(id) == null)
             {
-                return null;
+                return false;
             }
 
             var actorName = ValidateActorRequest(request);
@@ -100,37 +98,24 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            var updatedActor = actorRepository.Update(id, actor);
-            return new ActorResponse
-            {
-                Id = updatedActor.Id,
-                Name = updatedActor.Name,
-                Bio = updatedActor.Bio,
-                DateofBirth = updatedActor.DateOfBirth,
-                Gender = updatedActor.Gender
-            };
+            actorRepository.Update(id, actor);
+            return true;
         }
 
-        public ActorResponse Delete(int id)
+        public bool Delete(int id)
         {
             if (id <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
             }
 
-            var actor = actorRepository.Delete(id);
-            if (actor == null)
+            if (actorRepository.Get(id) == null)
             {
-                return null;
+                return false;
             }
-            return new ActorResponse
-            {
-                Id = actor.Id,
-                Name = actor.Name,
-                Bio = actor.Bio,
-                DateofBirth = actor.DateOfBirth,
-                Gender = actor.Gender
-            };
+
+            actorRepository.Delete(id);
+            return true;
         }
 
         private static string ValidateActorRequest(ActorRequest request)

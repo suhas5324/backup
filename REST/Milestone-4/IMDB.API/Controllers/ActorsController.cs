@@ -63,7 +63,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var updatedActor = actorService.Update(id, request);
-                if (updatedActor == null)
+                if (!updatedActor)
                 {
                     return NotFound("Actor not found");
                 }
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var deletedActor = actorService.Delete(id);
-                if (deletedActor == null)
+                if (!deletedActor)
                 {
                     return NotFound("Actor not found");
                 }

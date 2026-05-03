@@ -1,4 +1,5 @@
 using IMDB.API.Services.Implementations;
+using IMDB.API.Services.Interfaces;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
@@ -16,13 +17,13 @@ namespace IMDB_WebApplication.Services.Implementations
         private readonly IProducerRepository producerRepository;
         private readonly IActorRepository actorRepository;
         private readonly IGenreRepository genreRepository;
-        private readonly SupabaseService supabaseService;
+        private readonly ISupabaseService supabaseService;
         public MovieService(
             IMovieRepository movieRepository,
             IProducerRepository producerRepository,
             IActorRepository actorRepository,
             IGenreRepository genreRepository,
-            SupabaseService supabaseService)
+            ISupabaseService supabaseService)
         {
             this.movieRepository = movieRepository;
             this.producerRepository = producerRepository;
@@ -55,19 +56,16 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            movieRepository.Create(movie, actorIds, genreIds);
-
-            var movies = movieRepository.Get();
-            movie.Id = movies.Count == 0 ? 1 : movies.Max(x => x.Id);
+            var createdMovie = movieRepository.Create(movie, actorIds, genreIds);
 
             return new MovieResponse
             {
-                Id = movie.Id,
-                Name = movie.Name,
-                YearOfRelease = movie.YearOfRelease,
-                Plot = movie.Plot,
-                ProducerId = movie.ProducerId,
-                CoverImage = movie.CoverImage
+                Id = createdMovie.Id,
+                Name = createdMovie.Name,
+                YearOfRelease = createdMovie.YearOfRelease,
+                Plot = createdMovie.Plot,
+                ProducerId = createdMovie.ProducerId,
+                CoverImage = createdMovie.CoverImage
             };
         }
 
@@ -107,7 +105,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public MovieResponse Update(int id, MovieRequest request)
+        public bool Update(int id, MovieRequest request)
         {
             if (id <= 0)
             {
@@ -117,7 +115,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var existingMovie = movieRepository.Get(id);
             if (existingMovie == null)
             {
-                return null;
+                return false;
             }
 
             var movieName = ValidateMovieRequest(request);
@@ -133,7 +131,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                var newImageUrl = supabaseService.UploadFile(request.CoverImage).Result;
+                var newImageUrl =supabaseService.UploadFile(request.CoverImage).Result;
 
                 if (!string.IsNullOrEmpty(existingMovie.CoverImage))
                 {
@@ -154,20 +152,11 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            var updatedMovie = movieRepository.Update(id, movie,actorIds, genreIds);
-
-            return new MovieResponse
-            {
-                Id = updatedMovie.Id,
-                Name = updatedMovie.Name,
-                YearOfRelease = updatedMovie.YearOfRelease,
-                Plot = updatedMovie.Plot,
-                ProducerId = updatedMovie.ProducerId,
-                CoverImage = updatedMovie.CoverImage
-            };
+            movieRepository.Update(id, movie,actorIds, genreIds);
+            return true;
         }
 
-        public MovieResponse Delete(int id)
+        public bool Delete(int id)
         {
             if (id <= 0)
             {
@@ -177,24 +166,15 @@ namespace IMDB_WebApplication.Services.Implementations
             var movie = movieRepository.Get(id);
 
             if (movie == null)
-                return null;
+                return false;
 
             if (!string.IsNullOrEmpty(movie.CoverImage))
             {
                 supabaseService.DeleteFile(movie.CoverImage).Wait();
             }
 
-            var deletedMovie = movieRepository.Delete(id);
-
-            return new MovieResponse
-            {
-                Id = deletedMovie.Id,
-                Name = deletedMovie.Name,
-                YearOfRelease = deletedMovie.YearOfRelease,
-                Plot = deletedMovie.Plot,
-                ProducerId = deletedMovie.ProducerId,
-                CoverImage = deletedMovie.CoverImage
-            };
+            movieRepository.Delete(id);
+            return true;
         }
 
         private string ValidateMovieRequest(MovieRequest request)
@@ -224,6 +204,9 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new ArgumentException("At least one actor id is required.", nameof(MovieRequest.actorIds));
             }
 
+            var actors = actorRepository.Get();
+            var actorIds = actors.Select(actor => actor.Id).ToHashSet();
+
             foreach (var actorId in request.actorIds)
             {
                 if (actorId <= 0)
@@ -231,7 +214,7 @@ namespace IMDB_WebApplication.Services.Implementations
                     throw new ArgumentOutOfRangeException(nameof(MovieRequest.actorIds), "Actor id must be greater than zero.");
                 }
 
-                if (actorRepository.Get(actorId) == null)
+                if (!actorIds.Contains(actorId))
                 {
                     throw new ArgumentException($"Actor with id {actorId} does not exist.", nameof(MovieRequest.actorIds));
                 }
@@ -239,6 +222,9 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.genreIds != null && request.genreIds.Any())
             {
+                var genres = genreRepository.Get();
+                var genreIds = genres.Select(genre => genre.Id).ToHashSet();
+
                 foreach (var genreId in request.genreIds)
                 {
                     if (genreId <= 0)
@@ -246,7 +232,7 @@ namespace IMDB_WebApplication.Services.Implementations
                         throw new ArgumentOutOfRangeException(nameof(MovieRequest.genreIds), "Genre id must be greater than zero.");
                     }
 
-                    if (genreRepository.Get(genreId) == null)
+                    if (!genreIds.Contains(genreId))
                     {
                         throw new ArgumentException($"Genre with id {genreId} does not exist.", nameof(MovieRequest.genreIds));
                     }

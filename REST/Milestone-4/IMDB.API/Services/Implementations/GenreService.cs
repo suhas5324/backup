@@ -27,13 +27,11 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            genreRepository.Create(genre);
-            var genres = genreRepository.Get();
-            genre.Id = genres.Count == 0 ? 1 : genres.Max(existingGenre => existingGenre.Id);
+            var createdGenre = genreRepository.Create(genre);
             return new GenreResponse
             {
-                Id = genre.Id,
-                Name = genre.Name
+                Id = createdGenre.Id,
+                Name = createdGenre.Name
             };
         }
 
@@ -65,7 +63,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public GenreResponse Update(int id, GenreRequest request)
+        public bool Update(int id, GenreRequest request)
         {
             if (id <= 0)
             {
@@ -74,7 +72,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (genreRepository.Get(id) == null)
             {
-                return null;
+                return false;
             }
 
             var genreName = ValidateGenreRequest(request);
@@ -85,31 +83,24 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            var updatedGenre = genreRepository.Update(id, genre);
-            return new GenreResponse
-            {
-                Id = updatedGenre.Id,
-                Name = updatedGenre.Name
-            };
+            genreRepository.Update(id, genre);
+            return true;
         }
 
-        public GenreResponse Delete(int id)
+        public bool Delete(int id)
         {
             if (id <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
             }
 
-            var genre = genreRepository.Delete(id);
-            if (genre == null)
+            if (genreRepository.Get(id) == null)
             {
-                return null;
+                return false;
             }
-            return new GenreResponse
-            {
-                Id = genre.Id,
-                Name = genre.Name
-            };
+
+            genreRepository.Delete(id);
+            return true;
         }
 
         private static string ValidateGenreRequest(GenreRequest request)

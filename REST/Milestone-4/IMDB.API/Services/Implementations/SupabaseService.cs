@@ -8,7 +8,8 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    public class SupabaseService
+    using IMDB.API.Services.Interfaces;
+    public class SupabaseService : ISupabaseService
     {
         private readonly Client _client;
         private readonly IConfiguration _config;

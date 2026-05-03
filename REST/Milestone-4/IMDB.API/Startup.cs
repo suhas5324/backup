@@ -1,4 +1,5 @@
 using IMDB.API.Services.Implementations;
+using IMDB.API.Services.Interfaces;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Implementations;
 using IMDB_WebApplication.Repositories.Interfaces;
@@ -85,7 +86,7 @@ namespace IMDB.API
                 return client;
             });
 
-            services.AddScoped<SupabaseService>();
+            services.AddScoped<ISupabaseService,SupabaseService>();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

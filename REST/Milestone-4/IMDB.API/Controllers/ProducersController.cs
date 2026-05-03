@@ -63,7 +63,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var updatedProducer = producerService.Update(id, request);
-                if (updatedProducer == null)
+                if (!updatedProducer)
                 {
                     return NotFound("Producer not found");
                 }
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var deletedProducer = producerService.Delete(id);
-                if (deletedProducer == null)
+                if (!deletedProducer)
                 {
                     return NotFound("Producer not found");
                 }

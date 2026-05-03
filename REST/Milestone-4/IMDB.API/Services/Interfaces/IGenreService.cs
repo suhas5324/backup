@@ -9,7 +9,7 @@ namespace IMDB_WebApplication.Services.Interfaces
         GenreResponse Create(GenreRequest request);
         IList<GenreResponse> Get();
         GenreResponse Get(int id);
-        GenreResponse Update(int id, GenreRequest request);
-        GenreResponse Delete(int id);
+        bool Update(int id, GenreRequest request);
+        bool Delete(int id);
     }
 }

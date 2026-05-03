@@ -39,14 +39,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 MovieId = movieId,
                 Message = reviewMessage
             };
-            reviewRepository.Create(review);
-             var reviews = reviewRepository.Get(movieId);
-            review.Id = reviews.Count == 0 ? 1 : reviews.Max(existingReview => existingReview.Id);
+            var createdReview = reviewRepository.Create(review);
             return new ReviewResponse
             {
-                Id = review.Id,
-                MovieId = review.MovieId,
-                Message = review.Message
+                Id = createdReview.Id,
+                MovieId = createdReview.MovieId,
+                Message = createdReview.Message
             };
         }
 
@@ -82,11 +80,6 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
             }
 
-            if (!MovieExists(movieId))
-            {
-                return null;
-            }
-
             var review = reviewRepository.Get(movieId, id);
             if (review == null)
             {
@@ -100,7 +93,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public ReviewResponse Update(int movieId, int id, ReviewRequest request)
+        public bool Update(int movieId, int id, ReviewRequest request)
         {
             if (movieId <= 0)
             {
@@ -112,9 +105,9 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
             }
 
-            if (!MovieExists(movieId) || reviewRepository.Get(movieId, id) == null)
+            if (reviewRepository.Get(movieId, id) == null)
             {
-                return null;
+                return false;
             }
 
             var reviewMessage = ValidateReviewRequest(request);
@@ -126,16 +119,11 @@ namespace IMDB_WebApplication.Services.Implementations
                 Message = reviewMessage
             };
 
-            var updatedReview = reviewRepository.Update(movieId, id, review);
-            return new ReviewResponse
-            {
-                Id = updatedReview.Id,
-                MovieId = updatedReview.MovieId,
-                Message = updatedReview.Message
-            };
+            reviewRepository.Update(movieId, id, review);
+            return true;
         }
 
-        public ReviewResponse Delete(int movieId, int id)
+        public bool Delete(int movieId, int id)
         {
             if (movieId <= 0)
             {
@@ -147,22 +135,13 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
             }
 
-            if (!MovieExists(movieId))
+            if (reviewRepository.Get(movieId, id) == null)
             {
-                return null;
+                return false;
             }
 
-            var review = reviewRepository.Delete(movieId, id);
-            if (review == null)
-            {
-                return null;
-            }
-            return new ReviewResponse
-            {
-                Id = review.Id,
-                MovieId = review.MovieId,
-                Message = review.Message
-            };
+            reviewRepository.Delete(movieId, id);
+            return true;
         }
 
         private bool MovieExists(int movieId)

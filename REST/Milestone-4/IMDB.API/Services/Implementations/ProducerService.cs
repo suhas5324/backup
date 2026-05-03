@@ -30,16 +30,14 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            producerRepository.Create(producer);
-            var producers = producerRepository.Get();
-            producer.Id = producers.Count == 0 ? 1 : producers.Max(existingProducer => existingProducer.Id);
+            var createdProducer = producerRepository.Create(producer);
             return new ProducerResponse
             {
-                Id = producer.Id,
-                Name = producer.Name,
-                Bio = producer.Bio,
-                DateOfBirth = producer.DateOfBirth,
-                Gender = producer.Gender
+                Id = createdProducer.Id,
+                Name = createdProducer.Name,
+                Bio = createdProducer.Bio,
+                DateOfBirth = createdProducer.DateOfBirth,
+                Gender = createdProducer.Gender
             };
         }
 
@@ -77,7 +75,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public ProducerResponse Update(int id, ProducerRequest request)
+        public bool Update(int id, ProducerRequest request)
         {
             if (id <= 0)
             {
@@ -86,7 +84,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (producerRepository.Get(id) == null)
             {
-                return null;
+                return false;
             }
 
             var producerName = ValidateProducerRequest(request);
@@ -100,37 +98,24 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            var updatedProducer = producerRepository.Update(id, producer);
-            return new ProducerResponse
-            {
-                Id = updatedProducer.Id,
-                Name = updatedProducer.Name,
-                Bio = updatedProducer.Bio,
-                DateOfBirth = updatedProducer.DateOfBirth,
-                Gender = updatedProducer.Gender
-            };
+            producerRepository.Update(id, producer);
+            return true;
         }
 
-        public ProducerResponse Delete(int id)
+        public bool Delete(int id)
         {
             if (id <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(id), "Producer id must be greater than zero.");
             }
 
-            var producer = producerRepository.Delete(id);
-            if (producer == null)
+            if (producerRepository.Get(id) == null)
             {
-                return null;
+                return false;
             }
-            return new ProducerResponse
-            {
-                Id = producer.Id,
-                Name = producer.Name,
-                Bio = producer.Bio,
-                DateOfBirth = producer.DateOfBirth,
-                Gender = producer.Gender
-            };
+
+            producerRepository.Delete(id);
+            return true;
         }
 
         private static string ValidateProducerRequest(ProducerRequest request)

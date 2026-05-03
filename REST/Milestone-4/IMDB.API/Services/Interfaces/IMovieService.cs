@@ -9,7 +9,7 @@ namespace IMDB_WebApplication.Services.Interfaces
         MovieResponse Create(MovieRequest request);
         IList<MovieResponse> Get();
         MovieResponse Get(int id);
-        MovieResponse Update(int id, MovieRequest request);
-        MovieResponse Delete(int id);
+        bool Update(int id, MovieRequest request);
+        bool Delete(int id);
     }
 }

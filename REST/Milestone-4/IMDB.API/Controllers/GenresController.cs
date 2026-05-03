@@ -63,7 +63,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var updatedGenre = genreService.Update(id, request);
-                if (updatedGenre == null)
+                if (!updatedGenre)
                 {
                     return NotFound("Genre not found");
                 }
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var deletedGenre = genreService.Delete(id);
-                if (deletedGenre == null)
+                if (!deletedGenre)
                 {
                     return NotFound("Genre not found");
                 }

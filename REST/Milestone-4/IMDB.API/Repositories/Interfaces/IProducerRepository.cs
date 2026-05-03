@@ -5,10 +5,10 @@ namespace IMDB_WebApplication.Repositories.Interfaces
 {
     public interface IProducerRepository
     {
-        void Create(Producer producer);
+        Producer Create(Producer producer);
         IList<Producer> Get();
         Producer Get(int id);
-        Producer Update(int id, Producer producer);
-        Producer Delete(int id);
+        void Update(int id, Producer producer);
+        void Delete(int id);
     }
 }

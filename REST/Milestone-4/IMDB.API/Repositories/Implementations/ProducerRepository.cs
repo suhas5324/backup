@@ -1,6 +1,8 @@
+using Dapper;
 using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
            
         }
 
-        public void Create(Producer producer)
+        public Producer Create(Producer producer)
         {
             string query = @"INSERT INTO foundation.producers (
 	name
@@ -23,13 +25,16 @@ namespace IMDB_WebApplication.Repositories.Implementations
 	,dateofbirth
 	,gender
 	)
+OUTPUT INSERTED.id
 VALUES (
 	@Name
 	,@Bio
 	,@DateOfBirth
 	,@Gender
 	);";
-            Create(query, new { Name = producer.Name, Bio = producer.Bio, DateOfBirth = producer.DateOfBirth, Gender = producer.Gender });
+            using var connection = new SqlConnection(_connectionString);
+            var id = connection.ExecuteScalar<int>(query, new { Name = producer.Name, Bio = producer.Bio, DateOfBirth = producer.DateOfBirth, Gender = producer.Gender });
+            return Get(id);
         }
 
         public IList<Producer> Get()
@@ -47,7 +52,7 @@ WHERE id = @Id";
             return Get(query, new { Id = id });
         }
 
-        public Producer Update(int id, Producer producer)
+        public void Update(int id, Producer producer)
         {
             string query = @"UPDATE foundation.producers
 SET name = @Name
@@ -56,19 +61,13 @@ SET name = @Name
 	,gender = @Gender
 WHERE id = @Id";
             Update(query, new { Id = id, Name = producer.Name, Bio = producer.Bio,DateOfBirth=producer.DateOfBirth, Gender = producer.Gender});
-            return Get(id);
         }
-        public Producer Delete(int id)
+        public void Delete(int id)
         {
             string query = @"DELETE
 FROM foundation.producers
 WHERE id = @Id";
-            var producer = Get(id);
-            if (producer != null)
-            {
-                Delete(query, new { Id = id });
-            }
-            return producer;
+            Delete(query, new { Id = id });
         }
     }
 }

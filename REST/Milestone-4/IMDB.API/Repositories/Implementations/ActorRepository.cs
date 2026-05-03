@@ -15,7 +15,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
         {
         }
 
-        public void Create(Actor actor)
+        public Actor Create(Actor actor)
         {
             string query = @"INSERT INTO foundation.actors (
 	name
@@ -23,13 +23,16 @@ namespace IMDB_WebApplication.Repositories.Implementations
 	,gender
 	,dateofbirth
 	)
+OUTPUT INSERTED.id
 VALUES (
 	@Name
 	,@Bio
 	,@Gender
 	,@DateOfBirth
 	)";
-            Create(query, new { Name = actor.Name, Bio = actor.Bio, Gender = actor.Gender, DateOfBirth = actor.DateOfBirth });
+            using var connection = new SqlConnection(_connectionString);
+            var id = connection.ExecuteScalar<int>(query, new { Name = actor.Name, Bio = actor.Bio, Gender = actor.Gender, DateOfBirth = actor.DateOfBirth });
+            return Get(id);
         }
         public IList<Actor> Get()
         {
@@ -44,7 +47,7 @@ FROM foundation.actors
 WHERE id = @Id";
             return Get(query, new { Id = id });
         }
-        public Actor Update(int id, Actor actor)
+        public void Update(int id, Actor actor)
         {
             string query = @"UPDATE foundation.actors
 SET name = @Name
@@ -53,19 +56,13 @@ SET name = @Name
 	,gender = @Gender
 WHERE id = @Id";
             Update(query, new { Id = id, Name = actor.Name, Bio = actor.Bio, DateOfBirth = actor.DateOfBirth, Gender = actor.Gender });
-            return Get(id);
         }
-        public Actor Delete(int id)
+        public void Delete(int id)
         {
             string query = @"DELETE
 FROM foundation.actors
 WHERE id = @Id";
-            var actor = Get(id);
-            if (actor != null)
-            {
-                Delete(query, new { Id = id });
-            }
-            return actor;
+            Delete(query, new { Id = id });
         }
     }
 }

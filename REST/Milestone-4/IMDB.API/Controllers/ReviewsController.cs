@@ -81,7 +81,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var updatedReview = reviewService.Update(movieId, id, request);
-                if (updatedReview == null)
+                if (!updatedReview)
                 {
                     return NotFound("Movie or review not found");
                 }
@@ -100,7 +100,7 @@ namespace IMDB_WebApplication.Controllers
             try
             {
                 var deletedReview = reviewService.Delete(movieId, id);
-                if (deletedReview == null)
+                if (!deletedReview)
                 {
                     return NotFound("Movie or review not found");
                 }
