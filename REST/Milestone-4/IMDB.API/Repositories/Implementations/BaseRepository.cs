@@ -8,7 +8,7 @@ using System.Linq;
 
 public class BaseRepository<T> where T : class
 {
-    public readonly string _connectionString;
+    protected readonly string _connectionString;
     public BaseRepository(string connectionString)
     {
         _connectionString = connectionString;
@@ -23,7 +23,7 @@ public class BaseRepository<T> where T : class
         using var connection = new SqlConnection(_connectionString);
         return connection.Query<T>(query).ToList();
     }
-    protected IList<T> GetAll(string query, object parameters)
+    public IList<T> GetAll(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
         return connection.Query<T>(query, parameters).ToList();

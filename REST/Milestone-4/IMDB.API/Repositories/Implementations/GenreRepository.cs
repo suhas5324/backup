@@ -9,7 +9,6 @@ namespace IMDB_WebApplication.Repositories.Implementations
 {
     public class GenreRepository :BaseRepository<Genre>, IGenreRepository
     {
-        private readonly IList<Genre> _genres = new List<Genre>();
         public GenreRepository(IOptions<ConnectionString> options) : base(options.Value.IMDB)
         {
         }

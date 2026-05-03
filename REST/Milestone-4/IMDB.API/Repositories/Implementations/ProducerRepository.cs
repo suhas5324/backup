@@ -9,7 +9,6 @@ namespace IMDB_WebApplication.Repositories.Implementations
 {
     public class ProducerRepository :BaseRepository<Producer>, IProducerRepository
     {
-        private readonly List<Producer> _producers;
 
         public ProducerRepository(IOptions<ConnectionString> options):base(options.Value.IMDB)
         {
