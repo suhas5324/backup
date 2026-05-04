@@ -115,9 +115,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var authClaims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName ?? user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var authSigningKey = new SymmetricSecurityKey(

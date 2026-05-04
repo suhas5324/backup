@@ -48,8 +48,7 @@ namespace IMDB.API
                         ValidateLifetime = true,
                         ValidIssuer = issuer,
                         ValidAudience = audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ClockSkew = TimeSpan.Zero
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
                     };
                 });
 
