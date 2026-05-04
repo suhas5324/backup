@@ -3,6 +3,7 @@ using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -19,11 +20,11 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromForm] MovieRequest request)
+        public async Task<IActionResult> Create([FromForm] MovieRequest request)
         {
             try
             {
-                var movie = movieService.Create(request);
+                var movie = await movieService.Create(request);
                 return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
             }
             catch (ArgumentException exception)
@@ -58,11 +59,11 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int id, [FromForm] MovieRequest request)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromForm] MovieRequest request)
         {
             try
             {
-                var updatedMovie = movieService.Update(id, request);
+                var updatedMovie = await movieService.Update(id, request);
                 if (!updatedMovie)
                 {
                     return NotFound("Movie not found");
@@ -77,11 +78,11 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             try
             {
-                var deletedMovie = movieService.Delete(id);
+                var deletedMovie = await movieService.Delete(id);
                 if (!deletedMovie)
                 {
                     return NotFound("Movie not found");

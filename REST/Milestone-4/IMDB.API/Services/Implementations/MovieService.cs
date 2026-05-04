@@ -8,6 +8,7 @@ using IMDB_WebApplication.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -32,7 +33,7 @@ namespace IMDB_WebApplication.Services.Implementations
             this.supabaseService = supabaseService;
         }
 
-        public MovieResponse Create(MovieRequest request)
+        public async Task<MovieResponse> Create(MovieRequest request)
         {
             var movieName = ValidateMovieRequest(request);
 
@@ -46,7 +47,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                movie.CoverImage = supabaseService.UploadFile(request.CoverImage).Result;
+                movie.CoverImage = await supabaseService.UploadFile(request.CoverImage);
             }
 
             string actorIds = (request.actorIds != null && request.actorIds.Any())
@@ -105,7 +106,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public bool Update(int id, MovieRequest request)
+        public async Task<bool> Update(int id, MovieRequest request)
         {
             if (id <= 0)
             {
@@ -131,11 +132,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                var newImageUrl =supabaseService.UploadFile(request.CoverImage).Result;
+                var newImageUrl = await supabaseService.UploadFile(request.CoverImage);
 
                 if (!string.IsNullOrEmpty(existingMovie.CoverImage))
                 {
-                    supabaseService.DeleteFile(existingMovie.CoverImage).Wait();
+                    await supabaseService.DeleteFile(existingMovie.CoverImage);
                 }
 
                 movie.CoverImage = newImageUrl;
@@ -152,11 +153,11 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            movieRepository.Update(id, movie,actorIds, genreIds);
+            movieRepository.Update(id, movie, actorIds, genreIds);
             return true;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             if (id <= 0)
             {
@@ -170,7 +171,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (!string.IsNullOrEmpty(movie.CoverImage))
             {
-                supabaseService.DeleteFile(movie.CoverImage).Wait();
+                await supabaseService.DeleteFile(movie.CoverImage);
             }
 
             movieRepository.Delete(id);
