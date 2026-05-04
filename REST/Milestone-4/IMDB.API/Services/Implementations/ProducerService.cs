@@ -57,13 +57,13 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Producer id must be greater than zero.");
+                throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
             var producer = producerRepository.Get(id);
             if (producer == null)
             {
-                return null;
+                throw new NotFoundException("Producer not found.");
             }
             return new ProducerResponse
             {
@@ -79,12 +79,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Producer id must be greater than zero.");
+                throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
             if (producerRepository.Get(id) == null)
             {
-                return false;
+                throw new NotFoundException("Producer not found.");
             }
 
             var producerName = ValidateProducerRequest(request);
@@ -106,12 +106,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Producer id must be greater than zero.");
+                throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
             if (producerRepository.Get(id) == null)
             {
-                return false;
+                throw new NotFoundException("Producer not found.");
             }
 
             producerRepository.Delete(id);
@@ -122,12 +122,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                throw new ArgumentException("Producer name is required.", nameof(ProducerRequest.Name));
+                throw new RequiredFieldException("Producer name is required.");
             }
 
             if (request.DateOfBirth.HasValue)
@@ -137,8 +137,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
                 if (dateOfBirth < minimumDateOfBirth || dateOfBirth > DateTime.Today)
                 {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(ProducerRequest.DateOfBirth),
+                    throw new OutOfRangeException(
                         "Date of birth must be between January 1, 1900 and today.");
                 }
             }

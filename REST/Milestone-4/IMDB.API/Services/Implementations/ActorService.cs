@@ -57,13 +57,13 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
+                throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
             var actor = actorRepository.Get(id);
             if (actor == null)
             {
-                return null;
+                throw new NotFoundException("Actor not found.");
             }
             return new ActorResponse
             {
@@ -79,12 +79,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
+                throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
             if (actorRepository.Get(id) == null)
             {
-                return false;
+                throw new NotFoundException("Actor not found.");
             }
 
             var actorName = ValidateActorRequest(request);
@@ -106,12 +106,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Actor id must be greater than zero.");
+                throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
             if (actorRepository.Get(id) == null)
             {
-                return false;
+                throw new NotFoundException("Actor not found.");
             }
 
             actorRepository.Delete(id);
@@ -122,12 +122,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                throw new ArgumentException("Actor name is required.", nameof(ActorRequest.Name));
+                throw new RequiredFieldException("Actor name is required.");
             }
 
             if (request.DateOfBirth.HasValue)
@@ -137,8 +137,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
                 if (dateOfBirth < minimumDateOfBirth || dateOfBirth > DateTime.Today)
                 {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(ActorRequest.DateOfBirth),
+                    throw new OutOfRangeException(
                         "Date of birth must be between January 1, 1900 and today.");
                 }
             }

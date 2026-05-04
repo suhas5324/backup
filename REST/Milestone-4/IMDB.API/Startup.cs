@@ -8,20 +8,14 @@ using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Supabase;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IMDB.API
 {
@@ -86,7 +80,7 @@ namespace IMDB.API
                 return client;
             });
 
-            services.AddScoped<ISupabaseService,SupabaseService>();
+            services.AddScoped<ISupabaseService, SupabaseService>();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -96,6 +90,8 @@ namespace IMDB.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseRouting();
 

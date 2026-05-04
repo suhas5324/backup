@@ -2,7 +2,6 @@ using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -21,42 +20,28 @@ namespace IMDB_WebApplication.Controllers
         [AllowAnonymous]
         public IActionResult Signup([FromBody] SignupRequest request)
         {
-            try
-            {
-                var result = authService.SignUp(request);
+            var result = authService.SignUp(request);
 
-                if (!result)
-                {
-                    return BadRequest("A user with this email already exists.");
-                }
-
-                return Ok("User registered successfully.");
-            }
-            catch (ArgumentException exception)
+            if (!result)
             {
-                return BadRequest(exception.Message);
+                return BadRequest("A user with this email already exists.");
             }
+
+            return Ok("User registered successfully.");
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            try
-            {
-                var loginResponse = authService.Login(request);
+            var loginResponse = authService.Login(request);
 
-                if (loginResponse == null)
-                {
-                    return Unauthorized("Invalid email or password.");
-                }
-
-                return Ok(loginResponse);
-            }
-            catch (ArgumentException exception)
+            if (loginResponse == null)
             {
-                return BadRequest(exception.Message);
+                return Unauthorized("Invalid email or password.");
             }
+
+            return Ok(loginResponse);
         }
     }
 }

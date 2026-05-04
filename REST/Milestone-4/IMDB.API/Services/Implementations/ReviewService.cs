@@ -3,7 +3,6 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,12 +23,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (movieId <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             if (!MovieExists(movieId))
             {
-                return null;
+                throw new NotFoundException("Movie not found.");
             }
 
             var reviewMessage = ValidateReviewRequest(request);
@@ -52,12 +51,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (movieId <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             if (!MovieExists(movieId))
             {
-                return null;
+                throw new NotFoundException("Movie not found.");
             }
 
             return reviewRepository.Get(movieId).Select(r => new ReviewResponse
@@ -72,18 +71,18 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (movieId <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
+                throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
             var review = reviewRepository.Get(movieId, id);
             if (review == null)
             {
-                return null;
+                throw new NotFoundException("Review not found.");
             }
             return new ReviewResponse
             {
@@ -97,17 +96,17 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (movieId <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
+                throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
             if (reviewRepository.Get(movieId, id) == null)
             {
-                return false;
+                throw new NotFoundException("Review not found.");
             }
 
             var reviewMessage = ValidateReviewRequest(request);
@@ -127,17 +126,17 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (movieId <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(movieId), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Review id must be greater than zero.");
+                throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
             if (reviewRepository.Get(movieId, id) == null)
             {
-                return false;
+                throw new NotFoundException("Review not found.");
             }
 
             reviewRepository.Delete(movieId, id);
@@ -153,12 +152,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Message))
             {
-                throw new ArgumentException("Review message is required.", nameof(ReviewRequest.Message));
+                throw new RequiredFieldException("Review message is required.");
             }
 
             return request.Message.Trim();

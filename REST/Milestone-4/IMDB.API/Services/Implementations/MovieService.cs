@@ -1,4 +1,3 @@
-using IMDB.API.Services.Implementations;
 using IMDB.API.Services.Interfaces;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Models.Requests;
@@ -87,13 +86,13 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             var movie = movieRepository.Get(id);
             if (movie == null)
             {
-                return null;
+                throw new NotFoundException("Movie not found.");
             }
             return new MovieResponse
             {
@@ -110,13 +109,13 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             var existingMovie = movieRepository.Get(id);
             if (existingMovie == null)
             {
-                return false;
+                throw new NotFoundException("Movie not found.");
             }
 
             var movieName = ValidateMovieRequest(request);
@@ -161,13 +160,15 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Movie id must be greater than zero.");
+                throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
             var movie = movieRepository.Get(id);
 
             if (movie == null)
-                return false;
+            {
+                throw new NotFoundException("Movie not found.");
+            }
 
             if (!string.IsNullOrEmpty(movie.CoverImage))
             {
@@ -182,27 +183,27 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                throw new ArgumentException("Movie name is required.", nameof(MovieRequest.Name));
+                throw new RequiredFieldException("Movie name is required.");
             }
 
             if (request.ProducerId <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(MovieRequest.ProducerId), "Producer id must be greater than zero.");
+                throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
             if (producerRepository.Get(request.ProducerId) == null)
             {
-                throw new ArgumentException($"Producer with id {request.ProducerId} does not exist.", nameof(MovieRequest.ProducerId));
+                throw new NotFoundException($"Producer with id {request.ProducerId} does not exist.");
             }
 
             if (request.actorIds == null || !request.actorIds.Any())
             {
-                throw new ArgumentException("At least one actor id is required.", nameof(MovieRequest.actorIds));
+                throw new RequiredFieldException("At least one actor id is required.");
             }
 
             var actors = actorRepository.Get();
@@ -212,12 +213,12 @@ namespace IMDB_WebApplication.Services.Implementations
             {
                 if (actorId <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(MovieRequest.actorIds), "Actor id must be greater than zero.");
+                    throw new OutOfRangeException("Actor id must be greater than zero.");
                 }
 
                 if (!actorIds.Contains(actorId))
                 {
-                    throw new ArgumentException($"Actor with id {actorId} does not exist.", nameof(MovieRequest.actorIds));
+                    throw new NotFoundException($"Actor with id {actorId} does not exist.");
                 }
             }
 
@@ -230,12 +231,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 {
                     if (genreId <= 0)
                     {
-                        throw new ArgumentOutOfRangeException(nameof(MovieRequest.genreIds), "Genre id must be greater than zero.");
+                        throw new OutOfRangeException("Genre id must be greater than zero.");
                     }
 
                     if (!genreIds.Contains(genreId))
                     {
-                        throw new ArgumentException($"Genre with id {genreId} does not exist.", nameof(MovieRequest.genreIds));
+                        throw new NotFoundException($"Genre with id {genreId} does not exist.");
                     }
                 }
             }
@@ -247,9 +248,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
                 if (yearOfRelease < 1888 || yearOfRelease > currentYear)
                 {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(MovieRequest.YearOfRelease),
-                        $"Year of release must be between 1888 and {currentYear}.");
+                    throw new OutOfRangeException($"Year of release must be between 1888 and {currentYear}.");
                 }
             }
 

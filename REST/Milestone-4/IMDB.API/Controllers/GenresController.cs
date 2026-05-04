@@ -2,7 +2,6 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -21,15 +20,8 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] GenreRequest request)
         {
-            try
-            {
-                var genre = genreService.Create(request);
-                return CreatedAtAction(nameof(Get), new { id = genre.Id }, genre);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            var genre = genreService.Create(request);
+            return CreatedAtAction(nameof(Get), new { id = genre.Id }, genre);
         }
 
         [HttpGet]
@@ -41,58 +33,21 @@ namespace IMDB_WebApplication.Controllers
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-            try
-            {
-                var genre = genreService.Get(id);
-                if (genre == null)
-                {
-                    return NotFound("Genre not found");
-                }
-
-                return Ok(genre);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            return Ok(genreService.Get(id));
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromBody] GenreRequest request)
         {
-            try
-            {
-                var updatedGenre = genreService.Update(id, request);
-                if (!updatedGenre)
-                {
-                    return NotFound("Genre not found");
-                }
-
-                return NoContent();
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            genreService.Update(id, request);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            try
-            {
-                var deletedGenre = genreService.Delete(id);
-                if (!deletedGenre)
-                {
-                    return NotFound("Genre not found");
-                }
-
-                return NoContent();
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            genreService.Delete(id);
+            return NoContent();
         }
     }
 }

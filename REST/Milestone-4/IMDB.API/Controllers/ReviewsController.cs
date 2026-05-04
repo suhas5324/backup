@@ -2,7 +2,6 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -21,96 +20,34 @@ namespace IMDB_WebApplication.Controllers
         [HttpPost("")]
         public IActionResult Create([FromRoute] int movieId, [FromBody] ReviewRequest request)
         {
-            try
-            {
-                var review = reviewService.Create(movieId, request);
-                if (review == null)
-                {
-                    return NotFound("Movie not found");
-                }
-
-                return CreatedAtAction(nameof(Get), new { movieId, id = review.Id }, review);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            var review = reviewService.Create(movieId, request);
+            return CreatedAtAction(nameof(Get), new { movieId, id = review.Id }, review);
         }
 
         [HttpGet("")]
         public IActionResult Get([FromRoute] int movieId)
         {
-            try
-            {
-                var reviews = reviewService.Get(movieId);
-                if (reviews == null)
-                {
-                    return NotFound("Movie not found");
-                }
-
-                return Ok(reviews);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            return Ok(reviewService.Get(movieId));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int movieId, [FromRoute] int id)
         {
-            try
-            {
-                var review = reviewService.Get(movieId, id);
-                if (review == null)
-                {
-                    return NotFound("Movie or review not found");
-                }
-
-                return Ok(review);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            return Ok(reviewService.Get(movieId, id));
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int movieId, [FromRoute] int id, [FromBody] ReviewRequest request)
+        public IActionResult Update([FromRoute] int movieId, [FromBody] ReviewRequest request, [FromRoute] int id)
         {
-            try
-            {
-                var updatedReview = reviewService.Update(movieId, id, request);
-                if (!updatedReview)
-                {
-                    return NotFound("Movie or review not found");
-                }
-
-                return NoContent();
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            reviewService.Update(movieId, id, request);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int movieId, [FromRoute] int id)
         {
-            try
-            {
-                var deletedReview = reviewService.Delete(movieId, id);
-                if (!deletedReview)
-                {
-                    return NotFound("Movie or review not found");
-                }
-
-                return NoContent();
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
+            reviewService.Delete(movieId, id);
+            return NoContent();
         }
     }
 }

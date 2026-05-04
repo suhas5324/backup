@@ -3,7 +3,6 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -48,13 +47,13 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
+                throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
             var genre = genreRepository.Get(id);
             if (genre == null)
             {
-                return null;
+                throw new NotFoundException("Genre not found.");
             }
             return new GenreResponse
             {
@@ -67,12 +66,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
+                throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
             if (genreRepository.Get(id) == null)
             {
-                return false;
+                throw new NotFoundException("Genre not found.");
             }
 
             var genreName = ValidateGenreRequest(request);
@@ -91,12 +90,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (id <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "Genre id must be greater than zero.");
+                throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
             if (genreRepository.Get(id) == null)
             {
-                return false;
+                throw new NotFoundException("Genre not found.");
             }
 
             genreRepository.Delete(id);
@@ -107,12 +106,12 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Name))
             {
-                throw new ArgumentException("Genre name is required.", nameof(GenreRequest.Name));
+                throw new RequiredFieldException("Genre name is required.");
             }
 
             return request.Name.Trim();

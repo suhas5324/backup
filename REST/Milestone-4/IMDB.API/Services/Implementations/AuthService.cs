@@ -33,17 +33,17 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Email))
             {
-                throw new ArgumentException("Email is required.", nameof(SignupRequest.Email));
+                throw new RequiredFieldException("Email is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Password))
             {
-                throw new ArgumentException("Password is required.", nameof(SignupRequest.Password));
+                throw new RequiredFieldException("Password is required.");
             }
 
             var email = request.Email.Trim();
@@ -52,7 +52,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var existingUser = userRepository.GetByEmail(normalizedEmail);
             if (existingUser != null)
             {
-                return false;
+                throw new BadRequestException("User with this email already exists.");
             }
 
             var user = new User
@@ -72,17 +72,17 @@ namespace IMDB_WebApplication.Services.Implementations
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request payload is required.");
+                throw new RequiredFieldException("Request payload is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Email))
             {
-                throw new ArgumentException("Email is required.", nameof(LoginRequest.Email));
+                throw new RequiredFieldException("Email is required.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Password))
             {
-                throw new ArgumentException("Password is required.", nameof(LoginRequest.Password));
+                throw new RequiredFieldException("Password is required.");
             }
 
             var email = request.Email.Trim();
@@ -90,13 +90,13 @@ namespace IMDB_WebApplication.Services.Implementations
             var user = userRepository.GetByEmail(email.ToUpperInvariant());
             if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))
             {
-                return null;
+                throw new BadRequestException("Invalid email or password.");
             }
 
             var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             if (verificationResult == PasswordVerificationResult.Failed)
             {
-                return null;
+                throw new BadRequestException("Invalid email or password.");
             }
 
             var expiresAtUtc = DateTime.UtcNow.AddMinutes(30);
