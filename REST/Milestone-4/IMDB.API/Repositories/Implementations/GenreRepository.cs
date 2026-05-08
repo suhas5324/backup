@@ -2,58 +2,62 @@ using Dapper;
 using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
-    public class GenreRepository :BaseRepository<Genre>, IGenreRepository
+    public class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
         public GenreRepository(IOptions<ConnectionString> options) : base(options.Value.IMDB)
         {
         }
-        public Genre Create(Genre genre)
+
+        public async Task<Genre> CreateAsync(Genre genre)
         {
-            string query=@"INSERT INTO foundation.genres (name)
+            string query = @"INSERT INTO foundation.genres (name)
 OUTPUT INSERTED.id
 VALUES (@Name)";
             var Name = genre.Name;
-            var id = Create(query, new { Name });
-            return Get(id);
+            var id = await CreateAsync(query, new { Name });
+            return await GetAsync(id);
 
         }
-        public IList<Genre> Get()
+
+        public Task<IList<Genre>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.genres";
-            return Get(query);
+            return GetAsync(query);
         }
-        public Genre Get(int id)
+
+        public Task<Genre> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.genres
 WHERE id = @Id";
             var Id = id;
-            return Get(query, new { Id });
+            return GetAsync(query, new { Id });
         }
-        public void Update(Genre genre)
+
+        public Task UpdateAsync(Genre genre)
         {
-            string query= @"UPDATE foundation.genres
+            string query = @"UPDATE foundation.genres
 SET name = @Name
 WHERE id = @Id";
             var Id = genre.Id;
             var Name = genre.Name;
-            Update(query, new { Id, Name });
+            return UpdateAsync(query, new { Id, Name });
         }
-        public void Delete(int id)
+
+        public Task DeleteAsync(int id)
         {
-           string query = @"DELETE
+            string query = @"DELETE
 FROM foundation.genres
 WHERE id = @Id";
             var Id = id;
-            Delete(query, new { Id });
+            return DeleteAsync(query, new { Id });
         }
 
     }

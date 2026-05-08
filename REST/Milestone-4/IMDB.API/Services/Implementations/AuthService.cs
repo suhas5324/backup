@@ -10,6 +10,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -29,7 +30,7 @@ namespace IMDB_WebApplication.Services.Implementations
             _configuration = configuration;
         }
 
-        public void SignUp(SignupRequest request)
+        public async Task SignUpAsync(SignupRequest request)
         {
             if (request == null)
             {
@@ -49,7 +50,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var email = request.Email.Trim();
             var password = request.Password;
             var normalizedEmail = email.ToUpperInvariant();
-            var existingUser = _userRepository.GetByEmail(normalizedEmail);
+            var existingUser = await _userRepository.GetByEmailAsync(normalizedEmail);
             if (existingUser != null)
             {
                 throw new BadRequestException("User with this email already exists.");
@@ -63,10 +64,10 @@ namespace IMDB_WebApplication.Services.Implementations
             };
 
             user.PasswordHash = _passwordHasher.HashPassword(user, password);
-            _userRepository.Create(user);
+            await _userRepository.CreateAsync(user);
         }
 
-        public LoginResponse Login(LoginRequest request)
+        public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
             if (request == null)
             {
@@ -85,7 +86,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             var email = request.Email.Trim();
             var password = request.Password;
-            var user = _userRepository.GetByEmail(email.ToUpperInvariant());
+            var user = await _userRepository.GetByEmailAsync(email.ToUpperInvariant());
             if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 throw new BadRequestException("Invalid email or password.");

@@ -1,7 +1,8 @@
-﻿using IMDB_WebApplication.Models.RequestModels;
+using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -18,35 +19,35 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] ActorRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] ActorRequest request)
         {
-            var actor = _actorService.Create(request);
-            return CreatedAtAction(nameof(Get), new { id = actor.Id }, actor);
+            var actor = await _actorService.CreateAsync(request);
+            return CreatedAtAction(nameof(GetAsync), new { id = actor.Id }, actor);
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            return Ok(_actorService.Get());
+            return Ok(await _actorService.GetAsync());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public async Task<IActionResult> GetAsync([FromRoute] int id)
         {
-            return Ok(_actorService.Get(id));
+            return Ok(await _actorService.GetAsync(id));
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] ActorRequest request)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] ActorRequest request)
         {
-            _actorService.Update(id, request);
+            await _actorService.UpdateAsync(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            _actorService.Delete(id);
+            await _actorService.DeleteAsync(id);
             return NoContent();
         }
     }

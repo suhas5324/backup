@@ -1,15 +1,16 @@
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Interfaces
 {
     public interface IGenreService
     {
-        GenreResponse Create(GenreRequest request);
-        IList<GenreResponse> Get();
-        GenreResponse Get(int id);
-        void Update(int id, GenreRequest request);
-        void Delete(int id);
+        Task<GenreResponse> CreateAsync(GenreRequest request);
+        Task<IList<GenreResponse>> GetAsync();
+        Task<GenreResponse> GetAsync(int id);
+        Task UpdateAsync(int id, GenreRequest request);
+        Task DeleteAsync(int id);
     }
 }

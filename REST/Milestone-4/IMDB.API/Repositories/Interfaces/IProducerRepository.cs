@@ -1,14 +1,15 @@
 using IMDB_WebApplication.Models.DBModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Interfaces
 {
     public interface IProducerRepository
     {
-        Producer Create(Producer producer);
-        IList<Producer> Get();
-        Producer Get(int id);
-        void Update(Producer producer);
-        void Delete(int id);
+        Task<Producer> CreateAsync(Producer producer);
+        Task<IList<Producer>> GetAsync();
+        Task<Producer> GetAsync(int id);
+        Task UpdateAsync(Producer producer);
+        Task DeleteAsync(int id);
     }
 }

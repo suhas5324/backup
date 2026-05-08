@@ -1,14 +1,15 @@
 using IMDB_WebApplication.Models.DBModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Interfaces
 {
     public interface IReviewRepository
     {
-        Review Create(Review review);
-        IList<Review> Get(int movieId);
-        Review Get(int movieId, int id);
-        void Update(Review review);
-        void Delete(int movieId, int id);
+        Task<Review> CreateAsync(Review review);
+        Task<IList<Review>> GetAsync(int movieId);
+        Task<Review> GetAsync(int movieId, int id);
+        Task UpdateAsync(Review review);
+        Task DeleteAsync(int movieId, int id);
     }
 }

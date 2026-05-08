@@ -1,10 +1,8 @@
 using Dapper;
-using IMDB.API;
 using Microsoft.Data.SqlClient;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class BaseRepository<T> where T : class
 {
@@ -13,34 +11,48 @@ public class BaseRepository<T> where T : class
     {
         _connectionString = connectionString;
     }
-    public int Create(string query, object parameters)
+
+    public async Task<int> CreateAsync(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
-        return connection.ExecuteScalar<int>(query, parameters);
+        return await connection.ExecuteScalarAsync<int>(query, parameters);
     }
-    public IList<T> Get(string query)
+
+    public async Task<IList<T>> GetAsync(string query)
     {
         using var connection = new SqlConnection(_connectionString);
-        return connection.Query<T>(query).ToList();
+        var results = await connection.QueryAsync<T>(query);
+        return results.ToList();
     }
-    public IList<T> GetAll(string query, object parameters)
+
+    public async Task<IList<T>> GetAllAsync(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
-        return connection.Query<T>(query, parameters).ToList();
+        var results = await connection.QueryAsync<T>(query, parameters);
+        return results.ToList();
     }
-    public T Get(string query, object parameters)
+
+    public async Task<T> GetAsync(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
-        return connection.QuerySingleOrDefault<T>(query, parameters);
+        return await connection.QuerySingleOrDefaultAsync<T>(query, parameters);
     }
-    public void Update(string query, object parameters)
+
+    public async Task<int> ExecuteAsync(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
-        connection.Execute(query, parameters);
+        return await connection.ExecuteAsync(query, parameters);
     }
-    public void Delete(string query, object parameters)
+
+    public async Task UpdateAsync(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
-        connection.Execute(query, parameters);
+        await connection.ExecuteAsync(query, parameters);
+    }
+
+    public async Task DeleteAsync(string query, object parameters)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        await connection.ExecuteAsync(query, parameters);
     }
 }

@@ -18,6 +18,7 @@ namespace IMDB_WebApplication.Services.Implementations
         private readonly IActorRepository _actorRepository;
         private readonly IGenreRepository _genreRepository;
         private readonly ISupabaseService _supabaseService;
+
         public MovieService(
             IMovieRepository movieRepository,
             IProducerRepository producerRepository,
@@ -32,9 +33,9 @@ namespace IMDB_WebApplication.Services.Implementations
             _supabaseService = supabaseService;
         }
 
-        public async Task<MovieResponse> Create(MovieRequest request)
+        public async Task<MovieResponse> CreateAsync(MovieRequest request)
         {
-            var movieName = ValidateMovieRequest(request);
+            var movieName = await ValidateMovieRequestAsync(request);
 
             var movie = new Movie
             {
@@ -46,7 +47,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                movie.CoverImage = await _supabaseService.UploadFile(request.CoverImage);
+                movie.CoverImage = await _supabaseService.UploadFileAsync(request.CoverImage);
             }
 
             string actorIds = (request.actorIds != null && request.actorIds.Any())
@@ -56,7 +57,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            var createdMovie = _movieRepository.Create(movie, actorIds, genreIds);
+            var createdMovie = await _movieRepository.CreateAsync(movie, actorIds, genreIds);
 
             return new MovieResponse
             {
@@ -69,9 +70,11 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public IList<MovieResponse> Get()
+        public async Task<IList<MovieResponse>> GetAsync()
         {
-            return _movieRepository.Get().Select(m => new MovieResponse
+            var movies = await _movieRepository.GetAsync();
+
+            return movies.Select(m => new MovieResponse
             {
                 Id = m.Id,
                 Name = m.Name,
@@ -82,18 +85,19 @@ namespace IMDB_WebApplication.Services.Implementations
             }).ToList();
         }
 
-        public MovieResponse Get(int id)
+        public async Task<MovieResponse> GetAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            var movie = _movieRepository.Get(id);
+            var movie = await _movieRepository.GetAsync(id);
             if (movie == null)
             {
                 throw new NotFoundException("Movie not found.");
             }
+
             return new MovieResponse
             {
                 Id = movie.Id,
@@ -105,20 +109,9 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public async Task Update(int id, MovieRequest request)
+        public async Task UpdateAsync(int id, MovieRequest request)
         {
-            if (id <= 0)
-            {
-                throw new OutOfRangeException("Movie id must be greater than zero.");
-            }
-
-            var existingMovie = _movieRepository.Get(id);
-            if (existingMovie == null)
-            {
-                throw new NotFoundException("Movie not found.");
-            }
-
-            var movieName = ValidateMovieRequest(request);
+            var (existingMovie, movieName) = await ValidateMovieUpdateAsync(id, request);
 
             var movie = new Movie
             {
@@ -131,11 +124,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                var newImageUrl = await _supabaseService.UploadFile(request.CoverImage);
+                var newImageUrl = await _supabaseService.UploadFileAsync(request.CoverImage);
 
                 if (!string.IsNullOrEmpty(existingMovie.CoverImage))
                 {
-                    await _supabaseService.DeleteFile(existingMovie.CoverImage);
+                    await _supabaseService.DeleteFileAsync(existingMovie.CoverImage);
                 }
 
                 movie.CoverImage = newImageUrl;
@@ -152,17 +145,17 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            _movieRepository.Update(movie, actorIds, genreIds);
+            await _movieRepository.UpdateAsync(movie, actorIds, genreIds);
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            var movie = _movieRepository.Get(id);
+            var movie = await _movieRepository.GetAsync(id);
 
             if (movie == null)
             {
@@ -171,13 +164,13 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (!string.IsNullOrEmpty(movie.CoverImage))
             {
-                await _supabaseService.DeleteFile(movie.CoverImage);
+                await _supabaseService.DeleteFileAsync(movie.CoverImage);
             }
 
-            _movieRepository.Delete(id);
+            await _movieRepository.DeleteAsync(id);
         }
 
-        private string ValidateMovieRequest(MovieRequest request)
+        private async Task<string> ValidateMovieRequestAsync(MovieRequest request)
         {
             if (request == null)
             {
@@ -194,7 +187,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            if (_producerRepository.Get(request.ProducerId) == null)
+            if (await _producerRepository.GetAsync(request.ProducerId) == null)
             {
                 throw new NotFoundException($"Producer with id {request.ProducerId} does not exist.");
             }
@@ -204,7 +197,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new RequiredFieldException("At least one actor id is required.");
             }
 
-            var actors = _actorRepository.Get();
+            var actors = await _actorRepository.GetAsync();
             var actorIds = actors.Select(actor => actor.Id).ToHashSet();
 
             foreach (var actorId in request.actorIds)
@@ -222,7 +215,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.genreIds != null && request.genreIds.Any())
             {
-                var genres = _genreRepository.Get();
+                var genres = await _genreRepository.GetAsync();
                 var genreIds = genres.Select(genre => genre.Id).ToHashSet();
 
                 foreach (var genreId in request.genreIds)
@@ -253,5 +246,21 @@ namespace IMDB_WebApplication.Services.Implementations
             return request.Name.Trim();
         }
 
+        private async Task<(Movie existingMovie, string movieName)> ValidateMovieUpdateAsync(int id, MovieRequest request)
+        {
+            if (id <= 0)
+            {
+                throw new OutOfRangeException("Movie id must be greater than zero.");
+            }
+
+            var existingMovie = await _movieRepository.GetAsync(id);
+            if (existingMovie == null)
+            {
+                throw new NotFoundException("Movie not found.");
+            }
+
+            var movieName = await ValidateMovieRequestAsync(request);
+            return (existingMovie, movieName);
+        }
     }
 }

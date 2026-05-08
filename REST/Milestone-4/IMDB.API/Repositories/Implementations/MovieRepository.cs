@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
@@ -15,7 +16,8 @@ namespace IMDB_WebApplication.Repositories.Implementations
             : base(options.Value.IMDB)
         {
         }
-        public Movie Create(Movie movie, string actorIds, string genreIds)
+
+        public async Task<Movie> CreateAsync(Movie movie, string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -32,31 +34,32 @@ namespace IMDB_WebApplication.Repositories.Implementations
                 CoverImage = movie.CoverImage
             };
 
-            var createdMovieId = connection.QuerySingle<int>(
+            var createdMovieId = await connection.QuerySingleAsync<int>(
                 procedure,
                 values,
                 commandType: CommandType.StoredProcedure
             );
 
-            return Get(createdMovieId);
+            return await GetAsync(createdMovieId);
         }
 
-        public IList<Movie> Get()
+        public Task<IList<Movie>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.movies";
-            return Get(query);
+            return GetAsync(query);
         }
 
-        public Movie Get(int id)
+        public Task<Movie> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.movies
 WHERE id = @Id";
             var Id = id;
-            return Get(query, new { Id });
+            return GetAsync(query, new { Id });
         }
-        public void Update(Movie movie, string actorIds, string genreIds)
+
+        public async Task UpdateAsync(Movie movie, string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -74,19 +77,20 @@ WHERE id = @Id";
                 genreIds = genreIds,
             };
 
-            connection.Execute(
+            await connection.ExecuteAsync(
                 procedure,
                 values,
                 commandType: CommandType.StoredProcedure
             );
         }
-        public void Delete(int id)
+
+        public Task DeleteAsync(int id)
         {
             string query = @"DELETE
 FROM foundation.movies
 WHERE id = @Id";
             var Id = id;
-            Delete(query, new { Id});
+            return DeleteAsync(query, new { Id });
         }
     }
 }

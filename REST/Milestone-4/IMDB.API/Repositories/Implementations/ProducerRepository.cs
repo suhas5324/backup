@@ -2,22 +2,20 @@ using Dapper;
 using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
-    public class ProducerRepository :BaseRepository<Producer>, IProducerRepository
+    public class ProducerRepository : BaseRepository<Producer>, IProducerRepository
     {
 
-        public ProducerRepository(IOptions<ConnectionString> options):base(options.Value.IMDB)
+        public ProducerRepository(IOptions<ConnectionString> options) : base(options.Value.IMDB)
         {
-           
         }
 
-        public Producer Create(Producer producer)
+        public async Task<Producer> CreateAsync(Producer producer)
         {
             string query = @"INSERT INTO foundation.producers (
 	name
@@ -36,27 +34,27 @@ VALUES (
             var Bio = producer.Bio;
             var DateOfBirth = producer.DateOfBirth;
             var Gender = producer.Gender;
-            var id = Create(query, new { Name, Bio, DateOfBirth, Gender});
-            return Get(id);
+            var id = await CreateAsync(query, new { Name, Bio, DateOfBirth, Gender });
+            return await GetAsync(id);
         }
 
-        public IList<Producer> Get()
+        public Task<IList<Producer>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.producers";
-            return Get(query);
+            return GetAsync(query);
         }
 
-        public Producer Get(int id)
+        public Task<Producer> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.producers
 WHERE id = @Id";
             var Id = id;
-            return Get(query, new { Id });
+            return GetAsync(query, new { Id });
         }
 
-        public void Update(Producer producer)
+        public Task UpdateAsync(Producer producer)
         {
             string query = @"UPDATE foundation.producers
 SET name = @Name
@@ -69,15 +67,16 @@ WHERE id = @Id";
             var Bio = producer.Bio;
             var DateOfBirth = producer.DateOfBirth;
             var Gender = producer.Gender;
-            Update(query, new { Id, Name, Bio, DateOfBirth, Gender });
+            return UpdateAsync(query, new { Id, Name, Bio, DateOfBirth, Gender });
         }
-        public void Delete(int id)
+
+        public Task DeleteAsync(int id)
         {
             string query = @"DELETE
 FROM foundation.producers
 WHERE id = @Id";
             var Id = id;
-            Delete(query, new { Id });
+            return DeleteAsync(query, new { Id });
         }
     }
 }

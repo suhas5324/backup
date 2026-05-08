@@ -2,6 +2,7 @@ using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -18,18 +19,18 @@ namespace IMDB_WebApplication.Controllers
 
         [HttpPost("signup")]
         [AllowAnonymous]
-        public IActionResult Signup([FromBody] SignupRequest request)
+        public async Task<IActionResult> SignupAsync([FromBody] SignupRequest request)
         {
-            _authService.SignUp(request);
+            await _authService.SignUpAsync(request);
 
             return Ok("User registered successfully.");
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
         {
-            var loginResponse = _authService.Login(request);
+            var loginResponse = await _authService.LoginAsync(request);
 
             if (loginResponse == null)
             {

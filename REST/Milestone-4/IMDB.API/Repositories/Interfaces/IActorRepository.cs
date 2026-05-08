@@ -1,14 +1,15 @@
 using IMDB_WebApplication.Models.DBModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Interfaces
 {
     public interface IActorRepository
     {
-        Actor Create(Actor actor);
-        IList<Actor> Get();
-        Actor Get(int id);
-        void Update(Actor actor);
-        void Delete(int id);
+        Task<Actor> CreateAsync(Actor actor);
+        Task<IList<Actor>> GetAsync();
+        Task<Actor> GetAsync(int id);
+        Task UpdateAsync(Actor actor);
+        Task DeleteAsync(int id);
     }
 }

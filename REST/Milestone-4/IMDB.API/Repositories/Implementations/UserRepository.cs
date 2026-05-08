@@ -2,6 +2,7 @@ using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
@@ -12,7 +13,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
         {
         }
 
-        public User GetByEmail(string normalizedEmail)
+        public Task<User> GetByEmailAsync(string normalizedEmail)
         {
             const string query = @"SELECT id
 	,username
@@ -22,10 +23,10 @@ namespace IMDB_WebApplication.Repositories.Implementations
 FROM foundation.users
 WHERE normalizedemail = @NormalizedEmail";
 
-            return Get(query, new { NormalizedEmail = normalizedEmail });
+            return GetAsync(query, new { NormalizedEmail = normalizedEmail });
         }
 
-        public void Create(User user)
+        public async Task CreateAsync(User user)
         {
             const string query = @"INSERT INTO foundation.users (
 	username
@@ -40,7 +41,7 @@ VALUES (
 	,@PasswordHash
 	)";
 
-            Create(query, new
+            await ExecuteAsync(query, new
             {
                 user.UserName,
                 user.Email,

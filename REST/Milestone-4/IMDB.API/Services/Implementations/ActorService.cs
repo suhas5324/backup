@@ -6,6 +6,7 @@ using IMDB_WebApplication.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -18,7 +19,7 @@ namespace IMDB_WebApplication.Services.Implementations
             _actorRepository = actorRepository;
         }
 
-        public ActorResponse Create(ActorRequest request)
+        public async Task<ActorResponse> CreateAsync(ActorRequest request)
         {
             var actorName = ValidateActorRequest(request);
 
@@ -30,7 +31,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            var createdActor = _actorRepository.Create(actor);
+            var createdActor = await _actorRepository.CreateAsync(actor);
             return new ActorResponse
             {
                 Id = createdActor.Id,
@@ -41,9 +42,11 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public IList<ActorResponse> Get()
+        public async Task<IList<ActorResponse>> GetAsync()
         {
-            return _actorRepository.Get().Select(a => new ActorResponse
+            var actors = await _actorRepository.GetAsync();
+
+            return actors.Select(a => new ActorResponse
             {
                 Id = a.Id,
                 Name = a.Name,
@@ -53,18 +56,19 @@ namespace IMDB_WebApplication.Services.Implementations
             }).ToList();
         }
 
-        public ActorResponse Get(int id)
+        public async Task<ActorResponse> GetAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
-            var actor = _actorRepository.Get(id);
+            var actor = await _actorRepository.GetAsync(id);
             if (actor == null)
             {
                 throw new NotFoundException("Actor not found.");
             }
+
             return new ActorResponse
             {
                 Id = actor.Id,
@@ -75,19 +79,9 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public void Update(int id, ActorRequest request)
+        public async Task UpdateAsync(int id, ActorRequest request)
         {
-            if (id <= 0)
-            {
-                throw new OutOfRangeException("Actor id must be greater than zero.");
-            }
-
-            if (_actorRepository.Get(id) == null)
-            {
-                throw new NotFoundException("Actor not found.");
-            }
-
-            var actorName = ValidateActorRequest(request);
+            var actorName = await ValidateActorUpdateAsync(id, request);
 
             var actor = new Actor
             {
@@ -98,23 +92,22 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            _actorRepository.Update(actor);
-
+            await _actorRepository.UpdateAsync(actor);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
-            if (_actorRepository.Get(id) == null)
+            if (await _actorRepository.GetAsync(id) == null)
             {
                 throw new NotFoundException("Actor not found.");
             }
 
-            _actorRepository.Delete(id);
+            await _actorRepository.DeleteAsync(id);
         }
 
         private static string ValidateActorRequest(ActorRequest request)
@@ -144,5 +137,19 @@ namespace IMDB_WebApplication.Services.Implementations
             return request.Name.Trim();
         }
 
+        private async Task<string> ValidateActorUpdateAsync(int id, ActorRequest request)
+        {
+            if (id <= 0)
+            {
+                throw new OutOfRangeException("Actor id must be greater than zero.");
+            }
+
+            if (await _actorRepository.GetAsync(id) == null)
+            {
+                throw new NotFoundException("Actor not found.");
+            }
+
+            return ValidateActorRequest(request);
+        }
     }
 }

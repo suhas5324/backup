@@ -1,14 +1,15 @@
 using IMDB_WebApplication.Models.DBModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Interfaces
 {
     public interface IMovieRepository
     {
-        Movie Create(Movie movie,string actorIds, string genreIds);
-        IList<Movie> Get();
-        Movie Get(int id);
-        void Update(Movie movie, string actorIds, string genreIds);
-        void Delete(int id);
+        Task<Movie> CreateAsync(Movie movie, string actorIds, string genreIds);
+        Task<IList<Movie>> GetAsync();
+        Task<Movie> GetAsync(int id);
+        Task UpdateAsync(Movie movie, string actorIds, string genreIds);
+        Task DeleteAsync(int id);
     }
 }

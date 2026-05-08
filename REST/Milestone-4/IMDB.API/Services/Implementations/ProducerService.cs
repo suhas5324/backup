@@ -6,6 +6,7 @@ using IMDB_WebApplication.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -18,7 +19,7 @@ namespace IMDB_WebApplication.Services.Implementations
             _producerRepository = producerRepository;
         }
 
-        public ProducerResponse Create(ProducerRequest request)
+        public async Task<ProducerResponse> CreateAsync(ProducerRequest request)
         {
             var producerName = ValidateProducerRequest(request);
 
@@ -30,7 +31,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            var createdProducer = _producerRepository.Create(producer);
+            var createdProducer = await _producerRepository.CreateAsync(producer);
             return new ProducerResponse
             {
                 Id = createdProducer.Id,
@@ -41,9 +42,11 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public IList<ProducerResponse> Get()
+        public async Task<IList<ProducerResponse>> GetAsync()
         {
-            return _producerRepository.Get().Select(p => new ProducerResponse
+            var producers = await _producerRepository.GetAsync();
+
+            return producers.Select(p => new ProducerResponse
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -53,18 +56,19 @@ namespace IMDB_WebApplication.Services.Implementations
             }).ToList();
         }
 
-        public ProducerResponse Get(int id)
+        public async Task<ProducerResponse> GetAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            var producer = _producerRepository.Get(id);
+            var producer = await _producerRepository.GetAsync(id);
             if (producer == null)
             {
                 throw new NotFoundException("Producer not found.");
             }
+
             return new ProducerResponse
             {
                 Id = producer.Id,
@@ -75,19 +79,9 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public void Update(int id, ProducerRequest request)
+        public async Task UpdateAsync(int id, ProducerRequest request)
         {
-            if (id <= 0)
-            {
-                throw new OutOfRangeException("Producer id must be greater than zero.");
-            }
-
-            if (_producerRepository.Get(id) == null)
-            {
-                throw new NotFoundException("Producer not found.");
-            }
-
-            var producerName = ValidateProducerRequest(request);
+            var producerName = await ValidateProducerUpdateAsync(id, request);
 
             var producer = new Producer
             {
@@ -98,22 +92,22 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            _producerRepository.Update(producer);
+            await _producerRepository.UpdateAsync(producer);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            if (_producerRepository.Get(id) == null)
+            if (await _producerRepository.GetAsync(id) == null)
             {
                 throw new NotFoundException("Producer not found.");
             }
 
-            _producerRepository.Delete(id);
+            await _producerRepository.DeleteAsync(id);
         }
 
         private static string ValidateProducerRequest(ProducerRequest request)
@@ -143,5 +137,19 @@ namespace IMDB_WebApplication.Services.Implementations
             return request.Name.Trim();
         }
 
+        private async Task<string> ValidateProducerUpdateAsync(int id, ProducerRequest request)
+        {
+            if (id <= 0)
+            {
+                throw new OutOfRangeException("Producer id must be greater than zero.");
+            }
+
+            if (await _producerRepository.GetAsync(id) == null)
+            {
+                throw new NotFoundException("Producer not found.");
+            }
+
+            return ValidateProducerRequest(request);
+        }
     }
 }

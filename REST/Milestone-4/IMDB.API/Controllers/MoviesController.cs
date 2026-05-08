@@ -19,35 +19,35 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] MovieRequest request)
+        public async Task<IActionResult> CreateAsync([FromForm] MovieRequest request)
         {
-            var movie = await _movieService.Create(request);
-            return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
+            var movie = await _movieService.CreateAsync(request);
+            return CreatedAtAction(nameof(GetAsync), new { id = movie.Id }, movie);
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            return Ok(_movieService.Get());
+            return Ok(await _movieService.GetAsync());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public async Task<IActionResult> GetAsync([FromRoute] int id)
         {
-            return Ok(_movieService.Get(id));
+            return Ok(await _movieService.GetAsync(id));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromForm] MovieRequest request)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromForm] MovieRequest request)
         {
-            await _movieService.Update(id, request);
+            await _movieService.UpdateAsync(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            await _movieService.Delete(id);
+            await _movieService.DeleteAsync(id);
             return NoContent();
         }
     }

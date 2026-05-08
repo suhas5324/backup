@@ -2,6 +2,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -18,35 +19,35 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPost("")]
-        public IActionResult Create([FromRoute] int movieId, [FromBody] ReviewRequest request)
+        public async Task<IActionResult> CreateAsync([FromRoute] int movieId, [FromBody] ReviewRequest request)
         {
-            var review = _reviewService.Create(movieId, request);
-            return CreatedAtAction(nameof(Get), new { movieId, id = review.Id }, review);
+            var review = await _reviewService.CreateAsync(movieId, request);
+            return CreatedAtAction(nameof(GetAsync), new { movieId, id = review.Id }, review);
         }
 
         [HttpGet("")]
-        public IActionResult Get([FromRoute] int movieId)
+        public async Task<IActionResult> GetAsync([FromRoute] int movieId)
         {
-            return Ok(_reviewService.Get(movieId));
+            return Ok(await _reviewService.GetAsync(movieId));
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int movieId, [FromRoute] int id)
+        public async Task<IActionResult> GetAsync([FromRoute] int movieId, [FromRoute] int id)
         {
-            return Ok(_reviewService.Get(movieId, id));
+            return Ok(await _reviewService.GetAsync(movieId, id));
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int movieId, [FromBody] ReviewRequest request, [FromRoute] int id)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int movieId, [FromBody] ReviewRequest request, [FromRoute] int id)
         {
-            _reviewService.Update(movieId, id, request);
+            await _reviewService.UpdateAsync(movieId, id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int movieId, [FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int movieId, [FromRoute] int id)
         {
-            _reviewService.Delete(movieId, id);
+            await _reviewService.DeleteAsync(movieId, id);
             return NoContent();
         }
     }

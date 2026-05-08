@@ -7,10 +7,10 @@ namespace IMDB_WebApplication.Services.Interfaces
 {
     public interface IMovieService
     {
-        Task<MovieResponse> Create(MovieRequest request);
-        IList<MovieResponse> Get();
-        MovieResponse Get(int id);
-        Task Update(int id, MovieRequest request);
-        Task Delete(int id);
+        Task<MovieResponse> CreateAsync(MovieRequest request);
+        Task<IList<MovieResponse>> GetAsync();
+        Task<MovieResponse> GetAsync(int id);
+        Task UpdateAsync(int id, MovieRequest request);
+        Task DeleteAsync(int id);
     }
 }

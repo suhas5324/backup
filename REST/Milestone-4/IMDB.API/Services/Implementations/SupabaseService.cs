@@ -1,14 +1,14 @@
-﻿namespace IMDB.API.Services.Implementations
+namespace IMDB.API.Services.Implementations
 {
-    using System;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.AspNetCore.Http;
-    using Supabase;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using IMDB.API.Services.Interfaces;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
+    using Supabase;
+
     public class SupabaseService : ISupabaseService
     {
         private readonly Client _client;
@@ -20,7 +20,7 @@
             _config = config;
         }
 
-        public async Task<string> UploadFile(IFormFile file)
+        public async Task<string> UploadFileAsync(IFormFile file)
         {
             var bucket = _config["Supabase:Bucket"];
             var fileName = file.FileName;
@@ -37,7 +37,7 @@
                 .GetPublicUrl(fileName);
         }
 
-        public async Task DeleteFile(string fileUrl)
+        public async Task DeleteFileAsync(string fileUrl)
         {
             var bucket = _config["Supabase:Bucket"];
             var fileName = fileUrl.Split("/").Last();
@@ -48,4 +48,3 @@
         }
     }
 }
-

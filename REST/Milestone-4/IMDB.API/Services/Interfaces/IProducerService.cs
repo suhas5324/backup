@@ -1,15 +1,16 @@
 using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Models.Responses;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Interfaces
 {
     public interface IProducerService
     {
-        ProducerResponse Create(ProducerRequest request);
-        IList<ProducerResponse> Get();
-        ProducerResponse Get(int id);
-        void Update(int id, ProducerRequest request);
-        void Delete(int id);
+        Task<ProducerResponse> CreateAsync(ProducerRequest request);
+        Task<IList<ProducerResponse>> GetAsync();
+        Task<ProducerResponse> GetAsync(int id);
+        Task UpdateAsync(int id, ProducerRequest request);
+        Task DeleteAsync(int id);
     }
 }

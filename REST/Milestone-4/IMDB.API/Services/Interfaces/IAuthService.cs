@@ -1,11 +1,12 @@
 using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Models.Responses;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Interfaces
 {
     public interface IAuthService
     {
-        void SignUp(SignupRequest request);
-        LoginResponse Login(LoginRequest request);
+        Task SignUpAsync(SignupRequest request);
+        Task<LoginResponse> LoginAsync(LoginRequest request);
     }
 }

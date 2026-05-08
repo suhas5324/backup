@@ -1,10 +1,11 @@
 using IMDB_WebApplication.Models.DBModels;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        User GetByEmail(string normalizedEmail);
-        void Create(User user);
+        Task<User> GetByEmailAsync(string normalizedEmail);
+        Task CreateAsync(User user);
     }
 }

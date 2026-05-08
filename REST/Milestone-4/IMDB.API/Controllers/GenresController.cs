@@ -2,6 +2,7 @@ using IMDB_WebApplication.Models.Requests;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Controllers
 {
@@ -18,35 +19,35 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] GenreRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] GenreRequest request)
         {
-            var genre = _genreService.Create(request);
-            return CreatedAtAction(nameof(Get), new { id = genre.Id }, genre);
+            var genre = await _genreService.CreateAsync(request);
+            return CreatedAtAction(nameof(GetAsync), new { id = genre.Id }, genre);
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            return Ok(_genreService.Get());
+            return Ok(await _genreService.GetAsync());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public async Task<IActionResult> GetAsync([FromRoute] int id)
         {
-            return Ok(_genreService.Get(id));
+            return Ok(await _genreService.GetAsync(id));
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] GenreRequest request)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] GenreRequest request)
         {
-            _genreService.Update(id, request);
+            await _genreService.UpdateAsync(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            _genreService.Delete(id);
+            await _genreService.DeleteAsync(id);
             return NoContent();
         }
     }

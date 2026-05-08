@@ -2,22 +2,21 @@ using Dapper;
 using IMDB.API;
 using IMDB_WebApplication.Models.DBModels;
 using IMDB_WebApplication.Repositories.Interfaces;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Repositories.Implementations
 {
-    public class ReviewRepository :BaseRepository<Review>, IReviewRepository
+    public class ReviewRepository : BaseRepository<Review>, IReviewRepository
     {
-        public ReviewRepository(IOptions<ConnectionString> options):base(options.Value.IMDB)
+        public ReviewRepository(IOptions<ConnectionString> options) : base(options.Value.IMDB)
         {
         }
 
-        public Review Create(Review review)
+        public async Task<Review> CreateAsync(Review review)
         {
-            string query=@"INSERT INTO foundation.reviews (
+            string query = @"INSERT INTO foundation.reviews (
 	movieid
 	,message
 	)
@@ -28,29 +27,29 @@ VALUES (
 	)";
             var MovieId = review.MovieId;
             var Message = review.Message;
-            var id = Create(query, new { MovieId, Message });
-            return Get(review.MovieId, id);
+            var id = await CreateAsync(query, new { MovieId, Message });
+            return await GetAsync(review.MovieId, id);
         }
 
-        public IList<Review> Get(int movieId)
+        public Task<IList<Review>> GetAsync(int movieId)
         {
             string query = @"SELECT *
 FROM foundation.reviews
 WHERE movieid = @MovieId";
-            return GetAll(query, new { MovieId = movieId });
+            return GetAllAsync(query, new { MovieId = movieId });
         }
 
-        public Review Get(int movieId, int id)
+        public Task<Review> GetAsync(int movieId, int id)
         {
             string query = @"SELECT *
 FROM foundation.reviews
 WHERE id = @Id AND movieid = @MovieId";
             var Id = id;
             var MovieId = movieId;
-            return Get(query, new { Id, MovieId });
+            return GetAsync(query, new { Id, MovieId });
         }
 
-        public void Update(Review review)
+        public Task UpdateAsync(Review review)
         {
             string query = @"UPDATE foundation.reviews
 SET message = @Message
@@ -58,16 +57,16 @@ WHERE id = @Id AND movieid = @MovieId";
             var Id = review.Id;
             var MovieId = review.MovieId;
             var Message = review.Message;
-             Update(query, new { Id, MovieId, Message });
+            return UpdateAsync(query, new { Id, MovieId, Message });
         }
 
-        public void Delete(int movieId, int id)
+        public Task DeleteAsync(int movieId, int id)
         {
             string query = @"DELETE FROM foundation.reviews
 WHERE id = @Id AND movieid = @MovieId";
             var Id = id;
             var MovieId = movieId;
-            Delete(query, new { Id, MovieId });
+            return DeleteAsync(query, new { Id, MovieId });
         }
     }
 }

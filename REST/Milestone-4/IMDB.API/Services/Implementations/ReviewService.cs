@@ -5,6 +5,7 @@ using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -19,14 +20,14 @@ namespace IMDB_WebApplication.Services.Implementations
             _movieRepository = movieRepository;
         }
 
-        public ReviewResponse Create(int movieId, ReviewRequest request)
+        public async Task<ReviewResponse> CreateAsync(int movieId, ReviewRequest request)
         {
             if (movieId <= 0)
             {
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            if (!MovieExists(movieId))
+            if (!await MovieExistsAsync(movieId))
             {
                 throw new NotFoundException("Movie not found.");
             }
@@ -38,7 +39,8 @@ namespace IMDB_WebApplication.Services.Implementations
                 MovieId = movieId,
                 Message = reviewMessage
             };
-            var createdReview = _reviewRepository.Create(review);
+
+            var createdReview = await _reviewRepository.CreateAsync(review);
             return new ReviewResponse
             {
                 Id = createdReview.Id,
@@ -47,19 +49,21 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public IList<ReviewResponse> Get(int movieId)
+        public async Task<IList<ReviewResponse>> GetAsync(int movieId)
         {
             if (movieId <= 0)
             {
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            if (!MovieExists(movieId))
+            if (!await MovieExistsAsync(movieId))
             {
                 throw new NotFoundException("Movie not found.");
             }
 
-            return _reviewRepository.Get(movieId).Select(r => new ReviewResponse
+            var reviews = await _reviewRepository.GetAsync(movieId);
+
+            return reviews.Select(r => new ReviewResponse
             {
                 Id = r.Id,
                 MovieId = r.MovieId,
@@ -67,7 +71,7 @@ namespace IMDB_WebApplication.Services.Implementations
             }).ToList();
         }
 
-        public ReviewResponse Get(int movieId, int id)
+        public async Task<ReviewResponse> GetAsync(int movieId, int id)
         {
             if (movieId <= 0)
             {
@@ -79,11 +83,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
-            var review = _reviewRepository.Get(movieId, id);
+            var review = await _reviewRepository.GetAsync(movieId, id);
             if (review == null)
             {
                 throw new NotFoundException("Review not found.");
             }
+
             return new ReviewResponse
             {
                 Id = review.Id,
@@ -92,24 +97,9 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public void Update(int movieId, int id, ReviewRequest request)
+        public async Task UpdateAsync(int movieId, int id, ReviewRequest request)
         {
-            if (movieId <= 0)
-            {
-                throw new OutOfRangeException("Movie id must be greater than zero.");
-            }
-
-            if (id <= 0)
-            {
-                throw new OutOfRangeException("Review id must be greater than zero.");
-            }
-
-            if (_reviewRepository.Get(movieId, id) == null)
-            {
-                throw new NotFoundException("Review not found.");
-            }
-
-            var reviewMessage = ValidateReviewRequest(request);
+            var reviewMessage = await ValidateReviewUpdateAsync(movieId, id, request);
 
             var review = new Review
             {
@@ -118,11 +108,10 @@ namespace IMDB_WebApplication.Services.Implementations
                 Message = reviewMessage
             };
 
-            _reviewRepository.Update(review);
-
+            await _reviewRepository.UpdateAsync(review);
         }
 
-        public void Delete(int movieId, int id)
+        public async Task DeleteAsync(int movieId, int id)
         {
             if (movieId <= 0)
             {
@@ -134,17 +123,17 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
-            if (_reviewRepository.Get(movieId, id) == null)
+            if (await _reviewRepository.GetAsync(movieId, id) == null)
             {
                 throw new NotFoundException("Review not found.");
             }
 
-            _reviewRepository.Delete(movieId, id);
+            await _reviewRepository.DeleteAsync(movieId, id);
         }
 
-        private bool MovieExists(int movieId)
+        private async Task<bool> MovieExistsAsync(int movieId)
         {
-            return movieId > 0 && _movieRepository.Get(movieId) != null;
+            return movieId > 0 && await _movieRepository.GetAsync(movieId) != null;
         }
 
         private static string ValidateReviewRequest(ReviewRequest request)
@@ -160,6 +149,26 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             return request.Message.Trim();
+        }
+
+        private async Task<string> ValidateReviewUpdateAsync(int movieId, int id, ReviewRequest request)
+        {
+            if (movieId <= 0)
+            {
+                throw new OutOfRangeException("Movie id must be greater than zero.");
+            }
+
+            if (id <= 0)
+            {
+                throw new OutOfRangeException("Review id must be greater than zero.");
+            }
+
+            if (await _reviewRepository.GetAsync(movieId, id) == null)
+            {
+                throw new NotFoundException("Review not found.");
+            }
+
+            return ValidateReviewRequest(request);
         }
     }
 }

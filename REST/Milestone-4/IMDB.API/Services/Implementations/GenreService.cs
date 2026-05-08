@@ -5,6 +5,7 @@ using IMDB_WebApplication.Repositories.Interfaces;
 using IMDB_WebApplication.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IMDB_WebApplication.Services.Implementations
 {
@@ -17,7 +18,7 @@ namespace IMDB_WebApplication.Services.Implementations
             _genreRepository = genreRepository;
         }
 
-        public GenreResponse Create(GenreRequest request)
+        public async Task<GenreResponse> CreateAsync(GenreRequest request)
         {
             var genreName = ValidateGenreRequest(request);
 
@@ -26,7 +27,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            var createdGenre = _genreRepository.Create(genre);
+            var createdGenre = await _genreRepository.CreateAsync(genre);
             return new GenreResponse
             {
                 Id = createdGenre.Id,
@@ -34,27 +35,30 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public IList<GenreResponse> Get()
+        public async Task<IList<GenreResponse>> GetAsync()
         {
-            return _genreRepository.Get().Select(g => new GenreResponse
+            var genres = await _genreRepository.GetAsync();
+
+            return genres.Select(g => new GenreResponse
             {
                 Id = g.Id,
                 Name = g.Name
             }).ToList();
         }
 
-        public GenreResponse Get(int id)
+        public async Task<GenreResponse> GetAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
-            var genre = _genreRepository.Get(id);
+            var genre = await _genreRepository.GetAsync(id);
             if (genre == null)
             {
                 throw new NotFoundException("Genre not found.");
             }
+
             return new GenreResponse
             {
                 Id = genre.Id,
@@ -62,19 +66,9 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public void Update(int id, GenreRequest request)
+        public async Task UpdateAsync(int id, GenreRequest request)
         {
-            if (id <= 0)
-            {
-                throw new OutOfRangeException("Genre id must be greater than zero.");
-            }
-
-            if (_genreRepository.Get(id) == null)
-            {
-                throw new NotFoundException("Genre not found.");
-            }
-
-            var genreName = ValidateGenreRequest(request);
+            var genreName = await ValidateGenreUpdateAsync(id, request);
 
             var genre = new Genre
             {
@@ -82,22 +76,22 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            _genreRepository.Update(genre);
+            await _genreRepository.UpdateAsync(genre);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             if (id <= 0)
             {
                 throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
-            if (_genreRepository.Get(id) == null)
+            if (await _genreRepository.GetAsync(id) == null)
             {
                 throw new NotFoundException("Genre not found.");
             }
 
-            _genreRepository.Delete(id);
+            await _genreRepository.DeleteAsync(id);
         }
 
         private static string ValidateGenreRequest(GenreRequest request)
@@ -115,5 +109,19 @@ namespace IMDB_WebApplication.Services.Implementations
             return request.Name.Trim();
         }
 
+        private async Task<string> ValidateGenreUpdateAsync(int id, GenreRequest request)
+        {
+            if (id <= 0)
+            {
+                throw new OutOfRangeException("Genre id must be greater than zero.");
+            }
+
+            if (await _genreRepository.GetAsync(id) == null)
+            {
+                throw new NotFoundException("Genre not found.");
+            }
+
+            return ValidateGenreRequest(request);
+        }
     }
 }
