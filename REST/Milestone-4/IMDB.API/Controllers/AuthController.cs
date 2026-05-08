@@ -9,18 +9,18 @@ namespace IMDB_WebApplication.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService authService;
+        private readonly IAuthService _authService;
 
         public AuthController(IAuthService authService)
         {
-            this.authService = authService;
+            _authService = authService;
         }
 
         [HttpPost("signup")]
         [AllowAnonymous]
         public IActionResult Signup([FromBody] SignupRequest request)
         {
-            var result = authService.SignUp(request);
+            var result = _authService.SignUp(request);
 
             if (!result)
             {
@@ -34,7 +34,7 @@ namespace IMDB_WebApplication.Controllers
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            var loginResponse = authService.Login(request);
+            var loginResponse = _authService.Login(request);
 
             if (loginResponse == null)
             {

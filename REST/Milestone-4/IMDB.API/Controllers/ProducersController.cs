@@ -10,43 +10,43 @@ namespace IMDB_WebApplication.Controllers
     [Authorize]
     public class ProducersController : ControllerBase
     {
-        private readonly IProducerService producerService;
+        private readonly IProducerService _producerService;
 
         public ProducersController(IProducerService producerService)
         {
-            this.producerService = producerService;
+            _producerService = producerService;
         }
 
         [HttpPost]
         public IActionResult Create([FromBody] ProducerRequest request)
         {
-            var producer = producerService.Create(request);
+            var producer = _producerService.Create(request);
             return CreatedAtAction(nameof(Get), new { id = producer.Id }, producer);
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(producerService.Get());
+            return Ok(_producerService.Get());
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-            return Ok(producerService.Get(id));
+            return Ok(_producerService.Get(id));
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromBody] ProducerRequest request)
         {
-            producerService.Update(id, request);
+            _producerService.Update(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            producerService.Delete(id);
+            _producerService.Delete(id);
             return NoContent();
         }
     }

@@ -11,11 +11,11 @@ namespace IMDB_WebApplication.Services.Implementations
 {
     public class ProducerService : IProducerService
     {
-        private readonly IProducerRepository producerRepository;
+        private readonly IProducerRepository _producerRepository;
 
         public ProducerService(IProducerRepository producerRepository)
         {
-            this.producerRepository = producerRepository;
+            _producerRepository = producerRepository;
         }
 
         public ProducerResponse Create(ProducerRequest request)
@@ -30,7 +30,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            var createdProducer = producerRepository.Create(producer);
+            var createdProducer = _producerRepository.Create(producer);
             return new ProducerResponse
             {
                 Id = createdProducer.Id,
@@ -43,7 +43,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public IList<ProducerResponse> Get()
         {
-            return producerRepository.Get().Select(p => new ProducerResponse
+            return _producerRepository.Get().Select(p => new ProducerResponse
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -60,7 +60,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            var producer = producerRepository.Get(id);
+            var producer = _producerRepository.Get(id);
             if (producer == null)
             {
                 throw new NotFoundException("Producer not found.");
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            if (producerRepository.Get(id) == null)
+            if (_producerRepository.Get(id) == null)
             {
                 throw new NotFoundException("Producer not found.");
             }
@@ -98,7 +98,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            producerRepository.Update(id, producer);
+            _producerRepository.Update(id, producer);
             return true;
         }
 
@@ -109,12 +109,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            if (producerRepository.Get(id) == null)
+            if (_producerRepository.Get(id) == null)
             {
                 throw new NotFoundException("Producer not found.");
             }
 
-            producerRepository.Delete(id);
+            _producerRepository.Delete(id);
             return true;
         }
 

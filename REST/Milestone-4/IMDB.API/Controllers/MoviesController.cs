@@ -11,43 +11,43 @@ namespace IMDB_WebApplication.Controllers
     [Authorize]
     public class MoviesController : ControllerBase
     {
-        private readonly IMovieService movieService;
+        private readonly IMovieService _movieService;
 
         public MoviesController(IMovieService movieService)
         {
-            this.movieService = movieService;
+            _movieService = movieService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] MovieRequest request)
         {
-            var movie = await movieService.Create(request);
+            var movie = await _movieService.Create(request);
             return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(movieService.Get());
+            return Ok(_movieService.Get());
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-            return Ok(movieService.Get(id));
+            return Ok(_movieService.Get(id));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromForm] MovieRequest request)
         {
-            await movieService.Update(id, request);
+            await _movieService.Update(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            await movieService.Delete(id);
+            await _movieService.Delete(id);
             return NoContent();
         }
     }

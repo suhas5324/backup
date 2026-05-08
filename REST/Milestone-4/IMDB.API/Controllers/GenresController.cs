@@ -10,43 +10,43 @@ namespace IMDB_WebApplication.Controllers
     [Authorize]
     public class GenresController : ControllerBase
     {
-        private readonly IGenreService genreService;
+        private readonly IGenreService _genreService;
 
         public GenresController(IGenreService genreService)
         {
-            this.genreService = genreService;
+            _genreService = genreService;
         }
 
         [HttpPost]
         public IActionResult Create([FromBody] GenreRequest request)
         {
-            var genre = genreService.Create(request);
+            var genre = _genreService.Create(request);
             return CreatedAtAction(nameof(Get), new { id = genre.Id }, genre);
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(genreService.Get());
+            return Ok(_genreService.Get());
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-            return Ok(genreService.Get(id));
+            return Ok(_genreService.Get(id));
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromBody] GenreRequest request)
         {
-            genreService.Update(id, request);
+            _genreService.Update(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            genreService.Delete(id);
+            _genreService.Delete(id);
             return NoContent();
         }
     }

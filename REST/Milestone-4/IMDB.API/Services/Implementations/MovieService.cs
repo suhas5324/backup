@@ -13,11 +13,11 @@ namespace IMDB_WebApplication.Services.Implementations
 {
     public class MovieService : IMovieService
     {
-        private readonly IMovieRepository movieRepository;
-        private readonly IProducerRepository producerRepository;
-        private readonly IActorRepository actorRepository;
-        private readonly IGenreRepository genreRepository;
-        private readonly ISupabaseService supabaseService;
+        private readonly IMovieRepository _movieRepository;
+        private readonly IProducerRepository _producerRepository;
+        private readonly IActorRepository _actorRepository;
+        private readonly IGenreRepository _genreRepository;
+        private readonly ISupabaseService _supabaseService;
         public MovieService(
             IMovieRepository movieRepository,
             IProducerRepository producerRepository,
@@ -25,11 +25,11 @@ namespace IMDB_WebApplication.Services.Implementations
             IGenreRepository genreRepository,
             ISupabaseService supabaseService)
         {
-            this.movieRepository = movieRepository;
-            this.producerRepository = producerRepository;
-            this.actorRepository = actorRepository;
-            this.genreRepository = genreRepository;
-            this.supabaseService = supabaseService;
+            _movieRepository = movieRepository;
+            _producerRepository = producerRepository;
+            _actorRepository = actorRepository;
+            _genreRepository = genreRepository;
+            _supabaseService = supabaseService;
         }
 
         public async Task<MovieResponse> Create(MovieRequest request)
@@ -46,7 +46,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                movie.CoverImage = await supabaseService.UploadFile(request.CoverImage);
+                movie.CoverImage = await _supabaseService.UploadFile(request.CoverImage);
             }
 
             string actorIds = (request.actorIds != null && request.actorIds.Any())
@@ -56,7 +56,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            var createdMovie = movieRepository.Create(movie, actorIds, genreIds);
+            var createdMovie = _movieRepository.Create(movie, actorIds, genreIds);
 
             return new MovieResponse
             {
@@ -71,7 +71,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public IList<MovieResponse> Get()
         {
-            return movieRepository.Get().Select(m => new MovieResponse
+            return _movieRepository.Get().Select(m => new MovieResponse
             {
                 Id = m.Id,
                 Name = m.Name,
@@ -89,7 +89,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            var movie = movieRepository.Get(id);
+            var movie = _movieRepository.Get(id);
             if (movie == null)
             {
                 throw new NotFoundException("Movie not found.");
@@ -112,7 +112,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            var existingMovie = movieRepository.Get(id);
+            var existingMovie = _movieRepository.Get(id);
             if (existingMovie == null)
             {
                 throw new NotFoundException("Movie not found.");
@@ -131,11 +131,11 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.CoverImage != null && request.CoverImage.Length > 0)
             {
-                var newImageUrl = await supabaseService.UploadFile(request.CoverImage);
+                var newImageUrl = await _supabaseService.UploadFile(request.CoverImage);
 
                 if (!string.IsNullOrEmpty(existingMovie.CoverImage))
                 {
-                    await supabaseService.DeleteFile(existingMovie.CoverImage);
+                    await _supabaseService.DeleteFile(existingMovie.CoverImage);
                 }
 
                 movie.CoverImage = newImageUrl;
@@ -152,7 +152,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            movieRepository.Update(id, movie, actorIds, genreIds);
+            _movieRepository.Update(id, movie, actorIds, genreIds);
             return true;
         }
 
@@ -163,7 +163,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Movie id must be greater than zero.");
             }
 
-            var movie = movieRepository.Get(id);
+            var movie = _movieRepository.Get(id);
 
             if (movie == null)
             {
@@ -172,10 +172,10 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (!string.IsNullOrEmpty(movie.CoverImage))
             {
-                await supabaseService.DeleteFile(movie.CoverImage);
+                await _supabaseService.DeleteFile(movie.CoverImage);
             }
 
-            movieRepository.Delete(id);
+            _movieRepository.Delete(id);
             return true;
         }
 
@@ -196,7 +196,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Producer id must be greater than zero.");
             }
 
-            if (producerRepository.Get(request.ProducerId) == null)
+            if (_producerRepository.Get(request.ProducerId) == null)
             {
                 throw new NotFoundException($"Producer with id {request.ProducerId} does not exist.");
             }
@@ -206,7 +206,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new RequiredFieldException("At least one actor id is required.");
             }
 
-            var actors = actorRepository.Get();
+            var actors = _actorRepository.Get();
             var actorIds = actors.Select(actor => actor.Id).ToHashSet();
 
             foreach (var actorId in request.actorIds)
@@ -224,7 +224,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
             if (request.genreIds != null && request.genreIds.Any())
             {
-                var genres = genreRepository.Get();
+                var genres = _genreRepository.Get();
                 var genreIds = genres.Select(genre => genre.Id).ToHashSet();
 
                 foreach (var genreId in request.genreIds)

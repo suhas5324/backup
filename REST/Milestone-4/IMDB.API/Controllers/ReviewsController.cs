@@ -10,43 +10,43 @@ namespace IMDB_WebApplication.Controllers
     [Authorize]
     public class ReviewsController : ControllerBase
     {
-        private readonly IReviewService reviewService;
+        private readonly IReviewService _reviewService;
 
         public ReviewsController(IReviewService reviewService)
         {
-            this.reviewService = reviewService;
+            _reviewService = reviewService;
         }
 
         [HttpPost("")]
         public IActionResult Create([FromRoute] int movieId, [FromBody] ReviewRequest request)
         {
-            var review = reviewService.Create(movieId, request);
+            var review = _reviewService.Create(movieId, request);
             return CreatedAtAction(nameof(Get), new { movieId, id = review.Id }, review);
         }
 
         [HttpGet("")]
         public IActionResult Get([FromRoute] int movieId)
         {
-            return Ok(reviewService.Get(movieId));
+            return Ok(_reviewService.Get(movieId));
         }
 
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int movieId, [FromRoute] int id)
         {
-            return Ok(reviewService.Get(movieId, id));
+            return Ok(_reviewService.Get(movieId, id));
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] int movieId, [FromBody] ReviewRequest request, [FromRoute] int id)
         {
-            reviewService.Update(movieId, id, request);
+            _reviewService.Update(movieId, id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int movieId, [FromRoute] int id)
         {
-            reviewService.Delete(movieId, id);
+            _reviewService.Delete(movieId, id);
             return NoContent();
         }
     }

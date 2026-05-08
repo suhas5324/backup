@@ -10,13 +10,13 @@ namespace IMDB_WebApplication.Services.Implementations
 {
     public class ReviewService : IReviewService
     {
-        private readonly IReviewRepository reviewRepository;
-        private readonly IMovieRepository movieRepository;
+        private readonly IReviewRepository _reviewRepository;
+        private readonly IMovieRepository _movieRepository;
 
         public ReviewService(IReviewRepository reviewRepository, IMovieRepository movieRepository)
         {
-            this.reviewRepository = reviewRepository;
-            this.movieRepository = movieRepository;
+            _reviewRepository = reviewRepository;
+            _movieRepository = movieRepository;
         }
 
         public ReviewResponse Create(int movieId, ReviewRequest request)
@@ -38,7 +38,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 MovieId = movieId,
                 Message = reviewMessage
             };
-            var createdReview = reviewRepository.Create(review);
+            var createdReview = _reviewRepository.Create(review);
             return new ReviewResponse
             {
                 Id = createdReview.Id,
@@ -59,7 +59,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new NotFoundException("Movie not found.");
             }
 
-            return reviewRepository.Get(movieId).Select(r => new ReviewResponse
+            return _reviewRepository.Get(movieId).Select(r => new ReviewResponse
             {
                 Id = r.Id,
                 MovieId = r.MovieId,
@@ -79,7 +79,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
-            var review = reviewRepository.Get(movieId, id);
+            var review = _reviewRepository.Get(movieId, id);
             if (review == null)
             {
                 throw new NotFoundException("Review not found.");
@@ -104,7 +104,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
-            if (reviewRepository.Get(movieId, id) == null)
+            if (_reviewRepository.Get(movieId, id) == null)
             {
                 throw new NotFoundException("Review not found.");
             }
@@ -118,7 +118,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Message = reviewMessage
             };
 
-            reviewRepository.Update(movieId, id, review);
+            _reviewRepository.Update(movieId, id, review);
             return true;
         }
 
@@ -134,18 +134,18 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Review id must be greater than zero.");
             }
 
-            if (reviewRepository.Get(movieId, id) == null)
+            if (_reviewRepository.Get(movieId, id) == null)
             {
                 throw new NotFoundException("Review not found.");
             }
 
-            reviewRepository.Delete(movieId, id);
+            _reviewRepository.Delete(movieId, id);
             return true;
         }
 
         private bool MovieExists(int movieId)
         {
-            return movieId > 0 && movieRepository.Get(movieId) != null;
+            return movieId > 0 && _movieRepository.Get(movieId) != null;
         }
 
         private static string ValidateReviewRequest(ReviewRequest request)

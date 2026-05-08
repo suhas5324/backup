@@ -11,11 +11,11 @@ namespace IMDB_WebApplication.Services.Implementations
 {
     public class ActorService : IActorService
     {
-        private readonly IActorRepository actorRepository;
+        private readonly IActorRepository _actorRepository;
 
         public ActorService(IActorRepository actorRepository)
         {
-            this.actorRepository = actorRepository;
+            _actorRepository = actorRepository;
         }
 
         public ActorResponse Create(ActorRequest request)
@@ -30,7 +30,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            var createdActor = actorRepository.Create(actor);
+            var createdActor = _actorRepository.Create(actor);
             return new ActorResponse
             {
                 Id = createdActor.Id,
@@ -43,7 +43,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public IList<ActorResponse> Get()
         {
-            return actorRepository.Get().Select(a => new ActorResponse
+            return _actorRepository.Get().Select(a => new ActorResponse
             {
                 Id = a.Id,
                 Name = a.Name,
@@ -60,7 +60,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
-            var actor = actorRepository.Get(id);
+            var actor = _actorRepository.Get(id);
             if (actor == null)
             {
                 throw new NotFoundException("Actor not found.");
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
-            if (actorRepository.Get(id) == null)
+            if (_actorRepository.Get(id) == null)
             {
                 throw new NotFoundException("Actor not found.");
             }
@@ -98,7 +98,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            actorRepository.Update(id, actor);
+            _actorRepository.Update(id, actor);
             return true;
         }
 
@@ -109,12 +109,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Actor id must be greater than zero.");
             }
 
-            if (actorRepository.Get(id) == null)
+            if (_actorRepository.Get(id) == null)
             {
                 throw new NotFoundException("Actor not found.");
             }
 
-            actorRepository.Delete(id);
+            _actorRepository.Delete(id);
             return true;
         }
 

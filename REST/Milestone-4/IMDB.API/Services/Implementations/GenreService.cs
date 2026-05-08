@@ -10,11 +10,11 @@ namespace IMDB_WebApplication.Services.Implementations
 {
     public class GenreService : IGenreService
     {
-        private readonly IGenreRepository genreRepository;
+        private readonly IGenreRepository _genreRepository;
 
         public GenreService(IGenreRepository genreRepository)
         {
-            this.genreRepository = genreRepository;
+            _genreRepository = genreRepository;
         }
 
         public GenreResponse Create(GenreRequest request)
@@ -26,7 +26,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            var createdGenre = genreRepository.Create(genre);
+            var createdGenre = _genreRepository.Create(genre);
             return new GenreResponse
             {
                 Id = createdGenre.Id,
@@ -36,7 +36,7 @@ namespace IMDB_WebApplication.Services.Implementations
 
         public IList<GenreResponse> Get()
         {
-            return genreRepository.Get().Select(g => new GenreResponse
+            return _genreRepository.Get().Select(g => new GenreResponse
             {
                 Id = g.Id,
                 Name = g.Name
@@ -50,7 +50,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
-            var genre = genreRepository.Get(id);
+            var genre = _genreRepository.Get(id);
             if (genre == null)
             {
                 throw new NotFoundException("Genre not found.");
@@ -69,7 +69,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
-            if (genreRepository.Get(id) == null)
+            if (_genreRepository.Get(id) == null)
             {
                 throw new NotFoundException("Genre not found.");
             }
@@ -82,7 +82,7 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            genreRepository.Update(id, genre);
+            _genreRepository.Update(id, genre);
             return true;
         }
 
@@ -93,12 +93,12 @@ namespace IMDB_WebApplication.Services.Implementations
                 throw new OutOfRangeException("Genre id must be greater than zero.");
             }
 
-            if (genreRepository.Get(id) == null)
+            if (_genreRepository.Get(id) == null)
             {
                 throw new NotFoundException("Genre not found.");
             }
 
-            genreRepository.Delete(id);
+            _genreRepository.Delete(id);
             return true;
         }
 

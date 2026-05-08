@@ -15,18 +15,18 @@ namespace IMDB_WebApplication.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository userRepository;
-        private readonly IPasswordHasher<User> passwordHasher;
-        private readonly IConfiguration configuration;
+        private readonly IUserRepository _userRepository;
+        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IConfiguration _configuration;
 
         public AuthService(
             IUserRepository userRepository,
             IPasswordHasher<User> passwordHasher,
             IConfiguration configuration)
         {
-            this.userRepository = userRepository;
-            this.passwordHasher = passwordHasher;
-            this.configuration = configuration;
+            _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
+            _configuration = configuration;
         }
 
         public bool SignUp(SignupRequest request)
@@ -49,7 +49,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var email = request.Email.Trim();
             var password = request.Password;
             var normalizedEmail = email.ToUpperInvariant();
-            var existingUser = userRepository.GetByEmail(normalizedEmail);
+            var existingUser = _userRepository.GetByEmail(normalizedEmail);
             if (existingUser != null)
             {
                 throw new BadRequestException("User with this email already exists.");
@@ -62,8 +62,8 @@ namespace IMDB_WebApplication.Services.Implementations
                 NormalizedEmail = normalizedEmail
             };
 
-            user.PasswordHash = passwordHasher.HashPassword(user, password);
-            userRepository.Create(user);
+            user.PasswordHash = _passwordHasher.HashPassword(user, password);
+            _userRepository.Create(user);
 
             return true;
         }
@@ -87,13 +87,13 @@ namespace IMDB_WebApplication.Services.Implementations
 
             var email = request.Email.Trim();
             var password = request.Password;
-            var user = userRepository.GetByEmail(email.ToUpperInvariant());
+            var user = _userRepository.GetByEmail(email.ToUpperInvariant());
             if (user == null || string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 throw new BadRequestException("Invalid email or password.");
             }
 
-            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             if (verificationResult == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid email or password.");
@@ -119,11 +119,11 @@ namespace IMDB_WebApplication.Services.Implementations
             };
 
             var authSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+                Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var token = new JwtSecurityToken(
-                issuer: configuration["JWT:ValidIssuer"],
-                audience: configuration["JWT:ValidAudience"],
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
                 expires: expiresAtUtc,
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(
