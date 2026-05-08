@@ -5,7 +5,7 @@ namespace IMDB_WebApplication.Services.Interfaces
 {
     public interface IAuthService
     {
-        bool SignUp(SignupRequest request);
+        void SignUp(SignupRequest request);
         LoginResponse Login(LoginRequest request);
     }
 }

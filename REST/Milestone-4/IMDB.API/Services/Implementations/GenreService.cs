@@ -62,7 +62,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public bool Update(int id, GenreRequest request)
+        public void Update(int id, GenreRequest request)
         {
             if (id <= 0)
             {
@@ -82,11 +82,10 @@ namespace IMDB_WebApplication.Services.Implementations
                 Name = genreName
             };
 
-            _genreRepository.Update(id, genre);
-            return true;
+            _genreRepository.Update(genre);
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             if (id <= 0)
             {
@@ -99,7 +98,6 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             _genreRepository.Delete(id);
-            return true;
         }
 
         private static string ValidateGenreRequest(GenreRequest request)

@@ -9,7 +9,7 @@ namespace IMDB_WebApplication.Services.Interfaces
         ProducerResponse Create(ProducerRequest request);
         IList<ProducerResponse> Get();
         ProducerResponse Get(int id);
-        bool Update(int id, ProducerRequest request);
-        bool Delete(int id);
+        void Update(int id, ProducerRequest request);
+        void Delete(int id);
     }
 }

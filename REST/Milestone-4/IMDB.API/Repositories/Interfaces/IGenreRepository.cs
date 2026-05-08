@@ -8,7 +8,7 @@ namespace IMDB_WebApplication.Repositories.Interfaces
         Genre Create(Genre genre);
         IList<Genre> Get();
         Genre Get(int id);
-        void Update(int id, Genre genre);
+        void Update(Genre genre);
         void Delete(int id);
     }
 }

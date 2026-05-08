@@ -75,7 +75,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public bool Update(int id, ActorRequest request)
+        public void Update(int id, ActorRequest request)
         {
             if (id <= 0)
             {
@@ -98,11 +98,11 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            _actorRepository.Update(id, actor);
-            return true;
+            _actorRepository.Update(actor);
+
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             if (id <= 0)
             {
@@ -115,7 +115,6 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             _actorRepository.Delete(id);
-            return true;
         }
 
         private static string ValidateActorRequest(ActorRequest request)

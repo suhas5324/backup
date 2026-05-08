@@ -32,8 +32,11 @@ VALUES (
 	,@DateOfBirth
 	,@Gender
 	);";
-            using var connection = new SqlConnection(_connectionString);
-            var id = connection.ExecuteScalar<int>(query, new { Name = producer.Name, Bio = producer.Bio, DateOfBirth = producer.DateOfBirth, Gender = producer.Gender });
+            var Name = producer.Name;
+            var Bio = producer.Bio;
+            var DateOfBirth = producer.DateOfBirth;
+            var Gender = producer.Gender;
+            var id = Create(query, new { Name, Bio, DateOfBirth, Gender});
             return Get(id);
         }
 
@@ -49,10 +52,11 @@ FROM foundation.producers";
             string query = @"SELECT *
 FROM foundation.producers
 WHERE id = @Id";
-            return Get(query, new { Id = id });
+            var Id = id;
+            return Get(query, new { Id });
         }
 
-        public void Update(int id, Producer producer)
+        public void Update(Producer producer)
         {
             string query = @"UPDATE foundation.producers
 SET name = @Name
@@ -60,14 +64,20 @@ SET name = @Name
 	,dateofbirth = @DateOfBirth
 	,gender = @Gender
 WHERE id = @Id";
-            Update(query, new { Id = id, Name = producer.Name, Bio = producer.Bio,DateOfBirth=producer.DateOfBirth, Gender = producer.Gender});
+            var Id = producer.Id;
+            var Name = producer.Name;
+            var Bio = producer.Bio;
+            var DateOfBirth = producer.DateOfBirth;
+            var Gender = producer.Gender;
+            Update(query, new { Id, Name, Bio, DateOfBirth, Gender });
         }
         public void Delete(int id)
         {
             string query = @"DELETE
 FROM foundation.producers
 WHERE id = @Id";
-            Delete(query, new { Id = id });
+            var Id = id;
+            Delete(query, new { Id });
         }
     }
 }

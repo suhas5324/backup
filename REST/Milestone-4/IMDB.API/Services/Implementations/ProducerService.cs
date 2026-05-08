@@ -75,7 +75,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public bool Update(int id, ProducerRequest request)
+        public void Update(int id, ProducerRequest request)
         {
             if (id <= 0)
             {
@@ -98,11 +98,10 @@ namespace IMDB_WebApplication.Services.Implementations
                 Gender = request.Gender?.Trim()
             };
 
-            _producerRepository.Update(id, producer);
-            return true;
+            _producerRepository.Update(producer);
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             if (id <= 0)
             {
@@ -115,7 +114,6 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             _producerRepository.Delete(id);
-            return true;
         }
 
         private static string ValidateProducerRequest(ProducerRequest request)

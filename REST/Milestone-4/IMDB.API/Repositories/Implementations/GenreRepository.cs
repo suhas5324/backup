@@ -19,8 +19,8 @@ namespace IMDB_WebApplication.Repositories.Implementations
             string query=@"INSERT INTO foundation.genres (name)
 OUTPUT INSERTED.id
 VALUES (@Name)";
-            using var connection = new SqlConnection(_connectionString);
-            var id = connection.ExecuteScalar<int>(query, new { Name = genre.Name });
+            var Name = genre.Name;
+            var id = Create(query, new { Name });
             return Get(id);
 
         }
@@ -35,21 +35,25 @@ FROM foundation.genres";
             string query = @"SELECT *
 FROM foundation.genres
 WHERE id = @Id";
-            return Get(query, new { Id = id });
+            var Id = id;
+            return Get(query, new { Id });
         }
-        public void Update(int id,Genre genre)
+        public void Update(Genre genre)
         {
             string query= @"UPDATE foundation.genres
 SET name = @Name
 WHERE id = @Id";
-            Update(query, new { Id = id, Name = genre.Name });
+            var Id = genre.Id;
+            var Name = genre.Name;
+            Update(query, new { Id, Name });
         }
         public void Delete(int id)
         {
            string query = @"DELETE
 FROM foundation.genres
 WHERE id = @Id";
-            Delete(query, new { Id = id });
+            var Id = id;
+            Delete(query, new { Id });
         }
 
     }

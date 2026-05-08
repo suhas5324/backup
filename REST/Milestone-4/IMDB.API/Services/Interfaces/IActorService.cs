@@ -9,8 +9,8 @@ namespace IMDB_WebApplication.Services.Interfaces
         public ActorResponse Create(ActorRequest request);
         public IList<ActorResponse> Get();
         public ActorResponse Get(int id);
-        public bool Update(int id, ActorRequest request);
-        public bool Delete(int id);
+        public void Update(int id, ActorRequest request);
+        public void Delete(int id);
 
     }
 }

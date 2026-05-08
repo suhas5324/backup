@@ -13,10 +13,10 @@ public class BaseRepository<T> where T : class
     {
         _connectionString = connectionString;
     }
-    public void Create(string query, object parameters)
+    public int Create(string query, object parameters)
     {
         using var connection = new SqlConnection(_connectionString);
-        connection.Execute(query, parameters);
+        return connection.ExecuteScalar<int>(query, parameters);
     }
     public IList<T> Get(string query)
     {

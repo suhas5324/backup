@@ -105,7 +105,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public async Task<bool> Update(int id, MovieRequest request)
+        public async Task Update(int id, MovieRequest request)
         {
             if (id <= 0)
             {
@@ -152,11 +152,10 @@ namespace IMDB_WebApplication.Services.Implementations
                 ? string.Join(",", request.genreIds)
                 : null;
 
-            _movieRepository.Update(id, movie, actorIds, genreIds);
-            return true;
+            _movieRepository.Update(movie, actorIds, genreIds);
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task Delete(int id)
         {
             if (id <= 0)
             {
@@ -176,7 +175,6 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             _movieRepository.Delete(id);
-            return true;
         }
 
         private string ValidateMovieRequest(MovieRequest request)

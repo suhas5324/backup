@@ -8,7 +8,7 @@ namespace IMDB_WebApplication.Repositories.Interfaces
         Producer Create(Producer producer);
         IList<Producer> Get();
         Producer Get(int id);
-        void Update(int id, Producer producer);
+        void Update(Producer producer);
         void Delete(int id);
     }
 }

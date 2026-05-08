@@ -8,7 +8,7 @@ namespace IMDB_WebApplication.Repositories.Interfaces
         Review Create(Review review);
         IList<Review> Get(int movieId);
         Review Get(int movieId, int id);
-        void Update(int movieId, int id, Review review);
+        void Update(Review review);
         void Delete(int movieId, int id);
     }
 }

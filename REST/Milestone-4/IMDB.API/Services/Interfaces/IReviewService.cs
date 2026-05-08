@@ -9,7 +9,7 @@ namespace IMDB_WebApplication.Services.Interfaces
         ReviewResponse Create(int movieId, ReviewRequest request);
         IList<ReviewResponse> Get(int movieId);
         ReviewResponse Get(int movieId, int id);
-        bool Update(int movieId, int id, ReviewRequest request);
-        bool Delete(int movieId, int id);
+        void Update(int movieId, int id, ReviewRequest request);
+        void Delete(int movieId, int id);
     }
 }

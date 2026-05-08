@@ -29,7 +29,7 @@ namespace IMDB_WebApplication.Services.Implementations
             _configuration = configuration;
         }
 
-        public bool SignUp(SignupRequest request)
+        public void SignUp(SignupRequest request)
         {
             if (request == null)
             {
@@ -64,8 +64,6 @@ namespace IMDB_WebApplication.Services.Implementations
 
             user.PasswordHash = _passwordHasher.HashPassword(user, password);
             _userRepository.Create(user);
-
-            return true;
         }
 
         public LoginResponse Login(LoginRequest request)

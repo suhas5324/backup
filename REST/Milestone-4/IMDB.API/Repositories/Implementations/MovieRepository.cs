@@ -53,9 +53,10 @@ FROM foundation.movies";
             string query = @"SELECT *
 FROM foundation.movies
 WHERE id = @Id";
-            return Get(query, new { Id = id });
+            var Id = id;
+            return Get(query, new { Id });
         }
-        public void Update(int id, Movie movie, string actorIds, string genreIds)
+        public void Update(Movie movie, string actorIds, string genreIds)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -63,7 +64,7 @@ WHERE id = @Id";
 
             var values = new
             {
-                Id = id,
+                Id = movie.Id,
                 Name = movie.Name,
                 YearOfRelease = movie.YearOfRelease,
                 Plot = movie.Plot,
@@ -84,7 +85,8 @@ WHERE id = @Id";
             string query = @"DELETE
 FROM foundation.movies
 WHERE id = @Id";
-            Delete(query, new { Id = id });
+            var Id = id;
+            Delete(query, new { Id});
         }
     }
 }

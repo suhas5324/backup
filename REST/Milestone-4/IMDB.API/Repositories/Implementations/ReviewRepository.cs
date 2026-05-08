@@ -26,8 +26,9 @@ VALUES (
 	@MovieId
 	,@Message
 	)";
-            using var connection = new SqlConnection(_connectionString);
-            var id = connection.ExecuteScalar<int>(query, new { MovieId = review.MovieId, Message = review.Message });
+            var MovieId = review.MovieId;
+            var Message = review.Message;
+            var id = Create(query, new { MovieId, Message });
             return Get(review.MovieId, id);
         }
 
@@ -44,22 +45,29 @@ WHERE movieid = @MovieId";
             string query = @"SELECT *
 FROM foundation.reviews
 WHERE id = @Id AND movieid = @MovieId";
-            return Get(query, new { Id = id, MovieId = movieId });
+            var Id = id;
+            var MovieId = movieId;
+            return Get(query, new { Id, MovieId });
         }
 
-        public void Update(int movieId, int id, Review review)
+        public void Update(Review review)
         {
             string query = @"UPDATE foundation.reviews
 SET message = @Message
 WHERE id = @Id AND movieid = @MovieId";
-            Update(query, new { Id = id, MovieId = movieId, Message = review.Message });
+            var Id = review.Id;
+            var MovieId = review.MovieId;
+            var Message = review.Message;
+             Update(query, new { Id, MovieId, Message });
         }
 
         public void Delete(int movieId, int id)
         {
             string query = @"DELETE FROM foundation.reviews
 WHERE id = @Id AND movieid = @MovieId";
-            Delete(query, new { Id = id, MovieId = movieId });
+            var Id = id;
+            var MovieId = movieId;
+            Delete(query, new { Id, MovieId });
         }
     }
 }

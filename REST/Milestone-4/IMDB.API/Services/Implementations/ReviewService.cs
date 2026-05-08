@@ -92,7 +92,7 @@ namespace IMDB_WebApplication.Services.Implementations
             };
         }
 
-        public bool Update(int movieId, int id, ReviewRequest request)
+        public void Update(int movieId, int id, ReviewRequest request)
         {
             if (movieId <= 0)
             {
@@ -118,11 +118,11 @@ namespace IMDB_WebApplication.Services.Implementations
                 Message = reviewMessage
             };
 
-            _reviewRepository.Update(movieId, id, review);
-            return true;
+            _reviewRepository.Update(review);
+
         }
 
-        public bool Delete(int movieId, int id)
+        public void Delete(int movieId, int id)
         {
             if (movieId <= 0)
             {
@@ -140,7 +140,6 @@ namespace IMDB_WebApplication.Services.Implementations
             }
 
             _reviewRepository.Delete(movieId, id);
-            return true;
         }
 
         private bool MovieExists(int movieId)

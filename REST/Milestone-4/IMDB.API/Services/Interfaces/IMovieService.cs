@@ -10,7 +10,7 @@ namespace IMDB_WebApplication.Services.Interfaces
         Task<MovieResponse> Create(MovieRequest request);
         IList<MovieResponse> Get();
         MovieResponse Get(int id);
-        Task<bool> Update(int id, MovieRequest request);
-        Task<bool> Delete(int id);
+        Task Update(int id, MovieRequest request);
+        Task Delete(int id);
     }
 }

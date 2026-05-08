@@ -20,12 +20,7 @@ namespace IMDB_WebApplication.Controllers
         [AllowAnonymous]
         public IActionResult Signup([FromBody] SignupRequest request)
         {
-            var result = _authService.SignUp(request);
-
-            if (!result)
-            {
-                return BadRequest("A user with this email already exists.");
-            }
+            _authService.SignUp(request);
 
             return Ok("User registered successfully.");
         }
