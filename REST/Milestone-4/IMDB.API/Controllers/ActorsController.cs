@@ -1,4 +1,4 @@
-using IMDB_WebApplication.Models.RequestModels;
+﻿using IMDB_WebApplication.Models.RequestModels;
 using IMDB_WebApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace IMDB_WebApplication.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] ActorRequest request)
         {
             var actor = await _actorService.CreateAsync(request);
-            return CreatedAtAction(nameof(GetAsync), new { id = actor.Id }, actor);
+            return CreatedAtAction(nameof(Get), new { id = actor.Id }, actor);
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
             return Ok(await _actorService.GetAsync(id));
         }

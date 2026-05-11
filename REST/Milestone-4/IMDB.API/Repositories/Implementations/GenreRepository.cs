@@ -25,39 +25,39 @@ VALUES (@Name)";
 
         }
 
-        public Task<IList<Genre>> GetAsync()
+        public async Task<IList<Genre>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.genres";
-            return GetAsync(query);
+            return await GetAsync(query);
         }
 
-        public Task<Genre> GetAsync(int id)
+        public async Task<Genre> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.genres
 WHERE id = @Id";
             var Id = id;
-            return GetAsync(query, new { Id });
+            return await GetAsync(query, new { Id });
         }
 
-        public Task UpdateAsync(Genre genre)
+        public async Task UpdateAsync(Genre genre)
         {
             string query = @"UPDATE foundation.genres
 SET name = @Name
 WHERE id = @Id";
             var Id = genre.Id;
             var Name = genre.Name;
-            return UpdateAsync(query, new { Id, Name });
+            await UpdateAsync(query, new { Id, Name });
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
 FROM foundation.genres
 WHERE id = @Id";
             var Id = id;
-            return DeleteAsync(query, new { Id });
+            await DeleteAsync(query, new { Id });
         }
 
     }

@@ -38,23 +38,23 @@ VALUES (
             return await GetAsync(id);
         }
 
-        public Task<IList<Producer>> GetAsync()
+        public async Task<IList<Producer>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.producers";
-            return GetAsync(query);
+            return await GetAsync(query);
         }
 
-        public Task<Producer> GetAsync(int id)
+        public async Task<Producer> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.producers
 WHERE id = @Id";
             var Id = id;
-            return GetAsync(query, new { Id });
+            return await GetAsync(query, new { Id });
         }
 
-        public Task UpdateAsync(Producer producer)
+        public async Task UpdateAsync(Producer producer)
         {
             string query = @"UPDATE foundation.producers
 SET name = @Name
@@ -67,16 +67,16 @@ WHERE id = @Id";
             var Bio = producer.Bio;
             var DateOfBirth = producer.DateOfBirth;
             var Gender = producer.Gender;
-            return UpdateAsync(query, new { Id, Name, Bio, DateOfBirth, Gender });
+            await UpdateAsync(query, new { Id, Name, Bio, DateOfBirth, Gender });
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
 FROM foundation.producers
 WHERE id = @Id";
             var Id = id;
-            return DeleteAsync(query, new { Id });
+            await DeleteAsync(query, new { Id });
         }
     }
 }

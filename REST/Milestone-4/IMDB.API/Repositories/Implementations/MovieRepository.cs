@@ -43,20 +43,20 @@ namespace IMDB_WebApplication.Repositories.Implementations
             return await GetAsync(createdMovieId);
         }
 
-        public Task<IList<Movie>> GetAsync()
+        public async Task<IList<Movie>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.movies";
-            return GetAsync(query);
+            return await GetAsync(query);
         }
 
-        public Task<Movie> GetAsync(int id)
+        public async Task<Movie> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.movies
 WHERE id = @Id";
             var Id = id;
-            return GetAsync(query, new { Id });
+            return await GetAsync(query, new { Id });
         }
 
         public async Task UpdateAsync(Movie movie, string actorIds, string genreIds)
@@ -67,7 +67,7 @@ WHERE id = @Id";
 
             var values = new
             {
-                Id = movie.Id,
+                MovieId = movie.Id,
                 Name = movie.Name,
                 YearOfRelease = movie.YearOfRelease,
                 Plot = movie.Plot,
@@ -84,13 +84,13 @@ WHERE id = @Id";
             );
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
 FROM foundation.movies
 WHERE id = @Id";
             var Id = id;
-            return DeleteAsync(query, new { Id });
+            await DeleteAsync(query, new { Id });
         }
     }
 }

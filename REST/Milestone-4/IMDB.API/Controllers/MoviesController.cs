@@ -22,7 +22,7 @@ namespace IMDB_WebApplication.Controllers
         public async Task<IActionResult> CreateAsync([FromForm] MovieRequest request)
         {
             var movie = await _movieService.CreateAsync(request);
-            return CreatedAtAction(nameof(GetAsync), new { id = movie.Id }, movie);
+            return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
             return Ok(await _movieService.GetAsync(id));
         }

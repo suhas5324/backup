@@ -37,23 +37,23 @@ VALUES (
             return await GetAsync(id);
         }
 
-        public Task<IList<Actor>> GetAsync()
+        public async Task<IList<Actor>> GetAsync()
         {
             string query = @"SELECT *
 FROM foundation.actors";
-            return GetAsync(query);
+            return await GetAsync(query);
         }
 
-        public Task<Actor> GetAsync(int id)
+        public async Task<Actor> GetAsync(int id)
         {
             string query = @"SELECT *
 FROM foundation.actors
 WHERE id = @Id";
             var Id = id;
-            return GetAsync(query, new { Id });
+            return await GetAsync(query, new { Id });
         }
 
-        public Task UpdateAsync(Actor actor)
+        public async Task UpdateAsync(Actor actor)
         {
             string query = @"UPDATE foundation.actors
 SET name = @Name
@@ -66,16 +66,16 @@ WHERE id = @Id";
             var Gender = actor.Gender;
             var DateOfBirth = actor.DateOfBirth;
             var Id = actor.Id;
-            return UpdateAsync(query, new { Id, Name, Bio, DateOfBirth, Gender });
+            await UpdateAsync(query, new { Id, Name, Bio, DateOfBirth, Gender });
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
 FROM foundation.actors
 WHERE id = @Id";
             var Id = id;
-            return DeleteAsync(query, new { Id });
+            await DeleteAsync(query, new { Id });
         }
     }
 }

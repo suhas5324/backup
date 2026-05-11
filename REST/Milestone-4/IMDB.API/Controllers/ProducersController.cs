@@ -22,7 +22,7 @@ namespace IMDB_WebApplication.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] ProducerRequest request)
         {
             var producer = await _producerService.CreateAsync(request);
-            return CreatedAtAction(nameof(GetAsync), new { id = producer.Id }, producer);
+            return CreatedAtAction(nameof(Get), new { id = producer.Id }, producer);
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace IMDB_WebApplication.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
             return Ok(await _producerService.GetAsync(id));
         }

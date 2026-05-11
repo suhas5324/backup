@@ -13,7 +13,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
         {
         }
 
-        public Task<User> GetByEmailAsync(string normalizedEmail)
+        public async Task<User> GetByEmailAsync(string normalizedEmail)
         {
             const string query = @"SELECT id
 	,username
@@ -23,7 +23,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
 FROM foundation.users
 WHERE normalizedemail = @NormalizedEmail";
 
-            return GetAsync(query, new { NormalizedEmail = normalizedEmail });
+            return await GetAsync(query, new { NormalizedEmail = normalizedEmail });
         }
 
         public async Task CreateAsync(User user)

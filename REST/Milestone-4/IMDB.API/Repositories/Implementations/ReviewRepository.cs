@@ -31,25 +31,25 @@ VALUES (
             return await GetAsync(review.MovieId, id);
         }
 
-        public Task<IList<Review>> GetAsync(int movieId)
+        public async Task<IList<Review>> GetAsync(int movieId)
         {
             string query = @"SELECT *
 FROM foundation.reviews
 WHERE movieid = @MovieId";
-            return GetAllAsync(query, new { MovieId = movieId });
+            return await GetAllAsync(query, new { MovieId = movieId });
         }
 
-        public Task<Review> GetAsync(int movieId, int id)
+        public async Task<Review> GetAsync(int movieId, int id)
         {
             string query = @"SELECT *
 FROM foundation.reviews
 WHERE id = @Id AND movieid = @MovieId";
             var Id = id;
             var MovieId = movieId;
-            return GetAsync(query, new { Id, MovieId });
+            return await GetAsync(query, new { Id, MovieId });
         }
 
-        public Task UpdateAsync(Review review)
+        public async Task UpdateAsync(Review review)
         {
             string query = @"UPDATE foundation.reviews
 SET message = @Message
@@ -57,16 +57,16 @@ WHERE id = @Id AND movieid = @MovieId";
             var Id = review.Id;
             var MovieId = review.MovieId;
             var Message = review.Message;
-            return UpdateAsync(query, new { Id, MovieId, Message });
+            await UpdateAsync(query, new { Id, MovieId, Message });
         }
 
-        public Task DeleteAsync(int movieId, int id)
+        public async Task DeleteAsync(int movieId, int id)
         {
             string query = @"DELETE FROM foundation.reviews
 WHERE id = @Id AND movieid = @MovieId";
             var Id = id;
             var MovieId = movieId;
-            return DeleteAsync(query, new { Id, MovieId });
+            await DeleteAsync(query, new { Id, MovieId });
         }
     }
 }
