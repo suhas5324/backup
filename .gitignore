@@ -326,10 +326,10 @@ StyleCopReport.xml
 # Visual C++ cache files
 .build
 # Visual Studio profiler
-
+REST/
 # Visual Studio Trace Files
 *.e2e
-
+csharp/
 # TFS 2012 Local Workspace
 .git
 .dotnet*
