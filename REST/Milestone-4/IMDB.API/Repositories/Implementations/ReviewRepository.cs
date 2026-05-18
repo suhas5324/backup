@@ -17,14 +17,14 @@ namespace IMDB_WebApplication.Repositories.Implementations
         public async Task<Review> CreateAsync(Review review)
         {
             string query = @"INSERT INTO foundation.reviews (
-	movieid
-	,message
-	)
-OUTPUT INSERTED.id
-VALUES (
-	@MovieId
-	,@Message
-	)";
+                                        movieid
+                                        ,message
+                                        )
+                             OUTPUT INSERTED.id
+                             VALUES (
+                                        @MovieId
+                                        ,@Message
+                                        )";
             var MovieId = review.MovieId;
             var Message = review.Message;
             var id = await CreateAsync(query, new { MovieId, Message });
@@ -34,16 +34,17 @@ VALUES (
         public async Task<IList<Review>> GetAsync(int movieId)
         {
             string query = @"SELECT *
-FROM foundation.reviews
-WHERE movieid = @MovieId";
+                             FROM foundation.reviews
+                             WHERE movieid = @MovieId";
             return await GetAllAsync(query, new { MovieId = movieId });
         }
 
         public async Task<Review> GetAsync(int movieId, int id)
         {
             string query = @"SELECT *
-FROM foundation.reviews
-WHERE id = @Id AND movieid = @MovieId";
+                             FROM foundation.reviews
+                             WHERE id = @Id 
+                                     AND movieid = @MovieId";
             var Id = id;
             var MovieId = movieId;
             return await GetAsync(query, new { Id, MovieId });
@@ -52,8 +53,9 @@ WHERE id = @Id AND movieid = @MovieId";
         public async Task UpdateAsync(Review review)
         {
             string query = @"UPDATE foundation.reviews
-SET message = @Message
-WHERE id = @Id AND movieid = @MovieId";
+                             SET message = @Message
+                             WHERE id = @Id
+                                     AND movieid = @MovieId";
             var Id = review.Id;
             var MovieId = review.MovieId;
             var Message = review.Message;
@@ -63,7 +65,8 @@ WHERE id = @Id AND movieid = @MovieId";
         public async Task DeleteAsync(int movieId, int id)
         {
             string query = @"DELETE FROM foundation.reviews
-WHERE id = @Id AND movieid = @MovieId";
+                             WHERE id = @Id
+                                      AND movieid = @MovieId";
             var Id = id;
             var MovieId = movieId;
             await DeleteAsync(query, new { Id, MovieId });

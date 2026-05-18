@@ -16,12 +16,12 @@ namespace IMDB_WebApplication.Repositories.Implementations
         public async Task<User> GetByEmailAsync(string normalizedEmail)
         {
             const string query = @"SELECT id
-	,username
-	,email
-	,normalizedemail
-	,passwordhash
-FROM foundation.users
-WHERE normalizedemail = @NormalizedEmail";
+	                                    ,username
+	                                    ,email
+                                        ,normalizedemail
+                                        ,passwordhash
+                                    FROM foundation.users
+                                    WHERE normalizedemail = @NormalizedEmail";
 
             return await GetAsync(query, new { NormalizedEmail = normalizedEmail });
         }
@@ -29,17 +29,17 @@ WHERE normalizedemail = @NormalizedEmail";
         public async Task CreateAsync(User user)
         {
             const string query = @"INSERT INTO foundation.users (
-	username
-	,email
-	,normalizedemail
-	,passwordhash
-	)
-VALUES (
-	@UserName
-	,@Email
-	,@NormalizedEmail
-	,@PasswordHash
-	)";
+                                            username
+                                            ,email
+                                            ,normalizedemail
+                                            ,passwordhash
+                                            )
+                                    VALUES (
+                                            @UserName
+                                            ,@Email
+                                            ,@NormalizedEmail
+                                            ,@PasswordHash
+                                            )";
 
             await ExecuteAsync(query, new
             {

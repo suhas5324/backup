@@ -17,18 +17,18 @@ namespace IMDB_WebApplication.Repositories.Implementations
         public async Task<Actor> CreateAsync(Actor actor)
         {
             string query = @"INSERT INTO foundation.actors (
-	name
-	,bio
-	,gender
-	,dateofbirth
-	)
-OUTPUT INSERTED.id
-VALUES (
-	@Name
-	,@Bio
-	,@Gender
-	,@DateOfBirth
-	)";
+                                    name
+                                    ,bio
+                                    ,gender
+                                    ,dateofbirth
+                                    )
+                             OUTPUT INSERTED.id
+                             VALUES (
+                                    @Name
+                                    ,@Bio
+                                    ,@Gender
+                                    ,@DateOfBirth
+                                )";
             var Name = actor.Name;
             var Bio = actor.Bio;
             var Gender = actor.Gender;
@@ -40,15 +40,15 @@ VALUES (
         public async Task<IList<Actor>> GetAsync()
         {
             string query = @"SELECT *
-FROM foundation.actors";
+                             FROM foundation.actors";
             return await GetAsync(query);
         }
 
         public async Task<Actor> GetAsync(int id)
         {
             string query = @"SELECT *
-FROM foundation.actors
-WHERE id = @Id";
+                             FROM foundation.actors
+                             WHERE id = @Id";
             var Id = id;
             return await GetAsync(query, new { Id });
         }
@@ -56,11 +56,11 @@ WHERE id = @Id";
         public async Task UpdateAsync(Actor actor)
         {
             string query = @"UPDATE foundation.actors
-SET name = @Name
-	,bio = @Bio
-	,dateofbirth = @DateOfBirth
-	,gender = @Gender
-WHERE id = @Id";
+                             SET name = @Name
+                                ,bio = @Bio
+                                ,dateofbirth = @DateOfBirth
+                                ,gender = @Gender
+                             WHERE id = @Id";
             var Name = actor.Name;
             var Bio = actor.Bio;
             var Gender = actor.Gender;
@@ -72,8 +72,8 @@ WHERE id = @Id";
         public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
-FROM foundation.actors
-WHERE id = @Id";
+                             FROM foundation.actors
+                             WHERE id = @Id";
             var Id = id;
             await DeleteAsync(query, new { Id });
         }

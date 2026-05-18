@@ -17,8 +17,8 @@ namespace IMDB_WebApplication.Repositories.Implementations
         public async Task<Genre> CreateAsync(Genre genre)
         {
             string query = @"INSERT INTO foundation.genres (name)
-OUTPUT INSERTED.id
-VALUES (@Name)";
+                             OUTPUT INSERTED.id
+                             VALUES (@Name)";
             var Name = genre.Name;
             var id = await CreateAsync(query, new { Name });
             return await GetAsync(id);
@@ -28,15 +28,15 @@ VALUES (@Name)";
         public async Task<IList<Genre>> GetAsync()
         {
             string query = @"SELECT *
-FROM foundation.genres";
+                             FROM foundation.genres";
             return await GetAsync(query);
         }
 
         public async Task<Genre> GetAsync(int id)
         {
             string query = @"SELECT *
-FROM foundation.genres
-WHERE id = @Id";
+                             FROM foundation.genres
+                             WHERE id = @Id";
             var Id = id;
             return await GetAsync(query, new { Id });
         }
@@ -44,8 +44,8 @@ WHERE id = @Id";
         public async Task UpdateAsync(Genre genre)
         {
             string query = @"UPDATE foundation.genres
-SET name = @Name
-WHERE id = @Id";
+                             SET name = @Name
+                             WHERE id = @Id";
             var Id = genre.Id;
             var Name = genre.Name;
             await UpdateAsync(query, new { Id, Name });
@@ -54,8 +54,8 @@ WHERE id = @Id";
         public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
-FROM foundation.genres
-WHERE id = @Id";
+                             FROM foundation.genres
+                             WHERE id = @Id";
             var Id = id;
             await DeleteAsync(query, new { Id });
         }

@@ -46,15 +46,15 @@ namespace IMDB_WebApplication.Repositories.Implementations
         public async Task<IList<Movie>> GetAsync()
         {
             string query = @"SELECT *
-FROM foundation.movies";
+                             FROM foundation.movies";
             return await GetAsync(query);
         }
 
         public async Task<Movie> GetAsync(int id)
         {
             string query = @"SELECT *
-FROM foundation.movies
-WHERE id = @Id";
+                             FROM foundation.movies
+                             WHERE id = @Id";
             var Id = id;
             return await GetAsync(query, new { Id });
         }
@@ -87,8 +87,8 @@ WHERE id = @Id";
         public async Task DeleteAsync(int id)
         {
             string query = @"DELETE
-FROM foundation.movies
-WHERE id = @Id";
+                             FROM foundation.movies
+                             WHERE id = @Id";
             var Id = id;
             await DeleteAsync(query, new { Id });
         }
