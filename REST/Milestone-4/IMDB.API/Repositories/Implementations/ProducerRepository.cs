@@ -42,7 +42,7 @@ namespace IMDB_WebApplication.Repositories.Implementations
         {
             string query = @"SELECT *
                              FROM foundation.producers";
-            return await GetAsync(query);
+            return await GetAllAsync(query);
         }
 
         public async Task<Producer> GetAsync(int id)

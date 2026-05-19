@@ -18,18 +18,19 @@ public class BaseRepository<T> where T : class
         return await connection.ExecuteScalarAsync<int>(query, parameters);
     }
 
-    public async Task<IList<T>> GetAsync(string query)
+    public async Task<IList<T>> GetAllAsync(string query, object parameters=null)
     {
         using var connection = new SqlConnection(_connectionString);
-        var results = await connection.QueryAsync<T>(query);
-        return results.ToList();
-    }
-
-    public async Task<IList<T>> GetAllAsync(string query, object parameters)
-    {
-        using var connection = new SqlConnection(_connectionString);
-        var results = await connection.QueryAsync<T>(query, parameters);
-        return results.ToList();
+        if(parameters == null)
+        {
+            var results = await connection.QueryAsync<T>(query);
+            return results.ToList();
+        }
+        else
+        {
+            var results = await connection.QueryAsync<T>(query, parameters);
+            return results.ToList();
+        }
     }
 
     public async Task<T> GetAsync(string query, object parameters)
