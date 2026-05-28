@@ -1,0 +1,61 @@
+Question 2: Endpoint to Controller Mapping (Order Management)
+
+1) POST /v1/orders
+   Controller: OrdersController
+   Why: Creates a new order resource, which belongs to the order domain.
+
+2) GET /v1/products/{productId}
+   Controller: ProductsController
+   Why: Fetches a product by ID; product resource responsibility.
+
+3) POST /v1/carts/{cartId}/items
+   Controller: ItemsController
+   Why: Adds item(s) to an existing cart; nested cart-items resource operation.
+
+4) POST /v1/users
+   Controller: UsersController
+   Why: Creates a user account; user aggregate responsibility.
+
+5) POST /v1/payments
+   Controller: PaymentsController
+   Why: Initiates/records a payment transaction; payment lifecycle handling.
+
+6) GET /v1/categories
+   Controller: CategoriesController
+   Why: Lists product categories; category resource retrieval.
+
+7) POST /v1/products/{productId}/reviews
+   Controller: ReviewsController
+   Why: Creates review under a specific product; nested reviews resource.
+
+8) PUT /v1/orders/{orderId}
+   Controller: OrdersController
+   Why: Replaces/updates full order representation by order ID.
+
+9) POST /v1/users/{userId}/addresses
+   Controller: AddressesController
+   Why: Adds address to a specific user; nested user-addresses resource.
+
+10) POST /v1/auth/login
+    Controller: AuthController
+    Why: Authentication endpoint for token/session issuance.
+
+11) PATCH /v1/orders/{orderId}/status
+    Controller: OrdersController
+    Why: Partial update to order state/status, still within order aggregate.
+
+12) PUT /v1/users/{userId}
+    Controller: UsersController
+    Why: Full update of particular user profile/entity.
+
+13) GET /v1/products/{productId}/discounts
+    Controller: DiscountsController
+    Why: Retrieves discount data tied to a specific product.
+
+14) GET /v1/products/{productId}/availability
+    Controller: AvailabilityController
+    Why: Checks inventory/availability state for a specific product.
+
+15) GET /v1/users/{userId}/orders
+    Controller: OrdersController
+    Why: Retrieves orders scoped to one user via nested user context.
