@@ -40,7 +40,7 @@ namespace IMDB_WebApplication.Services.Implementations
             var movie = new Movie
             {
                 Name = movieName,
-                YearOfRelease = request.YearOfRelease ?? 0,
+                YearOfRelease = request.YearOfRelease,
                 Plot = request.Plot?.Trim(),
                 ProducerId = request.ProducerId,
             };
@@ -50,12 +50,8 @@ namespace IMDB_WebApplication.Services.Implementations
                 movie.CoverImage = await _supabaseService.UploadFileAsync(request.CoverImage);
             }
 
-            string actorIds = (request.actorIds != null && request.actorIds.Any())
-                ? string.Join(",", request.actorIds)
-                : null;
-            string genreIds = (request.genreIds != null && request.genreIds.Any())
-                ? string.Join(",", request.genreIds)
-                : null;
+            string actorIds =string.Join(",", request.actorIds);
+            string genreIds = string.Join(",", request.genreIds);
 
             var createdMovie = await _movieRepository.CreateAsync(movie, actorIds, genreIds);
 
@@ -138,12 +134,8 @@ namespace IMDB_WebApplication.Services.Implementations
                 movie.CoverImage = existingMovie.CoverImage;
             }
 
-            string actorIds = (request.actorIds != null && request.actorIds.Any())
-                ? string.Join(",", request.actorIds)
-                : null;
-            string genreIds = (request.genreIds != null && request.genreIds.Any())
-                ? string.Join(",", request.genreIds)
-                : null;
+            string actorIds = string.Join(",", request.actorIds);
+            string genreIds =  string.Join(",", request.genreIds);
 
             await _movieRepository.UpdateAsync(movie, actorIds, genreIds);
         }
