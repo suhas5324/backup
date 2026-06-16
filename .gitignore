@@ -336,7 +336,7 @@ csharp/
 .*csharp
 .Git
 # Guidance Automation Toolkit
-
+**/.vscode
 # ReSharper is a .NET coding add-in
 
 # TeamCity is a build add-in
