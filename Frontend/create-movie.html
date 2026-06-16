@@ -61,19 +61,23 @@
         <div class="form-group">
           <label for="actorSelect">Actors</label>
 
-          <select id="actorSelect" class="form-control">
-            <option value="">Select Actor</option>
-            <option value="Tom Cruise">Tom Cruise</option>
-            <option value="Robert Downey Jr">Robert Downey Jr</option>
-            <option value="Leonardo DiCaprio">Leonardo DiCaprio</option>
-          </select>
+          <div class="d-flex align-items-start">
+            <select id="actorSelect" class="form-control">
+              <option value="">Select Actor</option>
+              <option value="Tom Cruise">Tom Cruise</option>
+              <option value="Robert Downey Jr">Robert Downey Jr</option>
+              <option value="Leonardo DiCaprio">Leonardo DiCaprio</option>
+            </select>
 
-          <button
-            type="button"
-            class="btn btn-secondary mt-2"
-            id="addActorBtn">
-            Add Actor
-          </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm person-modal-btn ml-2"
+              id="addActorBtn"
+              data-toggle="modal"
+              data-target="#personModal">
+              Add Actor
+            </button>
+          </div>
 
           <div id="selectedActors" class="mt-2"></div>
 
@@ -87,12 +91,23 @@
         <div class="form-group">
           <label>Producer</label>
 
-          <select id="producerSelect" class="form-control" required>
-            <option value="">Select Producer</option>
-            <option value="Kevin Feige">Kevin Feige</option>
-            <option value="Emma Thomas">Emma Thomas</option>
-            <option value="James Cameron">James Cameron</option>
-          </select>
+          <div class="d-flex align-items-start">
+            <select id="producerSelect" class="form-control" required>
+              <option value="">Select Producer</option>
+              <option value="Kevin Feige">Kevin Feige</option>
+              <option value="Emma Thomas">Emma Thomas</option>
+              <option value="James Cameron">James Cameron</option>
+            </select>
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm person-modal-btn ml-2"
+              id="addProducerBtn"
+              data-toggle="modal"
+              data-target="#personModal">
+              Add Producer
+            </button>
+          </div>
 
           <div class="invalid-feedback">
             Please select producer
@@ -108,13 +123,6 @@
             <option value="Drama">Drama</option>
             <option value="Sci-Fi">Sci-Fi</option>
           </select>
-
-          <button
-            type="button"
-            class="btn btn-secondary mt-2"
-            id="addGenreBtn">
-            Add Genre
-          </button>
 
           <div id="selectedGenres" class="mt-2"></div>
 
@@ -143,6 +151,59 @@
         </button>
 
       </form>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="personModal" tabindex="-1" role="dialog" aria-labelledby="personModalTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="personModalTitle">Person Details</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="personName">Name</label>
+          <input type="text" class="form-control" id="personName">
+        </div>
+
+        <div class="form-group">
+          <label for="personDateOfBirth">Date of Birth</label>
+          <input type="date" class="form-control" id="personDateOfBirth">
+        </div>
+
+        <div class="form-group">
+          <label for="personBio">Bio</label>
+          <textarea class="form-control" id="personBio" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="personGender">Gender</label>
+          <select class="form-control" id="personGender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+
+        <button type="button" class="btn btn-primary">
+          Save
+        </button>
+      </div>
 
     </div>
   </div>

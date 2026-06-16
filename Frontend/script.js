@@ -6,13 +6,12 @@
 
   function createSelectionControl(config) {
     var select = document.getElementById(config.selectId);
-    var addButton = document.getElementById(config.buttonId);
     var selectedContainer = document.getElementById(config.containerId);
     var hiddenInput = document.getElementById(config.inputId);
     var feedback = document.getElementById(config.feedbackId);
     var selectedItems = [];
 
-    if (!select || !addButton || !selectedContainer || !hiddenInput) {
+    if (!select || !selectedContainer || !hiddenInput) {
       return null;
     }
 
@@ -29,14 +28,14 @@
       selectedContainer.innerHTML = "";
 
       selectedItems.forEach(function (item) {
-        var badge = document.createElement("span");
-        badge.className = "badge badge-primary mr-2 mb-2 p-2";
-        badge.appendChild(document.createTextNode(item + " "));
+        var selectedBox = document.createElement("span");
+        selectedBox.className = "selected-item-box";
+        selectedBox.appendChild(document.createTextNode(item));
 
         var removeButton = document.createElement("button");
         removeButton.type = "button";
-        removeButton.className = "btn btn-sm btn-light ml-1";
-        removeButton.textContent = "Remove";
+        removeButton.className = "selected-item-remove";
+        removeButton.textContent = "\u00d7";
         removeButton.setAttribute("aria-label", "Remove " + item);
         removeButton.addEventListener("click", function () {
           selectedItems = selectedItems.filter(function (selectedItem) {
@@ -59,12 +58,12 @@
           render();
         });
 
-        badge.appendChild(removeButton);
-        selectedContainer.appendChild(badge);
+        selectedBox.appendChild(removeButton);
+        selectedContainer.appendChild(selectedBox);
       });
     }
 
-    addButton.addEventListener("click", function () {
+    select.addEventListener("change", function () {
       var value = select.value;
 
       if (!value || selectedItems.indexOf(value) !== -1) {
@@ -93,7 +92,6 @@
   selectionControls.push(
     createSelectionControl({
       selectId: "actorSelect",
-      buttonId: "addActorBtn",
       containerId: "selectedActors",
       inputId: "actorListInput",
       feedbackId: "actorListFeedback",
@@ -101,7 +99,6 @@
     }),
     createSelectionControl({
       selectId: "genreSelect",
-      buttonId: "addGenreBtn",
       containerId: "selectedGenres",
       inputId: "genreListInput",
       feedbackId: "genreListFeedback",
