@@ -37,19 +37,11 @@
         removeButton.className = "selected-item-remove";
         removeButton.textContent = "\u00d7";
         removeButton.setAttribute("aria-label", "Remove " + item);
+
         removeButton.addEventListener("click", function () {
           selectedItems = selectedItems.filter(function (selectedItem) {
             return selectedItem !== item;
           });
-
-          var option = Array.from(select.options).find(function (selectOption) {
-            return selectOption.value === item;
-          });
-
-          if (option) {
-            option.hidden = false;
-            option.disabled = false;
-          }
 
           hiddenInput.value = selectedItems.join(", ");
           updateValidity(
@@ -66,13 +58,15 @@
     select.addEventListener("change", function () {
       var value = select.value;
 
-      if (!value || selectedItems.indexOf(value) !== -1) {
+      if (!value) return;
+
+      if (selectedItems.indexOf(value) !== -1) {
+        alert(value + " is already selected!");
+        select.value = "";
         return;
       }
 
       selectedItems.push(value);
-      select.options[select.selectedIndex].hidden = true;
-      select.options[select.selectedIndex].disabled = true;
       select.value = "";
       hiddenInput.value = selectedItems.join(", ");
       updateValidity(false);
@@ -224,31 +218,20 @@
   };
 
   function fillMovieModal(title) {
-    if (
-      !modalTitle ||
-      !modalDescription ||
-      !modalGenre ||
-      !modalProducer ||
-      !modalYear ||
-      !modalActors
-    ) {
+    if (!modalTitle || !modalDescription || !modalGenre || !modalProducer || !modalYear || !modalActors) {
       return;
     }
 
-    var details = movieData[title] || {};
-    modalTitle.textContent = title || "Unknown";
-    modalDescription.textContent =
-      details.description || "No description available.";
-    modalGenre.textContent = details.genre || "Unknown";
-    modalProducer.textContent = details.producer || "Unknown";
-    modalYear.textContent = details.year || "Unknown";
-    modalActors.textContent =
-      (details.actors || []).join(", ") || "No actors listed.";
+    var details = movieData[title];
+    modalTitle.textContent = title;
+    modalDescription.textContent = details.description;
+    modalGenre.textContent = details.genre;
+    modalProducer.textContent = details.producer;
+    modalYear.textContent = details.year;
+    modalActors.textContent = (details.actors || []).join(", ");
   }
 
-  var exploreButtons = document.querySelectorAll(
-    'button[data-target="#movieModal"]',
-  );
+  var exploreButtons = document.querySelectorAll('button[data-target="#movieModal"]');
 
   exploreButtons.forEach(function (button) {
     button.addEventListener("click", function () {
