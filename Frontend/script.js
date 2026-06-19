@@ -126,3 +126,17 @@ var selectionControls = [];
       fillMovieModal(card);
     });
   });
+  function clear(modalId, prefix) {
+  document.getElementById(prefix + "Name").value = "";
+  document.getElementById(prefix + "DateOfBirth").value = "";
+  document.getElementById(prefix + "Bio").value = "";
+  document.getElementById(prefix + "Gender").value = "";
+}
+
+document.getElementById("saveProducer").addEventListener("click", function () {
+  clear("producerModal", "producer");
+});
+
+document.getElementById("saveActor").addEventListener("click", function () {
+  clear("actorModal", "actor");
+});
