@@ -7,21 +7,15 @@
   function createSelectionControl(config) {
     var select = document.getElementById(config.selectId);
     var selectedContainer = document.getElementById(config.containerId);
-    var hiddenInput = document.getElementById(config.inputId);
     var feedback = document.getElementById(config.feedbackId);
     var selectedItems = [];
 
-    if (!select || !selectedContainer || !hiddenInput) {
+    if (!select || !selectedContainer) {
       return null;
     }
 
-    function updateValidity(showFeedback) {
-      var isValid = selectedItems.length > 0;
-      select.setCustomValidity(isValid ? "" : config.validationMessage);
-
-      if (feedback) {
-        feedback.style.display = !isValid && showFeedback ? "block" : "none";
-      }
+    function updateValidity(){
+      feedback.style.display = selectedItems.length === 0 ? "block" : "none";
     }
 
     function render() {
@@ -36,17 +30,13 @@
         removeButton.type = "button";
         removeButton.className = "selected-item-remove";
         removeButton.textContent = "\u00d7";
-        removeButton.setAttribute("aria-label", "Remove " + item);
 
         removeButton.addEventListener("click", function () {
           selectedItems = selectedItems.filter(function (selectedItem) {
             return selectedItem !== item;
           });
 
-          hiddenInput.value = selectedItems.join(", ");
-          updateValidity(
-            select.closest("form").classList.contains("was-validated"),
-          );
+          updateValidity();
           render();
         });
 
@@ -67,18 +57,15 @@
       }
 
       selectedItems.push(value);
+      updateValidity();
       select.value = "";
-      hiddenInput.value = selectedItems.join(", ");
-      updateValidity(false);
-      render();
+       render();
     });
 
-    updateValidity(false);
-    render();
 
     return {
       validate: function () {
-        updateValidity(true);
+        updateValidity();
       },
     };
   }
@@ -87,14 +74,12 @@
     createSelectionControl({
       selectId: "actorSelect",
       containerId: "selectedActors",
-      inputId: "actorListInput",
       feedbackId: "actorListFeedback",
       validationMessage: "Please add at least one actor.",
     }),
     createSelectionControl({
       selectId: "genreSelect",
       containerId: "selectedGenres",
-      inputId: "genreListInput",
       feedbackId: "genreListFeedback",
       validationMessage: "Please add at least one genre.",
     }),
@@ -218,7 +203,14 @@
   };
 
   function fillMovieModal(title) {
-    if (!modalTitle || !modalDescription || !modalGenre || !modalProducer || !modalYear || !modalActors) {
+    if (
+      !modalTitle ||
+      !modalDescription ||
+      !modalGenre ||
+      !modalProducer ||
+      !modalYear ||
+      !modalActors
+    ) {
       return;
     }
 
@@ -231,7 +223,9 @@
     modalActors.textContent = (details.actors || []).join(", ");
   }
 
-  var exploreButtons = document.querySelectorAll('button[data-target="#movieModal"]');
+  var exploreButtons = document.querySelectorAll(
+    'button[data-target="#movieModal"]',
+  );
 
   exploreButtons.forEach(function (button) {
     button.addEventListener("click", function () {
