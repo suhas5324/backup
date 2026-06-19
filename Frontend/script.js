@@ -1,8 +1,4 @@
-(function () {
-  "use strict";
-
-  var forms = document.querySelectorAll(".needs-validation");
-  var selectionControls = [];
+var selectionControls = [];
 
   function createSelectionControl(config) {
     var select = document.getElementById(config.selectId);
@@ -14,8 +10,15 @@
       return null;
     }
 
-    function updateValidity(){
-      feedback.style.display = selectedItems.length === 0 ? "block" : "none";
+    function updateValidity() {
+      var isValid = selectedItems.length > 0;
+
+      feedback.style.display =
+        isValid ? "none" : "block";
+
+      select.setCustomValidity(
+        isValid ? "" : "Please select at least one item"
+      );
     }
 
     function render() {
@@ -35,8 +38,6 @@
           selectedItems = selectedItems.filter(function (selectedItem) {
             return selectedItem !== item;
           });
-
-          updateValidity();
           render();
         });
 
@@ -48,8 +49,6 @@
     select.addEventListener("change", function () {
       var value = select.value;
 
-      if (!value) return;
-
       if (selectedItems.indexOf(value) !== -1) {
         alert(value + " is already selected!");
         select.value = "";
@@ -59,9 +58,8 @@
       selectedItems.push(value);
       updateValidity();
       select.value = "";
-       render();
+      render();
     });
-
 
     return {
       validate: function () {
@@ -70,43 +68,32 @@
     };
   }
 
-  selectionControls.push(
-    createSelectionControl({
-      selectId: "actorSelect",
-      containerId: "selectedActors",
-      feedbackId: "actorListFeedback",
-      validationMessage: "Please add at least one actor.",
-    }),
-    createSelectionControl({
-      selectId: "genreSelect",
-      containerId: "selectedGenres",
-      feedbackId: "genreListFeedback",
-      validationMessage: "Please add at least one genre.",
-    }),
-  );
+  var form = document.getElementById("movieForm");
 
-  selectionControls = selectionControls.filter(function (control) {
-    return control !== null;
-  });
-
-  Array.prototype.slice.call(forms).forEach(function (form) {
-    form.addEventListener(
-      "submit",
-      function (event) {
-        selectionControls.forEach(function (control) {
-          control.validate();
-        });
-
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-
-        form.classList.add("was-validated");
-      },
-      false,
+  if (form) {
+    selectionControls.push(
+      createSelectionControl({
+        selectId: "actorSelect",
+        containerId: "selectedActors",
+        feedbackId: "actorListFeedback",
+      }),
+      createSelectionControl({
+        selectId: "genreSelect",
+        containerId: "selectedGenres",
+        feedbackId: "genreListFeedback",
+      }),
     );
-  });
+
+    form.addEventListener("submit", function (event) {
+      selectionControls.forEach(function (control) {
+        control.validate();
+      });
+      form.classList.add("was-validated");
+      if (!form.checkValidity()) {
+        event.preventDefault();
+      }
+    });
+  }
 
   var modalTitle = document.getElementById("modalMovieTitle");
   var modalDescription = document.getElementById("modalMovieDescription");
@@ -115,124 +102,27 @@
   var modalYear = document.getElementById("modalMovieYear");
   var modalActors = document.getElementById("modalMovieActors");
 
-  var movieData = {
-    Interstellar: {
-      description: "A science fiction movie about space exploration.",
-      genre: "Sci-Fi",
-      producer: "Christopher Nolan",
-      year: "2014",
-      actors: ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"],
-    },
-    Inception: {
-      description: "A movie based on dreams and mind bending concepts.",
-      genre: "Sci-Fi",
-      producer: "Emma Thomas",
-      year: "2010",
-      actors: ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
-    },
-    Avatar: {
-      description: "A visually stunning adventure movie.",
-      genre: "Fantasy",
-      producer: "James Cameron",
-      year: "2009",
-      actors: ["Sam Worthington", "Zoe Saldana", "Sigourney Weaver"],
-    },
-    Titanic: {
-      description: "A romantic movie set on a famous ship.",
-      genre: "Romance",
-      producer: "James Cameron",
-      year: "1997",
-      actors: ["Leonardo DiCaprio", "Kate Winslet", "Billy Zane"],
-    },
-    Joker: {
-      description: "A psychological thriller movie.",
-      genre: "Drama",
-      producer: "Todd Phillips",
-      year: "2019",
-      actors: ["Joaquin Phoenix", "Robert De Niro", "Zazie Beetz"],
-    },
-    "The Batman": {
-      description: "A dark superhero action movie.",
-      genre: "Action",
-      producer: "Dylan Clark",
-      year: "2022",
-      actors: ["Robert Pattinson", "Zoë Kravitz", "Colin Farrell"],
-    },
-    Avengers: {
-      description: "Marvel superheroes save the world.",
-      genre: "Action",
-      producer: "Kevin Feige",
-      year: "2012",
-      actors: ["Robert Downey Jr", "Chris Evans", "Scarlett Johansson"],
-    },
-    Gladiator: {
-      description: "A warrior fights for justice.",
-      genre: "Drama",
-      producer: "Douglas Wick",
-      year: "2000",
-      actors: ["Russell Crowe", "Joaquin Phoenix", "Connie Nielsen"],
-    },
-    Dune: {
-      description: "An epic science fiction adventure.",
-      genre: "Sci-Fi",
-      producer: "Mary Parent",
-      year: "2021",
-      actors: ["Timothée Chalamet", "Zendaya", "Rebecca Ferguson"],
-    },
-    Frozen: {
-      description: "An animated fantasy musical movie.",
-      genre: "Animation",
-      producer: "Peter Del Vecho",
-      year: "2013",
-      actors: ["Idina Menzel", "Kristen Bell", "Jonathan Groff"],
-    },
-    "Doctor Strange": {
-      description: "A movie about magic and multiverse.",
-      genre: "Action",
-      producer: "Kevin Feige",
-      year: "2016",
-      actors: ["Benedict Cumberbatch", "Chiwetel Ejiofor", "Rachel McAdams"],
-    },
-    "Iron Man": {
-      description: "Story of a genius billionaire superhero.",
-      genre: "Action",
-      producer: "Avi Arad",
-      year: "2008",
-      actors: ["Robert Downey Jr", "Gwyneth Paltrow", "Terrence Howard"],
-    },
-  };
-
-  function fillMovieModal(title) {
-    if (
-      !modalTitle ||
-      !modalDescription ||
-      !modalGenre ||
-      !modalProducer ||
-      !modalYear ||
-      !modalActors
-    ) {
-      return;
-    }
-
-    var details = movieData[title];
-    modalTitle.textContent = title;
-    modalDescription.textContent = details.description;
-    modalGenre.textContent = details.genre;
-    modalProducer.textContent = details.producer;
-    modalYear.textContent = details.year;
-    modalActors.textContent = (details.actors || []).join(", ");
+  function fillMovieModal(card) {
+    modalTitle.textContent =
+      card.querySelector("h5").textContent.trim();
+    modalDescription.textContent =
+      card.querySelector(".card-text").textContent.trim();
+    modalGenre.textContent =
+      card.dataset.genre;
+    modalProducer.textContent =
+      card.dataset.producer;
+    modalYear.textContent =
+      card.dataset.year;
+    modalActors.textContent =
+      card.dataset.actors;
   }
 
   var exploreButtons = document.querySelectorAll(
     'button[data-target="#movieModal"]',
   );
-
   exploreButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      var card = button.closest(".card-body");
-      var titleElement = card && card.querySelector("h5");
-      var title = titleElement ? titleElement.textContent.trim() : "";
-      fillMovieModal(title);
+      var card = button.closest(".card").querySelector(".card-body");
+      fillMovieModal(card);
     });
   });
-})();
