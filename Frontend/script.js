@@ -126,7 +126,7 @@ var selectionControls = [];
       fillMovieModal(card);
     });
   });
-  function clear(modalId, prefix) {
+  function clear(prefix) {
   document.getElementById(prefix + "Name").value = "";
   document.getElementById(prefix + "DateOfBirth").value = "";
   document.getElementById(prefix + "Bio").value = "";
