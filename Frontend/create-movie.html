@@ -74,7 +74,8 @@
               class="btn btn-outline-secondary btn-sm person-modal-btn ml-2"
               id="addActorBtn"
               data-toggle="modal"
-              data-target="#actorModal">
+              data-target="#personModal"
+              data-person-type="actor">
               Add Actor
             </button>
           </div>
@@ -102,7 +103,8 @@
               class="btn btn-outline-secondary btn-sm person-modal-btn ml-2"
               id="addProducerBtn"
               data-toggle="modal"
-              data-target="#producerModal">
+              data-target="#personModal"
+              data-person-type="producer">
               Add Producer
             </button>
           </div>
@@ -142,6 +144,11 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label for="moviePoster">Movie Poster Image</label>
+          <input type="file" class="form-control-file" id="moviePoster">
+        </div>
+
         <button class="btn btn-primary" type="submit">
           Submit
         </button>
@@ -152,31 +159,31 @@
   </div>
 </div>
 
-<div class="modal fade" id="producerModal">
+<div class="modal fade" id="personModal">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Producer Details</h5>
+        <h5 class="modal-title" id="personModalTitle">Person Details</h5>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <div class="modal-body">
         <div class="form-group">
-          <label for="producerName">Name</label>
-          <input type="text" class="form-control" id="producerName">
+          <label for="personName">Name</label>
+          <input type="text" class="form-control" id="personName">
         </div>
         <div class="form-group">
-          <label for="producerDateOfBirth">Date of Birth</label>
-          <input type="date" class="form-control" id="producerDateOfBirth">
+          <label for="personDateOfBirth">Date of Birth</label>
+          <input type="date" class="form-control" id="personDateOfBirth">
         </div>
         <div class="form-group">
-          <label for="producerBio">Bio</label>
-          <textarea class="form-control" id="producerBio" rows="3"></textarea>
+          <label for="personBio">Bio</label>
+          <textarea class="form-control" id="personBio" rows="3"></textarea>
         </div>
         <div class="form-group">
-          <label for="producerGender">Gender</label>
-          <select class="form-control" id="producerGender">
+          <label for="personGender">Gender</label>
+          <select class="form-control" id="personGender">
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
@@ -187,48 +194,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveProducer" data-dismiss="modal">Save</button>
-      </div>
-
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="actorModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">Actor Details</h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="actorName">Name</label>
-          <input type="text" class="form-control" id="actorName">
-        </div>
-        <div class="form-group">
-          <label for="actorDateOfBirth">Date of Birth</label>
-          <input type="date" class="form-control" id="actorDateOfBirth">
-        </div>
-        <div class="form-group">
-          <label for="actorBio">Bio</label>
-          <textarea class="form-control" id="actorBio" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="actorGender">Gender</label>
-          <select class="form-control" id="actorGender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="saveActor" data-dismiss="modal">Save</button>
+        <button type="button" class="btn btn-primary" id="savePerson" data-dismiss="modal">Save</button>
       </div>
 
     </div>
