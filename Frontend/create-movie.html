@@ -7,6 +7,8 @@
 
   <link rel="stylesheet"
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -59,15 +61,18 @@
         </div>
 
         <div class="form-group">
-          <label for="actorSelect">Actors</label>
+          <div class="selection-control person-selection-control d-flex align-items-start">
+            <div class="selection-input">
+              <label class="selection-label" for="actorSelect">Actors</label>
+              <select id="actorSelect" class="form-control">
+                <option value="">Select Actor</option>
+                <option value="Tom Cruise">Tom Cruise</option>
+                <option value="Robert Downey Jr">Robert Downey Jr</option>
+                <option value="Leonardo DiCaprio">Leonardo DiCaprio</option>
+              </select>
 
-          <div class="d-flex align-items-start">
-            <select id="actorSelect" class="form-control">
-              <option value="">Select Actor</option>
-              <option value="Tom Cruise">Tom Cruise</option>
-              <option value="Robert Downey Jr">Robert Downey Jr</option>
-              <option value="Leonardo DiCaprio">Leonardo DiCaprio</option>
-            </select>
+              <div id="selectedActors" class="selected-items"></div>
+            </div>
 
             <button
               type="button"
@@ -80,8 +85,6 @@
             </button>
           </div>
 
-          <div id="selectedActors" class="mt-2"></div>
-
           <div class="invalid-feedback" id="actorListFeedback">
             Please add at least one actor.
           </div>
@@ -90,7 +93,7 @@
         <div class="form-group">
           <label>Producer</label>
 
-          <div class="d-flex align-items-start">
+          <div class="selection-control d-flex align-items-start">
             <select id="producerSelect" class="form-control" required>
               <option value="">Select Producer</option>
               <option value="Kevin Feige">Kevin Feige</option>
@@ -115,16 +118,19 @@
         </div>
 
         <div class="form-group">
-          <label for="genreSelect">Genres</label>
+          <div class="selection-control">
+            <div class="selection-input">
+              <label class="selection-label" for="genreSelect">Genres</label>
+              <select id="genreSelect" class="form-control">
+                <option value="">Select Genre</option>
+                <option value="Action">Action</option>
+                <option value="Drama">Drama</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+              </select>
 
-          <select id="genreSelect" class="form-control">
-            <option value="">Select Genre</option>
-            <option value="Action">Action</option>
-            <option value="Drama">Drama</option>
-            <option value="Sci-Fi">Sci-Fi</option>
-          </select>
-
-          <div id="selectedGenres" class="mt-2"></div>
+              <div id="selectedGenres" class="selected-items"></div>
+            </div>
+          </div>
 
           <div class="invalid-feedback" id="genreListFeedback">
             Please add at least one genre.
@@ -144,10 +150,16 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="moviePoster">Movie Poster Image</label>
-          <input type="file" class="form-control-file" id="moviePoster">
-        </div>
+       <div class="form-group">
+  <label for="moviePoster">Movie Poster Image</label>
+  <div class="poster-upload d-flex align-items-center">
+    <input type="file" class="form-control-file" id="moviePoster" accept="image/*" required>
+    <img id="posterPreview" class="poster-preview d-none" alt="Movie poster preview">
+  </div>
+  <div class="invalid-feedback">
+    Movie poster is required
+  </div>
+</div>
 
         <button class="btn btn-primary" type="submit">
           Submit
@@ -168,33 +180,37 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
-      <div class="modal-body">
+      <form id="personForm" class="modal-body needs-validation" novalidate>
         <div class="form-group">
           <label for="personName">Name</label>
-          <input type="text" class="form-control" id="personName">
+          <input type="text" class="form-control" id="personName" required>
+          <div class="invalid-feedback">Name is required.</div>
         </div>
         <div class="form-group">
           <label for="personDateOfBirth">Date of Birth</label>
-          <input type="date" class="form-control" id="personDateOfBirth">
+          <input type="date" class="form-control" id="personDateOfBirth" required>
+          <div class="invalid-feedback">Date of birth is required.</div>
         </div>
         <div class="form-group">
           <label for="personBio">Bio</label>
-          <textarea class="form-control" id="personBio" rows="3"></textarea>
+          <textarea class="form-control" id="personBio" rows="3" required></textarea>
+          <div class="invalid-feedback">Bio is required.</div>
         </div>
         <div class="form-group">
           <label for="personGender">Gender</label>
-          <select class="form-control" id="personGender">
+          <select class="form-control" id="personGender" required>
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
           </select>
+          <div class="invalid-feedback">Gender is required.</div>
         </div>
-      </div>
+      </form>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="savePerson" data-dismiss="modal">Save</button>
+        <button type="button" class="btn btn-primary" id="savePerson">Save</button>
       </div>
 
     </div>

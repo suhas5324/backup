@@ -18,8 +18,9 @@ function createSelectionControl(config) {
     select.setCustomValidity(isValid ? "" : "Please select at least one item");
   }
 
-  function render() {
+function render() {
     selectedContainer.innerHTML = "";
+    var wrapper = selectedContainer.closest(".selection-input");
 
     selectedItems.forEach(function (item) {
       var selectedBox = document.createElement("span");
@@ -41,6 +42,10 @@ function createSelectionControl(config) {
       selectedBox.appendChild(removeButton);
       selectedContainer.appendChild(selectedBox);
     });
+
+    if (wrapper) {
+      wrapper.classList.toggle("has-chips", selectedItems.length > 0);
+    }
   }
 
   select.addEventListener("change", function () {
@@ -80,11 +85,24 @@ if (form) {
       feedbackId: "genreListFeedback",
     }),
   );
-
+var posterFeedback = document.querySelector(
+  '#moviePoster ~ .invalid-feedback'
+);
   form.addEventListener("submit", function (event) {
+     var textFields = form.querySelectorAll(
+      'input[type="text"], input[type="number"], textarea'
+    );
+    textFields.forEach(function (field) {
+      field.value = field.value.replace(/\s+$/, "");
+    });
     selectionControls.forEach(function (control) {
       control.validate();
     });
+    if (posterFeedback) {
+  posterFeedback.style.display = posterInput.files.length
+    ? "none"
+    : "block";
+}
     form.classList.add("was-validated");
     if (!form.checkValidity()) {
       event.preventDefault();
@@ -134,14 +152,44 @@ if (personModalTitle && addActorBtn && addProducerBtn) {
 }
 
 function clearPersonForm() {
-  document.getElementById("personName").value = "";
-  document.getElementById("personDateOfBirth").value = "";
-  document.getElementById("personBio").value = "";
-  document.getElementById("personGender").value = "";
+  var personForm = document.getElementById("personForm");
+
+  if (personForm) {
+    personForm.reset();
+    personForm.classList.remove("was-validated");
+  }
 }
 
 var savePersonButton = document.getElementById("savePerson");
+var personForm = document.getElementById("personForm");
 
-if (savePersonButton) {
-  savePersonButton.addEventListener("click", clearPersonForm);
+if (savePersonButton && personForm) {
+  savePersonButton.addEventListener("click", function () {
+    personForm.classList.add("was-validated");
+
+    if (!personForm.checkValidity()) {
+      return;
+    }
+
+    $("#personModal").modal("hide");
+    clearPersonForm();
+  });
+}
+
+var posterInput = document.getElementById("moviePoster");
+var posterPreview = document.getElementById("posterPreview");
+
+if (posterInput && posterPreview) {
+  posterInput.addEventListener("change", function () {
+    var file = posterInput.files[0];
+
+    if (!file || !file.type.startsWith("image/")) {
+      posterPreview.src = "";
+      posterPreview.classList.add("d-none");
+      return;
+    }
+
+    posterPreview.src = URL.createObjectURL(file);
+    posterPreview.classList.remove("d-none");
+  });
 }
