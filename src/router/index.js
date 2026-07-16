@@ -2,8 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 
 import MovieListView from "@/views/MovieListView.vue";
-import CreateMovieView from "@/views/CreateMovieView.vue";
-import EditMovieView from "@/views/EditMovieView.vue";
+import MovieEditorView from "@/views/MovieEditorView.vue";
 
 Vue.use(Router);
 
@@ -22,14 +21,13 @@ export default new Router({
         {
             path: "/create",
             name: "createMovie",
-            component: CreateMovieView
+            component: MovieEditorView
         },
 
         {
             path: "/edit/:id",
             name: "editMovie",
-            component: EditMovieView,
-            props: true
+            component: MovieEditorView
         }
 
     ]

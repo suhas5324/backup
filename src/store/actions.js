@@ -39,11 +39,11 @@ export default {
     }
   },
 
-  async createMovieAction({ dispatch, commit }, formData) {
+  async createMovieAction({ dispatch, commit }, movie) {
     try {
       clearError(commit);
       commit("SET_LOADING", true);
-      await movieService.createMovie(formData);
+      await movieService.createMovie(movie);
       await dispatch("fetchMoviesAction");
     } catch (error) {
       storeError(commit, error);
@@ -56,7 +56,7 @@ export default {
     try {
       clearError(commit);
       commit("SET_LOADING", true);
-      await movieService.updateMovie(payload.id, payload.formData);
+      await movieService.updateMovie(payload.id, payload.movie);
       await dispatch("fetchMoviesAction");
     } catch (error) {
       storeError(commit, error);

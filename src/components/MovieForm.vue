@@ -136,13 +136,14 @@
       :dialog="personDialog"
       :entityType="dialogType"
       @close="personDialog = false"
-      @person-save="onPersonSave"
+      @person-save="savePerson"
     />
   </v-container>
 </template>
 
 <script>
 import PersonDialog from "@/components/PersonDialog.vue";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "MovieForm",
@@ -156,30 +157,6 @@ export default {
       type: Object,
 
       default: null,
-    },
-
-    isEdit: {
-      type: Boolean,
-
-      default: false,
-    },
-
-    actors: {
-      type: Array,
-
-      default: () => [],
-    },
-
-    producers: {
-      type: Array,
-
-      default: () => [],
-    },
-
-    genres: {
-      type: Array,
-
-      default: () => [],
     },
   },
 
@@ -222,12 +199,24 @@ export default {
       actorRules: [(v) => v.length > 0 || "Select at least one actor"],
 
       genreRules: [(v) => v.length > 0 || "Select at least one genre"],
+
+      posterRules:  [(v) => !!v || "Poster image is required"],
     };
   },
   computed: {
-    posterRules() {
-      return this.isEdit ? [] : [(v) => !!v || "Poster image is required"];
+    ...mapGetters({
+      actors: "allActors",
+      producers: "allProducers",
+      genres: "allGenres",
+    }),
+
+    isEdit() {
+      return !!this.movie;
     },
+  },
+
+  async created() {
+    await this.loadLookupData();
   },
 
   watch: {
@@ -258,6 +247,22 @@ export default {
     },
   },
   methods: {
+    ...mapActions([
+      "createActorAction",
+      "createProducerAction",
+      "fetchActorsAction",
+      "fetchGenresAction",
+      "fetchProducersAction",
+    ]),
+
+    loadLookupData() {
+      return Promise.all([
+        this.fetchActorsAction(),
+        this.fetchProducersAction(),
+        this.fetchGenresAction(),
+      ]);
+    },
+
     openActorDialog() {
       this.dialogType = "actor";
 
@@ -270,18 +275,18 @@ export default {
       this.personDialog = true;
     },
 
-    onPersonSave(personData) {
-      this.$emit("person-save", personData);
+    async savePerson({ entityType, person }) {
+      if (entityType === "actor") {
+        await this.createActorAction(person);
+      } else {
+        await this.createProducerAction(person);
+      }
 
       this.personDialog = false;
     },
 
     submitMovie() {
       if (!this.$refs.movieForm.validate()) {
-        return;
-      }
-
-      if (!this.isEdit && !this.movieData.coverImage) {
         return;
       }
 
