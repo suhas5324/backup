@@ -1,3 +1,4 @@
+
 var selectionControls = [];
 
 function createSelectionControl(config) {
@@ -85,9 +86,6 @@ if (form) {
       feedbackId: "genreListFeedback",
     }),
   );
-var posterFeedback = document.querySelector(
-  '#moviePoster ~ .invalid-feedback'
-);
   form.addEventListener("submit", function (event) {
      var textFields = form.querySelectorAll(
       'input[type="text"], input[type="number"], textarea'
@@ -98,11 +96,6 @@ var posterFeedback = document.querySelector(
     selectionControls.forEach(function (control) {
       control.validate();
     });
-    if (posterFeedback) {
-  posterFeedback.style.display = posterInput.files.length
-    ? "none"
-    : "block";
-}
     form.classList.add("was-validated");
     if (!form.checkValidity()) {
       event.preventDefault();
@@ -182,13 +175,6 @@ var posterPreview = document.getElementById("posterPreview");
 if (posterInput && posterPreview) {
   posterInput.addEventListener("change", function () {
     var file = posterInput.files[0];
-
-    if (!file || !file.type.startsWith("image/")) {
-      posterPreview.src = "";
-      posterPreview.classList.add("d-none");
-      return;
-    }
-
     posterPreview.src = URL.createObjectURL(file);
     posterPreview.classList.remove("d-none");
   });

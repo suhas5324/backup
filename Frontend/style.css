@@ -37,9 +37,22 @@ body {
   margin-right: 5px;
 }
 
+.card .mt-auto .bi-eye {
+  color: #007bff;
+}
+
+.card .mt-auto .bi-pencil {
+  color: #A9A9A9;
+}
+
+.card .mt-auto .bi-trash {
+  color: #dc3545;
+}
+
 .person-modal-btn {
   background-color: #1976d2;
   border-color: #1976d2;
+  color: #fff;
   flex-shrink: 0;
   line-height: 1.2;
   padding: 6px 10px;
@@ -142,19 +155,33 @@ body {
   pointer-events: auto;
 }
 
+.poster-upload {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
 .poster-preview {
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 4px;
   height: 100px;
-  margin-left: 1px;
   object-fit: contain;
   width: 100px;
+}
+
+.poster-preview.d-none {
+  display: block !important;
+  visibility: hidden;
 }
 
 .poster-upload .form-control-file {
   flex: 0 0 auto;
   width: auto;
+}
+
+.submit-btn {
+  margin-top: 8px;
 }
 
 @media (max-width: 767.98px) {
@@ -193,4 +220,8 @@ body {
   background-color: #dc3545;
   color: #fff;
   outline: none;
+}
+
+.create-movie-btn {
+  color: #1976d2;
 }
