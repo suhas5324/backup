@@ -53,15 +53,26 @@ body {
   background-color: #1976d2;
   border-color: #1976d2;
   color: #fff;
+  flex: 0 0 120px;
   flex-shrink: 0;
   line-height: 1.2;
+  margin-right: 0;
   padding: 6px 10px;
   text-transform: uppercase;
   white-space: nowrap;
+  width: 120px;
 }
 
 .selection-control {
+  display: flex;
   gap: 8px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.selection-field {
+  flex: 0 0 40%;
+  max-width: 40%;
 }
 
 .selection-input {
@@ -71,7 +82,8 @@ body {
   min-height: 40px;
   min-width: 0;
   position: relative;
-  width: 100%;
+  flex: 0 0 40%;
+  max-width: 40%;
 }
 
 .selection-input:focus-within {
@@ -79,16 +91,15 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.selection-label {
-  background-color: #fff;
-  color: #6c757d;
-  font-size: 12px;
-  left: 9px;
-  line-height: 1;
-  padding: 0 4px;
-  position: absolute;
-  top: -6px;
-  z-index: 3;
+.was-validated .selection-input.is-invalid,
+.was-validated .selection-input:has(select:invalid) {
+  border-color: #dc3545;
+}
+
+.was-validated .selection-input.is-invalid:focus-within,
+.was-validated .selection-input:has(select:invalid):focus-within {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
 .selection-input select {
@@ -217,11 +228,28 @@ body {
 
 .selected-item-remove:hover,
 .selected-item-remove:focus {
-  background-color: #dc3545;
-  color: #fff;
+  background-color: transparent;
+  color: #343a40;
   outline: none;
 }
 
 .create-movie-btn {
   color: #1976d2;
+}
+
+@media (max-width: 767.98px) {
+  .selection-control {
+    flex-direction: column;
+  }
+
+  .selection-field,
+  .selection-input {
+    flex-basis: auto;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .person-modal-btn {
+    align-self: flex-end;
+  }
 }

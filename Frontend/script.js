@@ -13,13 +13,17 @@ function createSelectionControl(config) {
 
   function updateValidity() {
     var isValid = selectedItems.length > 0;
+    var wrapper = selectedContainer.closest(".selection-input");
 
     feedback.style.display = isValid ? "none" : "block";
+    if (wrapper) {
+      wrapper.classList.toggle("is-invalid", !isValid);
+    }
 
     select.setCustomValidity(isValid ? "" : "Please select at least one item");
   }
 
-function render() {
+  function render() {
     selectedContainer.innerHTML = "";
     var wrapper = selectedContainer.closest(".selection-input");
 
@@ -37,6 +41,7 @@ function render() {
         selectedItems = selectedItems.filter(function (selectedItem) {
           return selectedItem !== item;
         });
+        updateValidity();
         render();
       });
 
@@ -51,6 +56,10 @@ function render() {
 
   select.addEventListener("change", function () {
     var value = select.value;
+
+    if (!value) {
+      return;
+    }
 
     if (selectedItems.indexOf(value) !== -1) {
       alert(value + " is already selected!");
@@ -93,10 +102,10 @@ if (form) {
     textFields.forEach(function (field) {
       field.value = field.value.replace(/\s+$/, "");
     });
+    form.classList.add("was-validated");
     selectionControls.forEach(function (control) {
       control.validate();
     });
-    form.classList.add("was-validated");
     if (!form.checkValidity()) {
       event.preventDefault();
     }

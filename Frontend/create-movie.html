@@ -43,7 +43,7 @@
               <input
                 id="yearInput"
                 type="number"
-                class="form-control
+                class="form-control"
                 min="1900"
                 max="2100"
                 step="1"
@@ -57,13 +57,11 @@
             </div>
 
             <div class="form-group">
+              <label for="actorSelect">Actors</label>
               <div
                 class="selection-control person-selection-control d-flex align-items-start"
               >
                 <div class="selection-input">
-                  <label class="selection-label" for="actorSelect"
-                    >Actors</label
-                  >
                   <select id="actorSelect" class="form-control">
                     <option value="">Select Actor</option>
                     <option value="Tom Cruise">Tom Cruise</option>
@@ -95,12 +93,16 @@
               <label>Producer</label>
 
               <div class="selection-control d-flex align-items-start">
-                <select id="producerSelect" class="form-control" required>
-                  <option value="">Select Producer</option>
-                  <option value="Kevin Feige">Kevin Feige</option>
-                  <option value="Emma Thomas">Emma Thomas</option>
-                  <option value="James Cameron">James Cameron</option>
-                </select>
+                <div class="selection-field">
+                  <select id="producerSelect" class="form-control" required>
+                    <option value="">Select Producer</option>
+                    <option value="Kevin Feige">Kevin Feige</option>
+                    <option value="Emma Thomas">Emma Thomas</option>
+                    <option value="James Cameron">James Cameron</option>
+                  </select>
+
+                  <div class="invalid-feedback">Please select producer</div>
+                </div>
 
                 <button
                   type="button"
@@ -113,16 +115,12 @@
                   Add Producer
                 </button>
               </div>
-
-              <div class="invalid-feedback">Please select producer</div>
             </div>
 
             <div class="form-group">
+              <label for="genreSelect">Genres</label>
               <div class="selection-control">
                 <div class="selection-input">
-                  <label class="selection-label" for="genreSelect"
-                    >Genres</label
-                  >
                   <select id="genreSelect" class="form-control">
                     <option value="">Select Genre</option>
                     <option value="Action">Action</option>
