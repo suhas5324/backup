@@ -30,18 +30,25 @@
 
           <form id="movieForm" class="needs-validation" novalidate>
             <div class="form-group">
-              <label>Movie Name</label>
+              <label for="movieName">Movie Name</label>
 
-              <input type="text" class="form-control" required />
+              <input
+                type="text"
+                class="form-control"
+                id="movieName"
+                name="movieName"
+                required
+              />
 
               <div class="invalid-feedback">Movie name is required</div>
             </div>
 
             <div class="form-group">
-              <label>Year Of Release</label>
+              <label for="yearInput">Year Of Release</label>
 
               <input
                 id="yearInput"
+                name="yearInput"
                 type="number"
                 class="form-control"
                 min="1900"
@@ -62,7 +69,7 @@
                 class="selection-control person-selection-control d-flex align-items-start"
               >
                 <div class="selection-input">
-                  <select id="actorSelect" class="form-control">
+                  <select id="actorSelect" name="actorSelect" class="form-control">
                     <option value="">Select Actor</option>
                     <option value="Tom Cruise">Tom Cruise</option>
                     <option value="Robert Downey Jr">Robert Downey Jr</option>
@@ -90,11 +97,11 @@
             </div>
 
             <div class="form-group">
-              <label>Producer</label>
+              <label for="producerSelect">Producer</label>
 
               <div class="selection-control d-flex align-items-start">
                 <div class="selection-field">
-                  <select id="producerSelect" class="form-control" required>
+                  <select id="producerSelect" name="producerSelect" class="form-control" required>
                     <option value="">Select Producer</option>
                     <option value="Kevin Feige">Kevin Feige</option>
                     <option value="Emma Thomas">Emma Thomas</option>
@@ -121,7 +128,7 @@
               <label for="genreSelect">Genres</label>
               <div class="selection-control">
                 <div class="selection-input">
-                  <select id="genreSelect" class="form-control">
+                  <select id="genreSelect" name="genreSelect" class="form-control">
                     <option value="">Select Genre</option>
                     <option value="Action">Action</option>
                     <option value="Drama">Drama</option>
@@ -138,9 +145,15 @@
             </div>
 
             <div class="form-group">
-              <label>Plot</label>
+              <label for="moviePlot">Plot</label>
 
-              <textarea class="form-control" rows="4" required></textarea>
+              <textarea
+                id="moviePlot"
+                name="moviePlot"
+                class="form-control"
+                rows="4"
+                required
+              ></textarea>
 
               <div class="invalid-feedback">Plot is required</div>
             </div>
@@ -152,7 +165,8 @@
                   type="file"
                   class="form-control-file"
                   id="moviePoster"
-                  accept="image/*"
+                  name="moviePoster"
+                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                   required
                 />
                 <img
@@ -188,6 +202,7 @@
                 type="text"
                 class="form-control"
                 id="personName"
+                name="personName"
                 required
               />
               <div class="invalid-feedback">Name is required.</div>
@@ -198,6 +213,7 @@
                 type="date"
                 class="form-control"
                 id="personDateOfBirth"
+                name="personDateOfBirth"
                 required
               />
               <div class="invalid-feedback">Date of birth is required.</div>
@@ -207,6 +223,7 @@
               <textarea
                 class="form-control"
                 id="personBio"
+                name="personBio"
                 rows="3"
                 required
               ></textarea>
@@ -214,7 +231,7 @@
             </div>
             <div class="form-group">
               <label for="personGender">Gender</label>
-              <select class="form-control" id="personGender" required>
+              <select class="form-control" id="personGender" name="personGender" required>
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
